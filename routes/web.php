@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
-
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\RoleController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,8 +17,30 @@ use App\Http\Controllers\LoginController;
 */
 
 // Route::redirect('/', '/dashboard-general-dashboard');
-        Route::get('/', [LoginController::class, 'index'])->name('login');
 
+Route::middleware('guest')->group(function () {
+    // Route::get('/', [LoginController::class, 'index'])->name('login');
+  Route::get('/', [LoginController::class, 'index'])
+    ->middleware('throttle:5,1') // max 5 requests per 1 menit
+    ->name('login');
+    Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
+    Route::post('/auth-login', [LoginController::class, 'login'])->name('auth-login.login');
+    Route::get('/auth-register', function () {
+        return view('pages.auth-register', ['type_menu' => 'auth']);
+    });
+});
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+   Route::resource('roles', RoleController::class);
+    Route::get('/dashboard', fn() => view('dashboard'));
+    Route::get('/features-profile', function () {
+        return view('pages.features-profile', ['type_menu' => 'features']);
+    });
+    Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
+    Route::put('/features-profile', [UserRoleController::class, 'index'])->name('features-profile');
+
+});
 // Dashboard
 Route::get('/dashboard-general-dashboard', function () {
     return view('pages.dashboard-general-dashboard', ['type_menu' => 'dashboard']);
@@ -202,9 +226,7 @@ Route::get('/auth-login', function () {
 Route::get('/auth-login2', function () {
     return view('pages.auth-login2', ['type_menu' => 'auth']);
 });
-Route::get('/auth-register', function () {
-    return view('pages.auth-register', ['type_menu' => 'auth']);
-});
+
 Route::get('/auth-reset-password', function () {
     return view('pages.auth-reset-password', ['type_menu' => 'auth']);
 });
@@ -233,9 +255,7 @@ Route::get('/features-post-create', function () {
 Route::get('/features-post', function () {
     return view('pages.features-post', ['type_menu' => 'features']);
 });
-Route::get('/features-profile', function () {
-    return view('pages.features-profile', ['type_menu' => 'features']);
-});
+
 Route::get('/features-settings', function () {
     return view('pages.features-settings', ['type_menu' => 'features']);
 });

@@ -4,123 +4,75 @@
 
 @push('style')
     <!-- CSS Libraries -->
-    <link rel="stylesheet"
-        href="{{ asset('library/selectric/public/selectric.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
 @endpush
-
 @section('main')
     <div class="card card-primary">
         <div class="card-header">
             <h4>Register</h4>
         </div>
-
         <div class="card-body">
-            <form method="POST">
+            <form action="{{ route('auth-register.register') }}" method="POST">
+                @csrf
                 <div class="row">
                     <div class="form-group col-6">
-                        <label for="frist_name">First Name</label>
-                        <input id="frist_name"
-                            type="text"
-                            class="form-control"
-                            name="frist_name"
-                            autofocus>
+                        <label for="Name">Name</label>
+                        <input id="name" type="text" class="form-control text-capitalize" name="name" autofocus>
                     </div>
+                    <script>
+                        document.getElementById('name').addEventListener('blur', function() {
+                            this.value = this.value.replace(/\b\w/g, c => c.toUpperCase());
+                        });
+                    </script>
                     <div class="form-group col-6">
-                        <label for="last_name">Last Name</label>
-                        <input id="last_name"
-                            type="text"
-                            class="form-control"
-                            name="last_name">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input id="email"
-                        type="email"
-                        class="form-control"
-                        name="email">
-                    <div class="invalid-feedback">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-6">
-                        <label for="password"
-                            class="d-block">Password</label>
-                        <input id="password"
-                            type="password"
-                            class="form-control pwstrength"
-                            data-indicator="pwindicator"
-                            name="password">
-                        <div id="pwindicator"
-                            class="pwindicator">
+                        <label for="password">Password</label>
+                        <div class="input-group">
+                            <input id="password" type="password" class="form-control pwstrength"
+                                data-indicator="pwindicator" name="password">
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="togglePassword()" style="cursor: pointer;">
+                                    <i class="fa fa-eye" id="eyeIcon"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="pwindicator" class="pwindicator">
                             <div class="bar"></div>
                             <div class="label"></div>
                         </div>
                     </div>
-                    <div class="form-group col-6">
-                        <label for="password2"
-                            class="d-block">Password Confirmation</label>
-                        <input id="password2"
-                            type="password"
-                            class="form-control"
-                            name="password-confirm">
-                    </div>
-                </div>
+                    <script>
+                        function togglePassword() {
+                            const passwordInput = document.getElementById('password');
+                            const eyeIcon = document.getElementById('eyeIcon');
+                            const isPassword = passwordInput.type === 'password';
 
-                <div class="form-divider">
-                    Your Home
-                </div>
-                <div class="row">
-                    <div class="form-group col-6">
-                        <label>Country</label>
-                        <select class="form-control selectric">
-                            <option>Indonesia</option>
-                            <option>Palestine</option>
-                            <option>Syria</option>
-                            <option>Malaysia</option>
-                            <option>Thailand</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-6">
-                        <label>Province</label>
-                        <select class="form-control selectric">
-                            <option>West Java</option>
-                            <option>East Java</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-6">
-                        <label>City</label>
-                        <input type="text"
-                            class="form-control">
-                    </div>
-                    <div class="form-group col-6">
-                        <label>Postal Code</label>
-                        <input type="text"
-                            class="form-control">
-                    </div>
-                </div>
+                            passwordInput.type = isPassword ? 'text' : 'password';
+                            eyeIcon.classList.toggle('fa-eye');
+                            eyeIcon.classList.toggle('fa-eye-slash');
+                        }
+                    </script>
 
+                </div>
                 <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox"
-                            name="agree"
-                            class="custom-control-input"
-                            id="agree">
-                        <label class="custom-control-label"
-                            for="agree">I agree with the terms and conditions</label>
+                    <label for="password2" class="d-block">Password Confirmation</label>
+                    <input id="password2" type="password" class="form-control" name="password_confirmation">
+                    <div class="invalid-feedback">
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <button type="submit"
-                        class="btn btn-primary btn-lg btn-block">
+                {{-- <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-lg btn-block">
+                        Register
+                    </button>
+                </div> --}}
+                <div class="form-group d-flex justify-content-between">
+                    <a href="{{ route('login') }}" class="btn btn-secondary btn-lg">
+                        Back
+                    </a>
+                    <button type="submit" class="btn btn-success btn-lg">
                         Register
                     </button>
                 </div>
+
             </form>
         </div>
     </div>

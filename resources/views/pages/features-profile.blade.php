@@ -1,15 +1,11 @@
 @extends('layouts.app')
-
 @section('title', 'Profile')
-
 @push('style')
     <!-- CSS Libraries -->
-    <link rel="stylesheet"
-        href="{{ asset('library/summernote/dist/summernote-bs4.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('library/bootstrap-social/assets/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/summernote/dist/summernote-bs4.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/bootstrap-social/assets/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 @endpush
-
 @section('main')
     <div class="main-content">
         <section class="section">
@@ -21,138 +17,66 @@
                 </div>
             </div>
             <div class="section-body">
-                <h2 class="section-title">Hi, Ujang!</h2>
+                <h2 class="section-title">Hai, {{ Auth::user()->name }}</h2>
                 <p class="section-lead">
-                    Change information about yourself on this page.
+                    Bring out your morning spirit
                 </p>
-
                 <div class="row mt-sm-4">
-                    <div class="col-12 col-md-12 col-lg-5">
-                        <div class="card profile-widget">
-                            <div class="profile-widget-header">
-                                <img alt="image"
-                                    src="{{ asset('img/avatar/avatar-1.png') }}"
-                                    class="rounded-circle profile-widget-picture">
-                                <div class="profile-widget-items">
-                                    <div class="profile-widget-item">
-                                        <div class="profile-widget-item-label">Posts</div>
-                                        <div class="profile-widget-item-value">187</div>
-                                    </div>
-                                    <div class="profile-widget-item">
-                                        <div class="profile-widget-item-label">Followers</div>
-                                        <div class="profile-widget-item-value">6,8K</div>
-                                    </div>
-                                    <div class="profile-widget-item">
-                                        <div class="profile-widget-item-label">Following</div>
-                                        <div class="profile-widget-item-value">2,1K</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="profile-widget-description">
-                                <div class="profile-widget-name">Ujang Maman <div
-                                        class="text-muted d-inline font-weight-normal">
-                                        <div class="slash"></div> Web Developer
-                                    </div>
-                                </div>
-                                Ujang maman is a superhero name in <b>Indonesia</b>, especially in my family. He is not a
-                                fictional character but an original hero in my family, a hero for his children and for his
-                                wife. So, I use the name as a user in this template. Not a tribute, I'm just bored with
-                                <b>'John Doe'</b>.
-                            </div>
-                            <div class="card-footer text-center">
-                                <div class="font-weight-bold mb-2">Follow Ujang On</div>
-                                <a href="#"
-                                    class="btn btn-social-icon btn-facebook mr-1">
-                                    <i class="fab fa-facebook-f"></i>
-                                </a>
-                                <a href="#"
-                                    class="btn btn-social-icon btn-twitter mr-1">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                                <a href="#"
-                                    class="btn btn-social-icon btn-github mr-1">
-                                    <i class="fab fa-github"></i>
-                                </a>
-                                <a href="#"
-                                    class="btn btn-social-icon btn-instagram">
-                                    <i class="fab fa-instagram"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-12 col-lg-7">
+                    <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form method="post"
-                                class="needs-validation"
-                                novalidate="">
-                                <div class="card-header">
-                                    <h4>Edit Profile</h4>
-                                </div>
+                            <form action="{{ route('features-profile.update') }}" method="POST">
+                                @csrf
+                                @method('PUT')
                                 <div class="card-body">
+                                    <h4>Edit Password Only</h4>
+                                    <div class="row">
+                                        {{-- <div class="form-group col-md-6 col-12">
+                                            <label>Old Password</label>
+                                            <input type="password" class="form-control" name="current_password" required>
+                                            <div class="invalid-feedback">
+                                                Please fill in the Old Password
+                                            </div>
+                                        </div> --}}
+                                        <div class="form-group col-md-6 col-12">
+    <label>Old Password</label>
+    <div class="input-group">
+        <input type="password" class="form-control" name="current_password" id="current_password" required>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary toggle-password" type="button" onclick="togglePasswordVisibility('current_password', this)">
+                <i class="fa fa-eye-slash"></i>
+            </button>
+        </div>
+        <div class="invalid-feedback">
+            Please fill in the Old Password
+        </div>
+    </div>
+</div>
+                                        <div class="form-group col-md-6 col-12">
+                                            <label>New Password</label>
+                                            <input type="password" class="form-control pwstrength"
+                                                data-indicator="pwindicator" name="new_password" required>
+                                            <div class="invalid-feedback">
+                                                Please fill in the New Password
+                                            </div>
+                                            <div id="pwindicator" class="pwindicator">
+                                                <div class="bar"></div>
+                                                <div class="label"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="form-group col-md-6 col-12">
-                                            <label>First Name</label>
-                                            <input type="text"
-                                                class="form-control"
-                                                value="Ujang"
-                                                required="">
+                                            <label>Password Confirmation</label>
+                                            <input type="password" class="form-control" name="new_password_confirmation"
+                                                required>
                                             <div class="invalid-feedback">
-                                                Please fill in the first name
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-6 col-12">
-                                            <label>Last Name</label>
-                                            <input type="text"
-                                                class="form-control"
-                                                value="Maman"
-                                                required="">
-                                            <div class="invalid-feedback">
-                                                Please fill in the last name
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-md-7 col-12">
-                                            <label>Email</label>
-                                            <input type="email"
-                                                class="form-control"
-                                                value="ujang@maman.com"
-                                                required="">
-                                            <div class="invalid-feedback">
-                                                Please fill in the email
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-5 col-12">
-                                            <label>Phone</label>
-                                            <input type="tel"
-                                                class="form-control"
-                                                value="">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-12">
-                                            <label>Bio</label>
-                                            <textarea class="form-control summernote-simple">Ujang maman is a superhero name in <b>Indonesia</b>, especially in my family. He is not a fictional character but an original hero in my family, a hero for his children and for his wife. So, I use the name as a user in this template. Not a tribute, I'm just bored with <b>'John Doe'</b>.</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-12 mb-0">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox"
-                                                    name="remember"
-                                                    class="custom-control-input"
-                                                    id="newsletter">
-                                                <label class="custom-control-label"
-                                                    for="newsletter">Subscribe to newsletter</label>
-                                                <div class="text-muted form-text">
-                                                    You will get new information about products, offers and promotions
-                                                </div>
+                                                Please fill in the Password Confirmation
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button class="btn btn-primary">Save Changes</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
                                 </div>
                             </form>
                         </div>
@@ -162,10 +86,10 @@
         </section>
     </div>
 @endsection
-
 @push('scripts')
     <!-- JS Libraies -->
     <script src="{{ asset('library/summernote/dist/summernote-bs4.js') }}"></script>
-
+    <script src="{{ asset('library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
+    <script src="{{ asset('js/page/features-profile.js') }}"></script>
     <!-- Page Specific JS File -->
 @endpush
