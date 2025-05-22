@@ -17,8 +17,15 @@
                 <div class="row">
                     <div class="form-group col-6">
                         <label for="Name">Name</label>
-                        <input id="name" type="text" class="form-control text-capitalize" name="name" autofocus>
+                       <input id="name" type="text" placeholder="Fill your name" class="form-control text-capitalize" name="name" value="{{ old('name') }}" autofocus>
+
                     </div>
+                    <div class="form-group col-6">
+                        <label for="username">Username</label>
+                        <input id="username" placeholder="create your username" type="number" class="form-control"value="{{ old('username') }}" name="username" autofocus>
+                        <small class="form-text text-muted">* numbers only, min 8 character example:08234729</small>
+                    </div>
+                    
                     <script>
                         document.getElementById('name').addEventListener('blur', function() {
                             this.value = this.value.replace(/\b\w/g, c => c.toUpperCase());
@@ -27,7 +34,7 @@
                     <div class="form-group col-6">
                         <label for="password">Password</label>
                         <div class="input-group">
-                            <input id="password" type="password" class="form-control pwstrength"
+                            <input id="password" placeholder="create your password" type="password" class="form-control pwstrength"
                                 data-indicator="pwindicator" name="password">
                             <div class="input-group-append">
                                 <span class="input-group-text" onclick="togglePassword()" style="cursor: pointer;">

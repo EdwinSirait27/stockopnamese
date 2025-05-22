@@ -32,14 +32,13 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="name">Name</label>
-                    <input id="name" type="text" class="form-control" name="name" placeholder="insert your name"
+                    <label for="username">Username</label>
+                    <input id="username" type="text" class="form-control" name="username" placeholder="insert your username"
                         tabindex="1" required autofocus>
                     <div class="invalid-feedback">
-                        Please fill in your name
+                        Please fill in your username
                     </div>
                 </div>
-
                 {{-- <div class="form-group">
                     <div class="d-block">
                         <label for="password"

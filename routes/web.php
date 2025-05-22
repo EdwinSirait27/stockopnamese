@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\dashboardController;
+use App\Http\Controllers\ScanbarcodeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -20,9 +22,9 @@ use App\Http\Controllers\RoleController;
 
 Route::middleware('guest')->group(function () {
     // Route::get('/', [LoginController::class, 'index'])->name('login');
-  Route::get('/', [LoginController::class, 'index'])
-    ->middleware('throttle:5,1') // max 5 requests per 1 menit
-    ->name('login');
+    Route::get('/', [LoginController::class, 'index'])
+        ->middleware('throttle:5,1') // max 5 requests per 1 menit
+        ->name('login');
     Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
     Route::post('/auth-login', [LoginController::class, 'login'])->name('auth-login.login');
     Route::get('/auth-register', function () {
@@ -30,15 +32,28 @@ Route::middleware('guest')->group(function () {
     });
 });
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
-
 Route::middleware(['auth'])->group(function () {
-   Route::resource('roles', RoleController::class);
-    Route::get('/dashboard', fn() => view('dashboard'));
+    Route::resource('roles', RoleController::class);
+    Route::get('/dashboard', function () {
+        return view('pages.dashboard', ['type_menu' => 'dashboard']);
+    });
+    Route::get('/mtokosoglo/mtokosoglo', [dashboardController::class, 'getMtokosoglo'])->name('mtokosoglo.mtokosoglo');
+    Route::get('/editdashboard/{kdtoko}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
+Route::put('/editdashboard/{kdtoko}', [dashboardController::class, 'update'])->name('pages.editdashboard.update');
+
     Route::get('/features-profile', function () {
         return view('pages.features-profile', ['type_menu' => 'features']);
     });
     Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
     Route::put('/features-profile', [UserRoleController::class, 'index'])->name('features-profile');
+    Route::post('/scan-barcode', [ScanbarcodeController::class, 'scanBarcode'])->name('scan.barcode');
+    Route::get('/scanbarcode', function () {
+        return view('pages.scanbarcode');
+    })->name('scan.page');
+    Route::get('/blank-page', function () {
+        return view('pages.blank-page', ['type_menu' => '']);
+
+    });
 
 });
 // Dashboard
@@ -56,9 +71,6 @@ Route::get('/layout-default-layout', function () {
 });
 
 // Blank Page
-Route::get('/blank-page', function () {
-    return view('pages.blank-page', ['type_menu' => '']);
-});
 
 // Bootstrap
 Route::get('/bootstrap-alert', function () {
