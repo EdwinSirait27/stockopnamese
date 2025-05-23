@@ -47,7 +47,9 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::get('/mtokosoglo/mtokosoglo', [dashboardController::class, 'getMtokosoglo'])->name('mtokosoglo.mtokosoglo');
     Route::get('/editdashboard/{kdtoko}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
-Route::put('/editdashboard/{kdtoko}', [dashboardController::class, 'update'])->name('pages.editdashboard.update');
+    Route::get('/showdashboard/{kdtoko}', [dashboardController::class, 'show'])->name('pages.showdashboard');
+    Route::put('/editdashboard/{kdtoko}', [dashboardController::class, 'update'])->name('pages.editdashboard.update');
+    Route::get('/mtokodetsoglo/mtokodetsoglo', [dashboardController::class, 'getMtokodetsoglo'])->name('mtokodetsoglo.mtokodetsoglo');
 
     Route::get('/features-profile', function () {
         return view('pages.features-profile', ['type_menu' => 'features']);

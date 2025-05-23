@@ -39,7 +39,6 @@
         {{ $success }}
     </div>
 @endif
-
                                     @if ($errors->any())
                                         <div class="alert alert-danger">
                                             <ul>
