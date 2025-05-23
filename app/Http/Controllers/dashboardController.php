@@ -18,7 +18,11 @@ class dashboardController extends Controller
                 $mtokosoglo->action = '
                 <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit mtokosoglo" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
                     <i class="fas fa-user-edit text-secondary"></i>
-                </a>';
+                </a>
+                 <button type="submit" class="btn btn-sm btn-outline-secondary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: {{ e($mtokosoglo->kdtoko) }}">
+        Edit
+    </button>
+                ';
                 return $mtokosoglo;
             });
         return DataTables::of($mtokosoglos)

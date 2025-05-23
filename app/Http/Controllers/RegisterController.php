@@ -55,7 +55,7 @@ class RegisterController extends Controller
                 'regex:/^\d+$/',
                 Rule::unique('users', 'username'),
             ],
-            'password' => ['required', 'confirmed', 'regex:/^\S+$/', 'max:255'],
+            'password' => ['required','regex:/^\S+$/','min:8', 'max:255'],
         ]);
         Log::info('Validation passed');
         $user = User::create([
@@ -72,6 +72,6 @@ class RegisterController extends Controller
         Log::info('Session regenerated');
         // Redirect ke halaman dashboard
         Log::info('Redirecting to /features-profile');
-        return redirect()->intended('/features-profile');
+        return redirect()->intended('/features-profile')->with('success', 'User Created Successfully!');
     }
 }

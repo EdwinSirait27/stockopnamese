@@ -5,6 +5,8 @@
         .text-center {
             text-align: center;
         }
+       
+
     </style>
 @endpush
 @section('main')
@@ -15,6 +17,7 @@
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="/dashboard">Stock Opname</a></div>
                 </div>
+              
             </div>
             <div class="section-body">
                 <div class="row">
@@ -24,11 +27,16 @@
                                 <h4>mtokosoglo</h4>
 
                             </div>
-                            @if (isset($success))
-                                <div class="alert alert-success">
-                                    {{ $success }}
-                                </div>
-                            @endif
+                          @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
+        <div>{{ session('success') }}</div>
+        <button type="button" class="btn btn-sm btn-light border-0 ms-2" data-bs-dismiss="alert" aria-label="Close" style="font-weight: bold;">X</button>
+    </div>
+@endif
+
+
+
+
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table-sm table" id="users-table">
@@ -56,6 +64,8 @@
 
 @push('scripts')
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         jQuery(document).ready(function($) {
             var table = $('#users-table').DataTable({

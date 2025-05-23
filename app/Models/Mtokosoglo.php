@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mtokosoglo extends Model
 {
+    //  protected $connection = 'mysql2';
     use HasFactory;
         protected $table = 'mtoko_soglo'; 
           protected $primaryKey = 'kdtoko';
