@@ -24,11 +24,14 @@ Route::middleware('guest')->group(function () {
     // Route::get('/', [LoginController::class, 'index'])
     //     ->middleware('throttle:5,1') // max 5 requests per 1 menit
     //     ->name('login');
-    Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect('/dashboard');
-    }
-    return app(LoginController::class)->index();
+//     Route::get('/', function () {
+//     if (Auth::check()) {
+//         return redirect('/dashboard');
+//     }
+//     return app(LoginController::class)->index();
+// })->middleware('throttle:5,1')->name('login');
+Route::get('/', function (LoginController $controller) {
+    return Auth::check() ? redirect('/dashboard') : $controller->index();
 })->middleware('throttle:5,1')->name('login');
     Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
     Route::post('/auth-login', [LoginController::class, 'login'])->name('auth-login.login');
