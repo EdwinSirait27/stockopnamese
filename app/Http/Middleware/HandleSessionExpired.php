@@ -22,7 +22,6 @@ class HandleSessionExpired
         if ($response->status() === 419) {
             return redirect('/');
         }
-
         return $response;
     }
 }
