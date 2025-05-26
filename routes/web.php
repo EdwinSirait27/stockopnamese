@@ -7,6 +7,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,10 +43,10 @@ Route::get('/', function (LoginController $controller) {
 });
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth'])->group(function () {
-    Route::resource('roles', RoleController::class);
+    // Route::resource('roles', RoleController::class);
     Route::get('/dashboard', function () {
         return view('pages.dashboard', ['type_menu' => 'dashboard']);
-    });
+    })->name('dashboard');
     Route::get('/mtokosoglo/mtokosoglo', [dashboardController::class, 'getMtokosoglo'])->name('mtokosoglo.mtokosoglo');
     Route::get('/editdashboard/{kdtoko}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
     Route::get('/showdashboard/{kdtoko}', [dashboardController::class, 'show'])->name('pages.showdashboard');
@@ -64,7 +66,22 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.blank-page', ['type_menu' => '']);
 
     });
-
+  Route::get('/roles', [RoleController::class, 'index'])
+            ->name('roles.index');
+        Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
+        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/roles/edit/{id}', [RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/{id}', [RoleController::class, 'update'])->name('roles.update');
+        Route::get('/role/role', [RoleController::class, 'getRoles'])->name('role.role');
+        
+        
+        Route::get('/permissions', [PermissionController::class, 'index'])
+            ->name('permissions.index');
+        Route::get('permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+        Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+        Route::get('/permissions/edit/{id}', [PermissionController::class, 'edit'])->name('permissions.edit');
+        Route::put('/permissions/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+        Route::get('/permissions/permissions', [PermissionController::class, 'getPermissions'])->name('permissions.permissions');
 });
 // Dashboard
 Route::get('/dashboard-general-dashboard', function () {

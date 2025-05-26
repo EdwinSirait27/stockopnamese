@@ -1,14 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Mtokosoglo;
 use App\Models\Mtokodetsoglo;
 use Illuminate\Support\Facades\Log;
-
 class dashboardController extends Controller
 {
     public function getMtokosoglo()
@@ -90,9 +88,10 @@ class dashboardController extends Controller
         $validated['inpmasuk'] = Auth::user()->name;
         // Update sekaligus
         $mtokosoglo->update($validated);
-        return view('pages.dashboard', [
-            'success' => 'Data berhasil diperbarui.',
-        ]);
+        // return view('pages.dashboard', [
+        //     'success' => 'Data berhasil diperbarui.',
+        // ]);
+        return redirect()->route('dashboard')->with('success', 'Data berhasil diperbarui.');
     }
 
 }
