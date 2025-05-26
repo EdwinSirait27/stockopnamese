@@ -85,6 +85,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/permissions/permissions', [PermissionController::class, 'getPermissions'])->name('permissions.permissions');
   
     Route::match(['get', 'post'], '/DB', [DbController::class, 'index'])->name('DB.index');
+    Route::get('/mstock/mstock', [DbController::class, 'getMstock'])->name('mstock.mstock');
 
 });
 // Dashboard
