@@ -198,12 +198,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-        }
-        
-        .search-container {
-            margin-bottom: 20px;
-        }
-        
+        } 
         .entries-info {
             display: flex;
             justify-content: between;
@@ -237,15 +232,6 @@
             color: #6c757d;
             display: none;
         }
-        
-        .search-input {
-            width: 100%;
-            max-width: 300px;
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-        }
-        
         @media (max-width: 768px) {
             .store-info {
                 flex-direction: column;
@@ -263,7 +249,6 @@
         }
     </style>
 @endpush
-
 @section('main')
     <div class="main-content">
         <section class="section">
@@ -290,11 +275,10 @@
                             @endif
                             
                             <div class="card-body">
-                                <!-- Search and Entries Controls -->
-                                <div class="entries-info">
+                                <div class="entries-info d-flex justify-content-between align-items-center mb-3">
                                     <div class="entries-select">
                                         <label for="entries-select">Show 
-                                            <select id="entries-select">
+                                            <select id="entries-select" class="form-select form-select-sm d-inline-block" style="width: auto;">
                                                 <option value="10">10</option>
                                                 <option value="25">25</option>
                                                 <option value="50">50</option>
@@ -305,13 +289,16 @@
                                         </label>
                                     </div>
                                     
+                                    <!-- Search Box -->
                                     <div class="search-container">
-                                        <input type="text" id="search-input" class="search-input" placeholder="Search stores...">
+                                        <label for="search-input">Search:
+                                            <input type="text" id="search-input" class="form-control form-control-sm d-inline-block ms-2" placeholder="Search stores..." style="width: 200px;">
+                                        </label>
                                     </div>
                                 </div>
                                 
                                 <!-- Loading Spinner -->
-                                <div class="loading-spinner" id="loading-spinner">
+                                <div class="loading-spinner text-center" id="loading-spinner" style="display: none;">
                                     <div class="spinner-border" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
@@ -319,7 +306,7 @@
                                 </div>
                                 
                                 <!-- No Data Message -->
-                                <div class="no-data" id="no-data">
+                                <div class="no-data text-center" id="no-data" style="display: none;">
                                     <p>No data available</p>
                                 </div>
                                 
@@ -329,7 +316,7 @@
                                 </div>
                                 
                                 <!-- Pagination -->
-                                <div class="pagination-container" id="pagination-container">
+                                <div class="pagination-container d-flex justify-content-center" id="pagination-container">
                                     <!-- Pagination will be loaded here -->
                                 </div>
                                 
@@ -344,6 +331,116 @@
             </div>
         </section>
     </div>
+
+    <style>
+        .store-card {
+            border: 1px solid #e3e6f0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .store-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .store-header {
+            border-bottom: 1px solid #e3e6f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .store-code {
+            font-weight: bold;
+            color: #5a5c69;
+            font-size: 14px;
+        }
+        
+        .store-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+        
+        .store-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .info-item {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #495057;
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .loading-spinner {
+            padding: 50px 0;
+        }
+        
+        .no-data {
+            padding: 50px 0;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .entries-info {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start !important;
+            }
+            
+            .search-container {
+                width: 100%;
+            }
+            
+            .search-container label {
+                display: flex;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .search-container input {
+                width: 100% !important;
+                margin-left: 10px !important;
+            }
+            
+            .store-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .info-item {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+    </style>
 @endsection
 
 @push('scripts')
@@ -356,22 +453,36 @@
             let currentSearch = '';
             let totalRecords = 0;
             let filteredRecords = 0;
+            let searchTimeout;
             
             // Load initial data
             loadData();
-            
-            // Search functionality
-            $('#search-input').on('keyup', function() {
-                currentSearch = $(this).val();
-                currentPage = 1;
-                loadData();
-            });
             
             // Entries per page functionality
             $('#entries-select').on('change', function() {
                 currentLength = parseInt($(this).val());
                 currentPage = 1;
                 loadData();
+            });
+            
+            // Search functionality with debounce
+            $('#search-input').on('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    currentSearch = $('#search-input').val().trim();
+                    currentPage = 1;
+                    loadData();
+                }, 300); // 300ms delay for debounce
+            });
+            
+            // Clear search on ESC key
+            $('#search-input').on('keydown', function(e) {
+                if (e.keyCode === 27) { // ESC key
+                    $(this).val('');
+                    currentSearch = '';
+                    currentPage = 1;
+                    loadData();
+                }
             });
             
             function loadData() {
@@ -383,7 +494,9 @@
                     data: {
                         start: (currentPage - 1) * currentLength,
                         length: currentLength,
-                        'search[value]': currentSearch,
+                        search: {
+                            value: currentSearch
+                        },
                         draw: 1
                     },
                     success: function(response) {
@@ -403,9 +516,10 @@
                             $('#no-data').show();
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
                         hideLoading();
-                        $('#cards-container').html('<div class="alert alert-danger">Error loading data</div>');
+                        console.error('AJAX Error:', error);
+                        $('#cards-container').html('<div class="alert alert-danger">Error loading data. Please try again.</div>');
                     }
                 });
             }
@@ -417,25 +531,30 @@
                     let startIndex = (currentPage - 1) * currentLength;
                     let rowNumber = startIndex + index + 1;
                     
+                    // Highlight search terms
+                    let kdtoko = highlightSearchTerm(item.kdtoko, currentSearch);
+                    let kettoko = highlightSearchTerm(item.kettoko, currentSearch);
+                    let personil = highlightSearchTerm(item.personil, currentSearch);
+                    
                     html += `
                         <div class="store-card">
                             <div class="store-header">
-                                <div class="store-code">#${rowNumber} - ${item.kdtoko}</div>
-                                <div class="store-name">${item.kettoko}</div>
+                                <div class="store-code">#${rowNumber} - ${kdtoko}</div>
+                                <div class="store-name">${kettoko}</div>
                             </div>
                             <div class="store-info">
                                 <div class="info-item">
                                     <div class="info-label">Personil</div>
-                                    <div class="info-value">${item.personil}</div>
+                                    <div class="info-value">${personil}</div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Inp Masuk</div>
-                                    <div class="info-value">${item.inpmasuk}</div>
+                                    <div class="info-value">${item.inpmasuk || '-'}</div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Actions</div>
                                     <div class="action-buttons">
-                                        ${item.action}
+                                        ${item.action || ''}
                                     </div>
                                 </div>
                             </div>
@@ -444,6 +563,17 @@
                 });
                 
                 $('#cards-container').html(html);
+            }
+            
+            function highlightSearchTerm(text, searchTerm) {
+                if (!searchTerm || !text) return text;
+                
+                const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
+                return text.replace(regex, '<mark>$1</mark>');
+            }
+            
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
             
             function renderPagination() {
@@ -525,6 +655,10 @@
                 let info = `Showing ${start} to ${end} of ${filteredRecords} entries`;
                 if (filteredRecords !== totalRecords) {
                     info += ` (filtered from ${totalRecords} total entries)`;
+                }
+                
+                if (currentSearch) {
+                    info += ` - searching for "${currentSearch}"`;
                 }
                 
                 $('#data-info').html(info);

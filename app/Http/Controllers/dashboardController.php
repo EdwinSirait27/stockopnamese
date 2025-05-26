@@ -9,28 +9,47 @@ use App\Models\Mtokodetsoglo;
 use Illuminate\Support\Facades\Log;
 class dashboardController extends Controller
 {
+    // public function getMtokosoglo()
+    // {
+    //     $mtokosoglos = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk',])
+    //         ->get()
+    //         ->map(function ($mtokosoglo) {
+    //             $mtokosoglo->action = '
+    //             <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit mtokosoglo" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
+    //                 <i class="fas fa-user-edit text-secondary"></i>
+    //             </a>
+    //             <a href="' . route('pages.showdashboard', $mtokosoglo->kdtoko) . '" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit mtokosoglo" title="Show mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
+    //                 <i class="fas fa-user-edit text-dark"></i>
+    //             </a>
+    //              <button type="submit" class="btn btn-sm btn-outline-secondary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: {{ e($mtokosoglo->kdtoko) }}">
+    //     Edit
+    // </button>
+    //             ';
+    //             return $mtokosoglo;
+    //         });
+    //     return DataTables::of($mtokosoglos)
+    //         ->rawColumns(['action'])
+    //         ->make(true);
+    // }
     public function getMtokosoglo()
-    {
-        $mtokosoglos = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk',])
-            ->get()
-            ->map(function ($mtokosoglo) {
-                $mtokosoglo->action = '
-                <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit mtokosoglo" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
-                    <i class="fas fa-user-edit text-secondary"></i>
+{
+    // Jangan gunakan ->get() dulu, biarkan DataTables yang handle query
+    $query = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk']);
+    
+    return DataTables::of($query)
+        ->addColumn('action', function ($mtokosoglo) {
+            return '
+                <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-primary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
+                    <i class="fas fa-user-edit"></i> Edit
                 </a>
-                <a href="' . route('pages.showdashboard', $mtokosoglo->kdtoko) . '" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit mtokosoglo" title="Show mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
-                    <i class="fas fa-user-edit text-dark"></i>
+                <a href="' . route('pages.showdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-info mx-1" data-bs-toggle="tooltip" title="Show mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
+                    <i class="fas fa-eye"></i> Show
                 </a>
-                 <button type="submit" class="btn btn-sm btn-outline-secondary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: {{ e($mtokosoglo->kdtoko) }}">
-        Edit
-    </button>
-                ';
-                return $mtokosoglo;
-            });
-        return DataTables::of($mtokosoglos)
-            ->rawColumns(['action'])
-            ->make(true);
-    }
+            ';
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+}
     public function getMtokodetsoglo()
     {
         $mtokodetsoglos = Mtokodetsoglo::select(['KDTOKO', 'BARA', 'NOURUT', 'FISIK','BARCODE','ID'])
