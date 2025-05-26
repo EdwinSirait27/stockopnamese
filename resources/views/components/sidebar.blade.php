@@ -30,12 +30,10 @@
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('Stockopname') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('Stockopname') }}">Impoer Database</a>
+                    <li class="{{ Request::is('DB') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('DB') }}">Impoer Database</a>
                     </li>
-                    <li class='{{ Request::is('permissions') ? 'active' : '' }}'>
-                        <a class="nav-link" href="{{ url('permissions') }}">Permissions</a>
-                    </li>
+                   
                   
 
                 </ul>
