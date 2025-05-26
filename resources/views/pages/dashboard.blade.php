@@ -733,7 +733,7 @@
                                     <!-- Search Box -->
                                     <div class="search-container">
                                         <label for="search-input">Search:
-                                            <input type="text" id="search-input" class="form-control form-control-sm d-inline-block ms-2" placeholder="Search stores..." style="width: 200px;">
+                                            <input type="text" id="search-input" class="form-control form-control-sm d-inline-block ms-2" placeholder="Search ..." style="width: 200px;">
                                         </label>
                                     </div>
                                 </div>

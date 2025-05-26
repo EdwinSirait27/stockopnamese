@@ -31,11 +31,38 @@ class dashboardController extends Controller
     //         ->rawColumns(['action'])
     //         ->make(true);
     // }
-    public function getMtokosoglo()
-{
-    // Jangan gunakan ->get() dulu, biarkan DataTables yang handle query
-    $query = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk']);
+//     public function getMtokosoglo()
+// {
+//     // Jangan gunakan ->get() dulu, biarkan DataTables yang handle query
+//     $query = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk']);
     
+//     return DataTables::of($query)
+//         ->addColumn('action', function ($mtokosoglo) {
+//             return '
+//                 <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-primary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
+//                     <i class="fas fa-user-edit"></i> Edit
+//                 </a>
+//                 <a href="' . route('pages.showdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-info mx-1" data-bs-toggle="tooltip" title="Show mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
+//                     <i class="fas fa-eye"></i> Show
+//                 </a>
+//             ';
+//         })
+//         ->rawColumns(['action'])
+//         ->make(true);
+// }
+public function getMtokosoglo(Request $request)
+{
+    $query = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk']);
+
+    // Jika ada input search, filter di sini
+    if ($search = $request->input('search.value')) {
+        $query->where(function ($q) use ($search) {
+            $q->where('kdtoko', 'like', "%{$search}%")
+              ->orWhere('kettoko', 'like', "%{$search}%")
+              ->orWhere('personil', 'like', "%{$search}%");
+        });
+    }
+
     return DataTables::of($query)
         ->addColumn('action', function ($mtokosoglo) {
             return '
