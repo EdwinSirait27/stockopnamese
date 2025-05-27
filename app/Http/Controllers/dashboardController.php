@@ -4,11 +4,35 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
+
 use App\Models\Mtokosoglo;
+use App\Models\Buttons;
 use App\Models\Mtokodetsoglo;
 use Illuminate\Support\Facades\Log;
 class dashboardController extends Controller
 {
+    public function index(){
+        
+       $buttons = Buttons::where('url', '/')->first();
+
+    if (!$buttons || !$buttons->start_date || !$buttons->end_date) {
+        return view('pages.error');
+    }
+
+    $start_date = Carbon::parse($buttons->start_date);
+    $end_date = Carbon::parse($buttons->end_date);
+
+    if (Carbon::now()->between($start_date, $end_date)) {
+        return view('pages.dashboard');
+    }
+
+    return view('pages.error');
+}
+    // public function index(){
+
+    //     return view('pages.dashboard');
+    // }
 
     public function getMtokosoglo(Request $request)
     {

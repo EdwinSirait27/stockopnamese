@@ -46,9 +46,10 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth'])->group(function () {
     // Route::resource('roles', RoleController::class);
-    Route::get('/dashboard', function () {
-        return view('pages.dashboard', ['type_menu' => 'dashboard']);
-    })->name('dashboard');
+    // Route::get('/dashboard', function () {
+    //     return view('pages.dashboard', ['type_menu' => 'dashboard']);
+    // })->name('dashboard');
+    Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
     Route::get('/mtokosoglo/mtokosoglo', [dashboardController::class, 'getMtokosoglo'])->name('mtokosoglo.mtokosoglo');
     Route::get('/editdashboard/{kdtoko}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
     Route::get('/showdashboard/{kdtoko}', [dashboardController::class, 'show'])->name('pages.showdashboard');

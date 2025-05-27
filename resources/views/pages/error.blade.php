@@ -13,7 +13,7 @@
             <div class="page-description">
                 Stock Opname is closed.
             </div>
-            <div class="page-search">
+            {{-- <div class="page-search">
                 <form>
                     <div class="form-group floating-addon floating-addon-not-append">
                         <div class="input-group">
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </form>
-            </div>
+            </div> --}}
         </div>
     </div>
 @endsection
