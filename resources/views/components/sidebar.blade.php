@@ -27,20 +27,24 @@
 
                 </ul>
             </li>
+            @role('Admin')
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('DB') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('DB') }}">Import Database</a>
                     </li>
-                   
-                  
-
                 </ul>
             </li>
+            @endrole
+            @role('Admin')
+
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Roles & Permissions</span></a>
                 <ul class="dropdown-menu">
+                    <li class="{{ Request::is('users') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('users') }}">Users</a>
+                    </li>
                     <li class="{{ Request::is('roles') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('roles') }}">Roles</a>
                     </li>
@@ -57,6 +61,8 @@
                     </li>
                 </ul>
             </li>
+            @endrole
+
             {{-- <li class="menu-header">Starter</li>
             <li class="nav-item dropdown ">
                 <a href="#"

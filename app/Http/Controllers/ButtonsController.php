@@ -12,7 +12,7 @@ class ButtonsController extends Controller
 {
     public function index()
     {
-        return view('Buttons.index');
+        return view('buttons.index');
     }
     public function getButtons()
     {
