@@ -56,9 +56,13 @@
                                 </div>
                             </div>
                             
-                            <div class="text-right">
+                            {{-- <div class="text-right">
                                 <button type="submit" class="btn btn-primary">Save</button>
-                            </div>
+                            </div> --}}
+                            <div class="card-footer d-flex justify-content-between">
+                                    <a href="{{ url('/dashboard') }}" class="btn btn-secondary">Back</a>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
                         </form>
 
                         <div class="mt-4 alert alert-danger" id="notFound" style="display:none;">

@@ -4,6 +4,7 @@ use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\ScanbarcodeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ButtonsController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\RoleController;
@@ -86,7 +87,11 @@ Route::middleware(['auth'])->group(function () {
   
     Route::match(['get', 'post'], '/DB', [DbController::class, 'index'])->name('DB.index');
     Route::get('/mstock/mstock', [DbController::class, 'getMstock'])->name('mstock.mstock');
-
+  
+    Route::get('/buttons', [ButtonsController::class, 'index'])->name('buttons.index');
+    Route::get('/buttons/buttons', [ButtonsController::class, 'getButtons'])->name('buttons.buttons');
+    Route::get('/buttons/edit/{id}', [ButtonsController::class, 'edit'])->name('buttons.edit');
+    Route::put('/buttons/{id}', [ButtonsController::class, 'update'])->name('buttons.update');
 });
 // Dashboard
 Route::get('/dashboard-general-dashboard', function () {

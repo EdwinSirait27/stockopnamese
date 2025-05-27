@@ -31,7 +31,7 @@
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('DB') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('DB') }}">Impoer Database</a>
+                        <a class="nav-link" href="{{ url('DB') }}">Import Database</a>
                     </li>
                    
                   
@@ -47,8 +47,14 @@
                     <li class='{{ Request::is('permissions') ? 'active' : '' }}'>
                         <a class="nav-link" href="{{ url('permissions') }}">Permissions</a>
                     </li>
-                  
-
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Turn On & Off</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('buttons') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('buttons') }}">Turn On SO</a>
+                    </li>
                 </ul>
             </li>
             {{-- <li class="menu-header">Starter</li>
