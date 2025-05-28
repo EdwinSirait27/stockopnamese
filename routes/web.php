@@ -88,7 +88,8 @@ Route::middleware(['auth','role:Admin'])->group(function () {
   
     Route::match(['get', 'post'], '/DB', [DbController::class, 'index'])->name('DB.index');
     Route::get('/mstock/mstock', [DbController::class, 'getMstock'])->name('mstock.mstock');
-  
+  Route::get('/import-stock', [DbController::class, 'import'])->name('stock.import');
+
     Route::get('/buttons', [ButtonsController::class, 'index'])->name('buttons.index');
     Route::get('/buttons/buttons', [ButtonsController::class, 'getButtons'])->name('buttons.buttons');
     Route::get('/buttons/edit/{id}', [ButtonsController::class, 'edit'])->name('buttons.edit');

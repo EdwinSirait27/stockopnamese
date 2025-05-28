@@ -4,8 +4,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 class Mstock extends Model
 {
-    protected $connection = 'mysql2';
     use HasFactory;
+    protected $connection = 'mysql'; // default
     protected $table = 'mstock';
     protected $primaryKey = 'BARA';
     protected $keyType = 'string';
@@ -15,7 +15,17 @@ class Mstock extends Model
         'BARA2',
         'NAMA',
         'AVER',
+        'AWAL',
+        'MASUK',
+        'KELUAR',
         'SATUAN',
-        'SALDO',
-    ]; 
+        // 'SALDO',
+    ];
+// RUMUS SALDO ITU AWAL TAMBAH MASUK KURANG KELUAR =SALDO
+    // ✅ Tambahkan method ini:
+    public function setConnectionNameDynamic($connection)
+    {
+        $this->setConnection($connection);
+        return $this;
+    }
 }
