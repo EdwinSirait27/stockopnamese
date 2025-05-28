@@ -36,6 +36,7 @@ class DbController extends Controller
     // Ambil parameter DB dari request (default ke mysql)
     $db = $request->input('db', 'utama'); // default 'utama' jika tidak ada input
     $connection = $db === 'kedua' ? 'mysql2' : 'mysql';
+    
 
     // Gunakan koneksi dinamis
     $mstock = new Mstock();
@@ -43,7 +44,7 @@ class DbController extends Controller
 
     // Ambil data dengan query Eloquent
     $mstocks = $mstock->newQuery()
-        ->select(['BARA', 'BARA2', 'NAMA', 'AWAL','MASUK','KELUAR','AVER','HBELI','HJUAL','STATUS','KDGOL','KDTOKO','HPP','SATUAN'])
+        ->select(['BARA', 'BARA2', 'NAMA','AVER','SATUAN','SALDO'])
         ->get()
         ->map(function ($mstock) {
             return $mstock;

@@ -5,10 +5,11 @@
         .text-center {
             text-align: center;
         }
+        
     </style>
 @endpush
 @section('main')
-    <div class="main-content">
+    <div class="main-content container-fluid">
         <section class="section">
             <div class="section-header">
                 <h1>Stock Opname</h1>
@@ -341,7 +342,7 @@
                         console.error('AJAX Error:', error);
                         $('#cards-container').html(
                             '<div class="alert alert-danger">Error loading data. Please try again.</div>'
-                            );
+                        );
                     }
                 });
             }
@@ -465,7 +466,7 @@
                         html += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
                     } else {
                         html +=
-                        `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+                            `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
                     }
                 }
 

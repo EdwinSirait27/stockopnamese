@@ -12,16 +12,8 @@ class Mstocksoglo extends Model
         'BARA',
         'BARA2',
         'NAMA',
-        'AWAL',
-        'MASUK',
-        'SALDO',
         'AVER',
-        'HBELI',
-        'HJUAL',
-        'STATUS',
-        'KDGOL',
-        'KDTOKO',
-        'HPP',
         'SATUAN',
+        'SALDO',
     ];
 }

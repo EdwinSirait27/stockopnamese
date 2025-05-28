@@ -12,6 +12,5 @@ class Mstockitem extends Model
     protected $fillable = [
         'BARA',
         'BARA1',
-        
     ];
 }

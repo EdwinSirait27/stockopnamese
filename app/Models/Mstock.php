@@ -14,17 +14,9 @@ class Mstock extends Model
         'BARA',
         'BARA2',
         'NAMA',
-        'AWAL',
-        'MASUK',
-        'KELUAR',
         'AVER',
-        'HBELI',
-        'HJUAL',
-        'STATUS',
-        'KDGOL',
-        'KDTOKO',
-        'HPP',
         'SATUAN',
+        'SALDO',
     ];
     // public function Mtokodetsoglos()
     // {
