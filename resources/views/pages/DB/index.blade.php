@@ -1,4 +1,4 @@
-{{-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Pilih dan Tampilkan Database</title>
@@ -63,8 +63,8 @@
         </table>
     @endisset
 </body>
-</html> --}}
-@extends('layouts.app')
+</html>
+{{-- @extends('layouts.app')
 @section('title', 'MJM')
 @push('style')
     <style>
@@ -245,4 +245,4 @@
         });
     </script>
 @endpush
-
+ --}}

@@ -17,10 +17,5 @@ class Mstock extends Model
         'AVER',
         'SATUAN',
         'SALDO',
-    ];
-    // public function Mtokodetsoglos()
-    // {
-    //     return $this->hasMany(Mtokodetsoglo::class, 'KDTOKO', 'kdtoko');
-    // }
-    // cari dulu berdasarkan bara2 terus bara1 di mstock_soglo lalu setelah itu kalau tidak ada cari di 
+    ]; 
 }
