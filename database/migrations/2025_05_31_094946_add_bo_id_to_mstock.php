@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('mstock_item', function (Blueprint $table) {
-        $table->unsignedBigInteger('bo_id')->nullable()->after('BARA1');
+        Schema::table('mstock', function (Blueprint $table) {
+        $table->unsignedBigInteger('bo_id')->nullable()->after('BARA2');
             $table->foreign('bo_id')
                 ->references('id')
                 ->on('bo')->onDelete('cascade');
@@ -28,7 +28,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('mstock_item', function (Blueprint $table) {
+        Schema::table('mstock', function (Blueprint $table) {
             //
         });
     }

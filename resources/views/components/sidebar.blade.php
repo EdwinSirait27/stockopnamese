@@ -34,6 +34,9 @@
                     <li class="{{ Request::is('DB') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('DB') }}">Import Database</a>
                     </li>
+                    <li class="{{ Request::is('Currentdb') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('Currentdb') }}">Current Database</a>
+                    </li>
                 </ul>
             </li>
             @endrole

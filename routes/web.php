@@ -9,6 +9,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CurrentdbController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\DbController;
 
@@ -45,8 +46,8 @@ Route::middleware('guest')->group(function () {
     });
 });
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
-Route::middleware(['auth','role:Admin|Penginput'])->group(function () {
-    
+Route::middleware(['auth', 'role:Admin|Penginput'])->group(function () {
+
     Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
     Route::get('/mtokosoglo/mtokosoglo', [dashboardController::class, 'getMtokosoglo'])->name('mtokosoglo.mtokosoglo');
     Route::get('/editdashboard/{kdtoko}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
@@ -67,11 +68,11 @@ Route::middleware(['auth','role:Admin|Penginput'])->group(function () {
         return view('pages.blank-page', ['type_menu' => '']);
 
     });
-   
+
 });
-Route::middleware(['auth','role:Admin'])->group(function () {
-    
-   Route::get('/roles', [RoleController::class, 'index'])
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+
+    Route::get('/roles', [RoleController::class, 'index'])
         ->name('roles.index');
     Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
@@ -85,20 +86,25 @@ Route::middleware(['auth','role:Admin'])->group(function () {
     Route::get('/permissions/edit/{id}', [PermissionController::class, 'edit'])->name('permissions.edit');
     Route::put('/permissions/{id}', [PermissionController::class, 'update'])->name('permissions.update');
     Route::get('/permissions/permissions', [PermissionController::class, 'getPermissions'])->name('permissions.permissions');
-  
+
     Route::match(['get', 'post'], '/DB', [DbController::class, 'index'])->name('DB.index');
     Route::get('/mstock/mstock', [DbController::class, 'getMstock'])->name('mstock.mstock');
-  Route::get('/import-stock', [DbController::class, 'import'])->name('stock.import');
+    Route::post('/import-stock', [DbController::class, 'import'])->name('stock.import');
+    //   Route::get('/import-stock', [DbController::class, 'import'])->name('stock.import');
 
     Route::get('/buttons', [ButtonsController::class, 'index'])->name('buttons.index');
     Route::get('/buttons/buttons', [ButtonsController::class, 'getButtons'])->name('buttons.buttons');
     Route::get('/buttons/edit/{id}', [ButtonsController::class, 'edit'])->name('buttons.edit');
     Route::put('/buttons/{id}', [ButtonsController::class, 'update'])->name('buttons.update');
-   
+
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/users', [UserController::class, 'getUsers'])->name('users.users');
     Route::get('/users/edit/{hashedId}', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{hashedId}', [userController::class, 'update'])->name('users.update');
+
+      Route::get('/Currentdb', [CurrentdbController::class, 'index'])->name('Currentdb.index');
+    Route::get('/currentdb/currentdb', [CurrentdbController::class, 'getCurrentdb'])->name('currentdb.currentdb');
+  
 });
 
 
@@ -191,9 +197,9 @@ Route::middleware(['auth','role:Admin'])->group(function () {
 //     return view('pages.bootstrap-typography', ['type_menu' => 'bootstrap']);
 // });
 // Route::resource('roles', RoleController::class);
-    // Route::get('/dashboard', function () {
-    //     return view('pages.dashboard', ['type_menu' => 'dashboard']);
-    // })->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('pages.dashboard', ['type_menu' => 'dashboard']);
+// })->name('dashboard');
 
 // components
 // Route::get('/components-article', function () {

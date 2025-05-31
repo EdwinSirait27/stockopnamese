@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Mstockitem extends Model
+class Branch extends Model
 {
     use HasFactory;
-        protected $table = 'mstock_item'; 
+    protected $table = 'bo';
+    protected $primaryKey = 'id';
     protected $fillable = [
-        'BARA',
-        'BARA1',
-        '',
-    ];
+        'BO',
+        'CABANG',
+    ]; 
+   
 }

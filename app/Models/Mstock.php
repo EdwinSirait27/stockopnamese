@@ -19,6 +19,7 @@ class Mstock extends Model
         'MASUK',
         'KELUAR',
         'SATUAN',
+        'bo_id',
         // 'SALDO',
     ];
 // RUMUS SALDO ITU AWAL TAMBAH MASUK KURANG KELUAR =SALDO
@@ -27,5 +28,9 @@ class Mstock extends Model
     {
         $this->setConnection($connection);
         return $this;
+    }
+     public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'bo_id', 'id');
     }
 }
