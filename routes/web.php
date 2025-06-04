@@ -104,7 +104,12 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
 
       Route::get('/Currentdb', [CurrentdbController::class, 'index'])->name('Currentdb.index');
     Route::get('/currentdb/currentdb', [CurrentdbController::class, 'getCurrentdb'])->name('currentdb.currentdb');
-  
+  Route::get('/import-progress', function () {
+    return response()->json([
+        'progress' => Cache::get('import_progress', 0),
+        'done' => Cache::get('import_progress_done', false),
+    ]);
+})->name('import.progress');
 });
 
 

@@ -720,22 +720,22 @@
                 var paginationControls = $('.pagination-controls');
                 
                 // Quick page size buttons
-                var pageSizeControls = $('<div class="page-size-controls">' +
-                    '<span style="margin-right: 10px;">Quick:</span>' +
-                    '<button class="page-size-btn" data-size="25">25</button>' +
-                    '<button class="page-size-btn" data-size="50">50</button>' +
-                    '<button class="page-size-btn" data-size="100">100</button>' +
-                    '<button class="page-size-btn" data-size="200">200</button>' +
-                    '</div>');
+                // var pageSizeControls = $('<div class="page-size-controls">' +
+                //     '<span style="margin-right: 10px;">Quick:</span>' +
+                //     '<button class="page-size-btn" data-size="25">25</button>' +
+                //     '<button class="page-size-btn" data-size="50">50</button>' +
+                //     '<button class="page-size-btn" data-size="100">100</button>' +
+                //     '<button class="page-size-btn" data-size="200">200</button>' +
+                //     '</div>');
                 
-                // Page jump controls
-                var pageJumpControls = $('<div class="page-jump">' +
-                    '<span>To the page:</span>' +
-                    '<input type="number" id="page-jump-input" min="1" placeholder="1">' +
-                    '<button id="page-jump-btn">Go</button>' +
-                    '</div>');
+                // // Page jump controls
+                // var pageJumpControls = $('<div class="page-jump">' +
+                //     '<span>To the page:</span>' +
+                //     '<input type="number" id="page-jump-input" min="1" placeholder="1">' +
+                //     '<button id="page-jump-btn">Go</button>' +
+                //     '</div>');
                 
-                paginationControls.append(pageSizeControls).append(pageJumpControls);
+                // paginationControls.append(pageSizeControls).append(pageJumpControls);
                 
                 // Page size button handlers
                 $('.page-size-btn').on('click', function() {

@@ -64,7 +64,6 @@ class DbController extends Controller
             return response()->json(['error' => 'Server error: ' . $e->getMessage()], 500);
         }
     }
-
     // Branch data hanya dari mysql
     try {
         $branch = Branch::on('mysql')->orderBy('BO')->get();
@@ -78,130 +77,50 @@ class DbController extends Controller
         'branch' => $branch,
     ]);
 }
-// public function index(Request $request)
-// {
-//     $allowedConnections = ['mysql', 'mysql2', 'mysql3', 'mysql4', 'mysql5'];
-//     $connection = in_array($request->input('db'), $allowedConnections) ? $request->input('db') : 'mysql';
-//     try {
-//         $namaDB = DB::connection($connection)->getDatabaseName();
-//         Log::info('Nama database: ' . $namaDB);
-//     } catch (\Exception $e) {
-//         Log::error('Gagal mendapatkan nama database: ' . $e->getMessage());
-//         abort(500, 'Database connection failed.');
-//     }
-//     if ($request->ajax()) {
 
-//         try {
-//             $mstock = (new Mstock)->setConnection($connection);
-//             $query = $mstock->newQuery()->with('branch');
+    // public function import(Request $request)
+    // {
+    //     $allowedConnections = ['mysql', 'mysql2', 'mysql3', 'mysql4', 'mysql5'];
+    //     $sourceConnection = in_array($request->input('db'), $allowedConnections) ? $request->input('db') : 'mysql2';
+    //     $targetConnection = 'mysql'; // Tujuan akhir
+        
+    //     $branchId = $request->input('bo_id'); // Ambil branch_id dari input form
+        
+    //     $sourceModel = (new Mstock)->setConnectionNameDynamic($sourceConnection);
+    //     $targetModel = (new Mstock)->setConnectionNameDynamic($targetConnection);
+        
+    //     $totalImported = 0;
 
-//             $length = $request->input('length');
+    //     $sourceModel->newQuery()->chunk(500, function ($rows) use ($targetModel, &$totalImported, $branchId) {
+    //         foreach ($rows as $row) {
+    //             $targetModel->create([
+    //                 'BARA'     => $row->BARA,
+    //                 'BARA2'    => $row->BARA2,
+    //                 'NAMA'     => $row->NAMA,
+    //                 'AVER'     => $row->AVER,
+    //                 'AWAL'     => $row->AWAL,
+    //                 'MASUK'    => $row->MASUK,
+    //                 'KELUAR'   => $row->KELUAR,
+    //                 'SATUAN'   => $row->SATUAN,
+    //                 'bo_id'=> $branchId,    
+    //             ]);
+    //             $totalImported++;
+    //         }
+    //     });
 
-//             if ($length == -1) {
-//                 $data = $query->get();
+    //     Log::info("Import selesai dari [$sourceConnection] ke [$targetConnection] | Total: $totalImported");
 
-//                 return DataTables::of($data)
-//                     ->addIndexColumn()
-//                     ->addColumn('SALDO', function ($row) {
-//                         $awal = (double) $row->AWAL;
-//                         $masuk = (double) $row->MASUK;
-//                         $keluar = (double) $row->KELUAR;
-//                         return $awal + $masuk - $keluar;
-//                     })
-//                     ->rawColumns(['SALDO'])
-//                     ->make(true);
-//             }
-
-//             return DataTables::of($query)
-//                 ->addIndexColumn()
-//                 ->addColumn('SALDO', function ($row) {
-//                     $awal = (double) $row->AWAL;
-//                     $masuk = (double) $row->MASUK;
-//                     $keluar = (double) $row->KELUAR;
-//                     return $awal + $masuk - $keluar;
-//                 })
-//                 ->addColumn('CABANG', function ($row) {
-//     return $row->branch->CABANG ?? '-';
-// })
-
-//                 ->rawColumns(['SALDO'])
-//                 ->make(true);
-//         } catch (\Exception $e) {
-            
-//             return response()->json(['error' => 'Server error'], 500);
-//         }
-//     }
-
- 
-//             $branch = Branch::orderBy('BO')->get();
-//     return view('pages.DB.index', [
-//         'koneksi' => $connection,
-//         'db_yang_dipakai' => $namaDB,
-//         'branch' => $branch,
-//     ]);
-// }
-// public function import(Request $request)
-// {
-//     $allowedConnections = ['mysql', 'mysql2', 'mysql3', 'mysql4', 'mysql5'];
-//     $sourceConnection = in_array($request->input('db'), $allowedConnections) ? $request->input('db') : 'mysql2';
-//     $targetConnection = 'mysql'; // Tujuan akhir
-//     $sourceModel = (new Mstock)->setConnectionNameDynamic($sourceConnection);
-//     $targetModel = (new Mstock)->setConnectionNameDynamic($targetConnection);
-//     $totalImported = 0;
-//     $sourceModel->newQuery()->chunk(500, function ($rows) use ($targetModel, &$totalImported) {
-//         foreach ($rows as $row) {
-//             $targetModel->create([
-//                 'BARA'    => $row->BARA,
-//                 'BARA2'   => $row->BARA2,
-//                 'NAMA'    => $row->NAMA,
-//                 'AVER'    => $row->AVER,
-//                 'AWAL'    => $row->AWAL,
-//                 'MASUK'   => $row->MASUK,
-//                 'KELUAR'  => $row->KELUAR,
-//                 'SATUAN'  => $row->SATUAN,
-//             ]);
-//             $totalImported++;
-//         }
-//     });
-
-//     Log::info("Import selesai dari [$sourceConnection] ke [$targetConnection] | Total: $totalImported");
-
-//    return redirect()->route('DB.index')->with('success', "Import selesai dari [$sourceConnection] ke [$targetConnection]. Jumlah data: $totalImported");
-
-// }
-public function import(Request $request)
+    //     return redirect()->route('DB.index')->with('success', "Import selesai dari [$sourceConnection] ke [$targetConnection]. Jumlah data: $totalImported");
+    // }
+    public function import(Request $request)
 {
     $allowedConnections = ['mysql', 'mysql2', 'mysql3', 'mysql4', 'mysql5'];
     $sourceConnection = in_array($request->input('db'), $allowedConnections) ? $request->input('db') : 'mysql2';
-    $targetConnection = 'mysql'; // Tujuan akhir
-    
-    $branchId = $request->input('bo_id'); // Ambil branch_id dari input form
-    
-    $sourceModel = (new Mstock)->setConnectionNameDynamic($sourceConnection);
-    $targetModel = (new Mstock)->setConnectionNameDynamic($targetConnection);
-    
-    $totalImported = 0;
 
-    $sourceModel->newQuery()->chunk(500, function ($rows) use ($targetModel, &$totalImported, $branchId) {
-        foreach ($rows as $row) {
-            $targetModel->create([
-                'BARA'     => $row->BARA,
-                'BARA2'    => $row->BARA2,
-                'NAMA'     => $row->NAMA,
-                'AVER'     => $row->AVER,
-                'AWAL'     => $row->AWAL,
-                'MASUK'    => $row->MASUK,
-                'KELUAR'   => $row->KELUAR,
-                'SATUAN'   => $row->SATUAN,
-                'bo_id'=> $branchId,    
-            ]);
-            $totalImported++;
-        }
-    });
+    // Dispatch job ke queue
+    ImportMstockDataJob::dispatch($sourceConnection);
 
-    Log::info("Import selesai dari [$sourceConnection] ke [$targetConnection] | Total: $totalImported");
-
-    return redirect()->route('DB.index')->with('success', "Import selesai dari [$sourceConnection] ke [$targetConnection]. Jumlah data: $totalImported");
+    return redirect()->back()->with('success', 'Proses import sedang berjalan di latar belakang.');
 }
 
    public function getMstock(Request $request)
