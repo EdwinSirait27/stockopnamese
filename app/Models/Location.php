@@ -16,5 +16,6 @@ class Location extends Model
         'name',
         'code',
     ];
+    
 
 }

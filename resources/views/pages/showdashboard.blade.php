@@ -13,7 +13,7 @@
             <div class="section-header">
 
                 @if ($posopnamesublocation->isNotEmpty())
-                    <h1>Pos Opname : {{ $posopnamesublocation->first()->sublocation->location->name ?? 'Tidak diketahui' }}
+                    <h1>Pos Opname : {{ $posopnamesublocation->first()->opname->location->name ?? 'Tidak diketahui' }}
                     </h1>
                 @endif
 

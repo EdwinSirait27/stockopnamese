@@ -7,10 +7,7 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-
-
 use App\Models\Mtokosoglo;
 use App\Models\Posopnamesublocation;
 use App\Models\Buttons;
@@ -34,7 +31,7 @@ public function getPosopnames(Request $request)
         'approval_1_date', 'approval_2_date', 'approval_3_date',
         'type', 'company_id', 'type_opname'
     ])
-    ->with('location');
+    ->with('location','ambildarisublocation','ambildarisublocation.location');
 
     // Filter lokasi jika dipilih dari dropdown
    if ($request->filled('location_name')) {
@@ -42,8 +39,6 @@ public function getPosopnames(Request $request)
         $q->where('name', 'like', '%' . $request->location_name . '%');
     });
 }
-
-
     // Filter pencarian umum (search bar)
     if ($search = $request->input('search.value')) {
         $query->where(function ($q) use ($search) {
@@ -155,7 +150,7 @@ public function getPosopnames(Request $request)
     {
     Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
     
-    $posopnamesublocation = Posopnamesublocation::with('opname','sublocation.location','users')
+    $posopnamesublocation = Posopnamesublocation::with('opname','sublocation.location','users','sublocation','opname.ambildarisublocation')
     ->where('opname_id', $opname_id)
         ->get();
 

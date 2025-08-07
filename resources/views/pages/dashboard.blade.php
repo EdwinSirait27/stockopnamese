@@ -626,6 +626,7 @@
                                                 <th scope="col" class="text-center">Status</th>
                                                 {{-- <th scope="col" class="text-center">Location ID</th> --}}
                                                 <th scope="col" class="text-center">Location</th>
+                                                <th scope="col" class="text-center">Sub Location</th>
                                                 <th scope="col" class="text-center">Opname Type</th>
                                                 <th scope="col" class="text-center">Note</th>
                                                 {{-- <th scope="col" class="text-center">Note</th>
@@ -718,8 +719,13 @@
                     //     className: 'text-center'
                     // },
                     {
-                        data: 'location.name',
-                        name: 'location.name',
+                        data: 'ambildarisublocation.location.name',
+                        name: 'ambildarisublocation.location.name',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'ambildarisublocation.name',
+                        name: 'ambildarisublocation.name',
                         className: 'text-center'
                     },
                     {

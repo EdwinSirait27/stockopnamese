@@ -27,33 +27,19 @@ use App\Http\Controllers\DbController;
 // Route::redirect('/', '/dashboard-general-dashboard');
 
 Route::middleware('guest')->group(function () {
-    // Route::get('/', [LoginController::class, 'index'])
-    //     ->middleware('throttle:5,1') // max 5 requests per 1 menit
-    //     ->name('login');
-//     Route::get('/', function () {
-//     if (Auth::check()) {
-//         return redirect('/dashboard');
-//     }
-//     return app(LoginController::class)->index();
-// })->middleware('throttle:5,1')->name('login');
     Route::get('/', function (LoginController $controller) {
         return Auth::check() ? redirect('/dashboard') : $controller->index();
     })->middleware('throttle:5,1')->name('login');
     Route::post('/auth-login', [LoginController::class, 'login'])->name('auth-login.login');
- 
+
 });
 Route::middleware(['auth', 'role:Bos|Admin|Penginput'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-   Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
-   Route::get('/auth-register', [RegisterController::class, 'index'])->name('auth-register.auth-register');
-    // Route::get('/auth-register', function () {
-    //     return view('pages.auth-register', ['type_menu' => 'auth']);
-    // });
+    Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
+    Route::get('/auth-register', [RegisterController::class, 'index'])->name('auth-register.auth-register');
     Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
     Route::get('/posopname/posopname', [dashboardController::class, 'getPosopnames'])->name('posopname.posopname');
-    // Route::get('/editdashboard/{opanme_id}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
     Route::get('/showdashboard/{opname_id}', [dashboardController::class, 'show'])->name('pages.showdashboard');
-    // Route::put('/editdashboard/{opanme_id}', [dashboardController::class, 'update'])->name('pages.editdashboard.update');
     Route::get('/posopnamesublocations/posopnamesublocations', [dashboardController::class, 'getPosopnamesublocations'])->name('posopnamesublocations.posopnamesublocations');
     Route::get('/features-profile', function () {
         return view('pages.features-profile', ['type_menu' => 'features']);
@@ -67,22 +53,12 @@ Route::middleware(['auth', 'role:Bos|Admin|Penginput'])->group(function () {
     Route::get('/blank-page', function () {
         return view('pages.blank-page', ['type_menu' => '']);
     });
-// Route::get('/Importso', [dashboardController::class, 'indexso'])
-// ->name('pages.Importso');
-Route::get('/importso/use/{opname_id}', [dashboardController::class, 'indexso'])->name('importso.use');
-
-// Route::post('/Importso', [dashboardController::class, 'Importso'])->name('Importpayroll.payrolls');
-Route::post('/Importso/{opname_id}', [dashboardController::class, 'Importso'])->name('Importso.use');
+    Route::get('/importso/use/{opname_id}', [dashboardController::class, 'indexso'])->name('importso.use');
+    Route::post('/Importso/{opname_id}', [dashboardController::class, 'Importso'])->name('Importso.use');
     Route::get('/Importso/downloadso/{filename}', [dashboardController::class, 'downloadso'])->name('Importso.downloadso');
-
-
-
-
-
-
-
 });
-Route::middleware(['auth', 'role:Admin'])->group(function () {
+
+Route::middleware(['auth', 'role:Bos'])->group(function () {
 
     Route::get('/roles', [RoleController::class, 'index'])
         ->name('roles.index');

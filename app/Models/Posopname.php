@@ -41,4 +41,9 @@ class Posopname extends Model
 {
     return $this->belongsTo(Location::class, 'location_id', 'location_id');
 }
+     public function ambildarisublocation()
+{
+    return $this->belongsTo(Sublocation::class, 'location_id', 'location_id');
+}
+
 }
