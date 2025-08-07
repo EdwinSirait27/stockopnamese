@@ -5,6 +5,8 @@
 @push('style')
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 @endpush
 @section('main')
     <div class="card card-primary">
@@ -13,7 +15,7 @@
         </div>
      
         <div class="card-body">
-            <form action="{{ route('auth-register.register') }}" method="POST">
+            <form id="departments-create" action="{{ route('auth-register.register') }}" method="POST">
                 @csrf
                 @if ($errors->any())
     <div class="alert alert-danger">
@@ -44,7 +46,7 @@
                             this.value = this.value.replace(/\b\w/g, c => c.toUpperCase());
                         });
                     </script>
-                    <div class="form-group col-12">
+                    <div class="form-group col-6">
                         <label for="password">Password</label>
                         <div class="input-group">
                             <input id="password" placeholder="create your password" type="password"
@@ -62,6 +64,30 @@
                             <div class="label"></div>
                         </div>
                     </div>
+                       {{-- <div class="form-group col-6">
+                        <label for="role">Role</label>
+                        <select name="role" onchange="this.form.submit()">
+        <option value="">-- All Role --</option>
+        @foreach ($roles as $r)
+            <option value="{{ $r->name }}" {{ request('role') === $r->name ? 'selected' : '' }}>
+                {{ ucfirst($r->name) }}
+            </option>
+        @endforeach
+    </select>
+                    </div> --}}
+                    <div class="form-group col-6">
+    <label for="role">Role</label>
+    <select name="role" id="role" class="form-control select2" required>
+        <option value="">-- Pilih Role --</option>
+        @foreach ($roles as $r)
+            <option value="{{ $r->name }}" {{ old('role') === $r->name ? 'selected' : '' }}>
+                {{ ucfirst($r->name) }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+
                     <script>
                         function togglePassword() {
                             const passwordInput = document.getElementById('password');
@@ -86,10 +112,10 @@
                     </button>
                 </div> --}}
                 <div class="form-group d-flex justify-content-between">
-                    <a href="{{ route('login') }}" class="btn btn-secondary btn-lg">
+                    <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-lg">
                         Back
                     </a>
-                    <button type="submit" class="btn btn-success btn-lg">
+                    <button type="submit" id="create-btn" class="btn btn-success btn-lg">
                         Register
                     </button>
                 </div>
@@ -106,4 +132,54 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/auth-register.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Select2 JS (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+       @if (session('success'))
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        @endif
+
+        @if (session('error'))
+            Swal.fire({
+                title: 'Failed!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        @endif
+      document.getElementById('create-btn').addEventListener('click', function(e) {
+            e.preventDefault(); // Mencegah pengiriman form langsung
+            Swal.fire({
+                title: 'Are You Sure?',
+                text: "Make sure the data you entered is correct!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Assign!',
+                cancelButtonText: 'Abort'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika pengguna mengkonfirmasi, submit form
+                    document.getElementById('departments-create').submit();
+                }
+            });
+        });
+    $(document).ready(function() {
+        $('#role').select2({
+            placeholder: '-- All Role --',
+            allowClear: false
+        });
+    });
+</script>
 @endpush

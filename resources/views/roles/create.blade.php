@@ -49,15 +49,15 @@
                                     </div>
 
 
-                                    <div class="form-group row mb-3">
+                                    {{-- <div class="form-group row mb-3">
                                         <label class="col-md-2 col-form-label">Permissions</label>
                                         <div class="col-md-10">
                                             @foreach ($permissions as $permission)
                                                 <div class="col-md-3">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" required
+                                                        <input class="form-check-input" type="checkbox"
                                                             name="permissions[]" id="permission-{{ $permission->id }}"
-                                                            value="{{ $permission->id }}" {{-- THIS MUST BE UUID --}}
+                                                            value="{{ $permission->id }}" 
                                                             {{ in_array($permission->id, old('permissions', [])) ? 'checked' : '' }}>
                                                         <label class="form-check-label"
                                                             for="permission-{{ $permission->id }}">
@@ -67,12 +67,27 @@
                                                 </div>
                                             @endforeach
 
-                                            <!-- Menampilkan pesan error untuk permissions jika ada -->
                                             @error('permissions')
                                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
+                                    </div> --}}
+                                    <div class="row">
+    @foreach ($permissions as $permission)
+        <div class="col-md-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                    name="permissions[]" id="permission-{{ $permission->id }}"
+                    value="{{ $permission->id }}"
+                    {{ in_array($permission->id, old('permissions', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="permission-{{ $permission->id }}">
+                    {{ $permission->name }}
+                </label>
+            </div>
+        </div>
+    @endforeach
+</div>
+
                                     <!-- Form Buttons -->
                                     <div class="form-group row mb-0">
                                         <div class="col-md-10 offset-md-2">

@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="{{ asset('library/summernote/dist/summernote-bs4.css') }}">
     <link rel="stylesheet" href="{{ asset('library/bootstrap-social/assets/css/bootstrap.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <style>
         .password-wrapper {
             position: relative;
@@ -32,11 +34,12 @@
         .pwindicator {
             margin-top: 5px;
         }
-        select.form-control, select.form-select {
-    font-size: 2rem;
-    color: #212529;
-}
 
+        select.form-control,
+        select.form-select {
+            font-size: 2rem;
+            color: #212529;
+        }
     </style>
 @endpush
 @section('main')
@@ -72,75 +75,7 @@
                                             </ul>
                                         </div>
                                     @endif
-                                    {{-- <div class="row">
-                                        <div class="form-group col-md-6 col-12">
-                                            <label>Name</label>
-                                            <input type="text" class="form-control" id="name" name="name"
-                                               value="{{ old('name', $user->name) }}">
-                                            <div class="invalid-feedback">
-                                                Please fill in the Name
-                                            </div>
-                                        </div>
-                                        
-                                            <div class="form-group col-md-6 col-12">
-                                                    <label>Roles</label>
-                                                    <div class="@error('role') border border-danger rounded-3 @enderror">
-                                                        <select class="form-control @error('role') is-invalid @enderror" name="role" id="role"
-                                                            required>
 
-                                                            <option value="">Select Role</option>
-                                                            @foreach ($roles as $name => $displayName)
-                                                                <option value="{{ $name }}"
-                                                                    {{ $selectedRole == $name ? 'selected' : '' }}>
-                                                                    {{ $displayName }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-
-
-                                                        @error('role')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                </div>
-                                            </div>
-
-                                        <div class="form-group col-md-6 col-12">
-                                            <label for="newPassword">New Password</label>
-                                            <div class="password-wrapper position-relative">
-                                                <input type="password" class="form-control pwstrength" id="newPassword"
-                                                    data-indicator="pwindicator" name="new_password">
-                                                <span class="toggle-password" onclick="togglePassword()">
-                                                    <i id="eyeIcon" class="fa fa-eye"></i>
-                                                </span>
-                                                <div class="invalid-feedback">
-                                                    Please fill in the New Password
-                                                </div>
-                                                <div id="pwindicator" class="pwindicator">
-                                                    <div class="bar"></div>
-                                                    <div class="label"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <script>
-                                            function togglePassword() {
-                                                const passwordInput = document.getElementById("newPassword");
-                                                const eyeIcon = document.getElementById("eyeIcon");
-
-                                                if (passwordInput.type === "password") {
-                                                    passwordInput.type = "text";
-                                                    eyeIcon.classList.remove("fa-eye");
-                                                    eyeIcon.classList.add("fa-eye-slash");
-                                                } else {
-                                                    passwordInput.type = "password";
-                                                    eyeIcon.classList.remove("fa-eye-slash");
-                                                    eyeIcon.classList.add("fa-eye");
-                                                }
-                                            }
-                                        </script>
-                                    </div> --}}
                                     <div class="row">
                                         <!-- Name Field -->
                                         <div class="form-group col-md-6 col-12">
@@ -152,25 +87,48 @@
                                             </div>
                                         </div>
 
-                                       <!-- Roles Field -->
-<div class="form-group col-md-6 col-12">
-    <label for="role">Roles</label>
-    <div class="@error('role') border border-danger rounded-3 @enderror">
-        <select class="form-select @error('role') is-invalid @enderror" name="role" id="role" required>
-            <option value="">Select Role</option>
-            @foreach ($roles as $name => $displayName)
-                <option value="{{ $name }}" {{ $selectedRole == $name ? 'selected' : '' }}>
-                    {{ $displayName ?? ucfirst($name) }}
-                </option>
-            @endforeach
-        </select>
-        @error('role')
-            <span class="invalid-feedback d-block" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
-    </div>
-</div>
+                                        <!-- Roles Field -->
+                                        {{-- <div class="form-group col-md-6 col-12">
+                                            <label for="role">Roles</label>
+                                            <div class="@error('role') border border-danger rounded-3 @enderror">
+                                                <select class="form-select @error('role') is-invalid @enderror"
+                                                    name="role" id="role" required>
+                                                    <option value="">Select Role</option>
+                                                    @foreach ($roles as $name => $displayName)
+                                                        <option value="{{ $name }}"
+                                                            {{ $selectedRole == $name ? 'selected' : '' }}>
+                                                            {{ $displayName ?? ucfirst($name) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('role')
+                                                    <span class="invalid-feedback d-block" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div> --}}
+                                        <div class="form-group col-md-6 col-12">
+                                            <label for="role">Roles</label>
+                                            <div class="@error('role') border border-danger rounded-3 @enderror">
+                                                <select class="form-select select2 @error('role') is-invalid @enderror"
+                                                    name="role" id="role" required>
+                                                    <option value="">Select Role</option>
+                                                    @foreach ($roles as $name => $displayName)
+                                                        <option value="{{ $name }}"
+                                                            {{ $selectedRole == $name ? 'selected' : '' }}>
+                                                            {{ $displayName ?? ucfirst($name) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('role')
+                                                    <span class="invalid-feedback d-block" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
 
 
 
@@ -194,6 +152,23 @@
                                                     <div class="label"></div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="form-group col-md-6 col-12">
+                                            <label for="location_id">Location</label>
+                                            <label for="location_id" class="form-label">Location</label>
+                                            <select name="location_id"
+                                                class="form-select select2 @error('location_id') is-invalid @enderror" required>
+                                                <option value="">Pilih Lokasi</option>
+                                                @foreach ($locations as $id => $name)
+                                                    <option value="{{ $id }}"
+                                                        {{ old('location_id', $user->location_id) == $id ? 'selected' : '' }}>
+                                                        {{ $name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('location_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -229,9 +204,19 @@
     </div>
 @endsection
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- JS Libraies -->
     <script src="{{ asset('library/summernote/dist/summernote-bs4.js') }}"></script>
     <script src="{{ asset('library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
     <script src="{{ asset('js/page/features-profile.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#role').select2({
+                placeholder: "Select Role",
+                allowClear: true
+            });
+        });
+    </script>
+
     <!-- Page Specific JS File -->
 @endpush

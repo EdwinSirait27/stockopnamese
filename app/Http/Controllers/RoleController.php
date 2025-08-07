@@ -4,7 +4,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
-
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\PermissionRegistrar;
 
 class RoleController extends Controller
@@ -54,21 +54,27 @@ class RoleController extends Controller
             ->make(true);
     }
     public function create() {
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('name')->get();
         return view('roles.create', compact('permissions'));
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'name' => 'required|unique:roles,name',
-            'permissions' => 'array',
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|unique:roles,name',
+        'permissions' => 'array|exists:permissions,id',
+    ]);
 
+    DB::transaction(function () use ($request) {
         $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
 
-        return redirect()->route('roles.index')->with('success', 'Role created successfully.');
-    }
+        $permissions = Permission::whereIn('id', $request->permissions)->get();
+        $role->syncPermissions($permissions);
+    });
+
+    return redirect()->route('roles.index')->with('success', 'Role created successfully.');
+}
+
 
     // public function edit($id) {
     //     $role = Role::findOrFail($id);

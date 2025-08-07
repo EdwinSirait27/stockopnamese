@@ -1,12 +1,18 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Imports\SoImport;
+use App\Models\Posopname;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+
 
 use App\Models\Mtokosoglo;
+use App\Models\Posopnamesublocation;
 use App\Models\Buttons;
 use App\Models\Mtokodetsoglo;
 use Illuminate\Support\Facades\Log;
@@ -14,179 +20,255 @@ class dashboardController extends Controller
 {
     public function index(){
         
-       $buttons = Buttons::where('url', '/')->first();
-
-    if (!$buttons || !$buttons->start_date || !$buttons->end_date) {
-        return view('pages.error');
-    }
-
-    $start_date = Carbon::parse($buttons->start_date);
-    $end_date = Carbon::parse($buttons->end_date);
-
-    if (Carbon::now()->between($start_date, $end_date)) {
-        return view('pages.dashboard');
-    }
-
-    return view('pages.error');
+ 
+    $locations = Location::all();
+        return view('pages.dashboard',compact('locations'));
+ 
 }
-    // public function index(){
+ 
+public function getPosopnames(Request $request)
+{
+    $query = Posopname::select([
+        'opname_id', 'date', 'status', 'location_id', 'note', 'counter', 'number',
+        'approval_1', 'approval_2', 'approval_3', 'user_id', 'prefix_number',
+        'approval_1_date', 'approval_2_date', 'approval_3_date',
+        'type', 'company_id', 'type_opname'
+    ])
+    ->with('location');
 
-    //     return view('pages.dashboard');
-    // }
+    // Filter lokasi jika dipilih dari dropdown
+   if ($request->filled('location_name')) {
+    $query->whereHas('location', function ($q) use ($request) {
+        $q->where('name', 'like', '%' . $request->location_name . '%');
+    });
+}
 
-    public function getMtokosoglo(Request $request)
-    {
-        $query = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk']);
 
-        // Jika ada input search, filter di sini
-        if ($search = $request->input('search.value')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('kdtoko', 'like', "%{$search}%")
-                    ->orWhere('kettoko', 'like', "%{$search}%")
-                    ->orWhere('personil', 'like', "%{$search}%");
-            });
-        }
+    // Filter pencarian umum (search bar)
+    if ($search = $request->input('search.value')) {
+        $query->where(function ($q) use ($search) {
+            $q->where('opname_id', 'like', "%{$search}%")
+              ->orWhere('status', 'like', "%{$search}%")
+              ->orWhereHas('location', function ($q2) use ($search) {
+                  $q2->where('name', 'like', "%{$search}%");
+              });
+        });
+    }
 
-        return DataTables::of($query)
-            ->addColumn('action', function ($mtokosoglo) {
-                return '
-                <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-primary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
-                    <i class="fas fa-user-edit"></i> Edit
-                </a>
-                <a href="' . route('pages.showdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-info mx-1" data-bs-toggle="tooltip" title="Show mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
+    return DataTables::of($query)
+       ->orderColumn('location.name', function ($query, $order) {
+    $query->join('locations', 'locations.id', '=', 'posopnames.location_id')
+          ->orderBy('locations.name', $order);
+})
+
+        ->addColumn('action', function ($posopname) {
+            return '
+                <a href="' . route('pages.showdashboard', $posopname->opname_id) . '" 
+                   class="btn btn-sm btn-outline-info mx-1" 
+                   data-bs-toggle="tooltip" 
+                   title="Show opname: ' . e($posopname->opname_id) . '">
                     <i class="fas fa-eye"></i> Show
                 </a>
             ';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
-    }
-    // public function getMtokodetsoglo()
-    // {
-    //     $mtokodetsoglos = Mtokodetsoglo::select(['KDTOKO', 'BARA', 'NOURUT', 'FISIK','BARCODE','ID'])
-    //         ->get()
-    //         ->map(function ($mtokodetsoglo) {
-    //             $mtokodetsoglo->action = '
+        })
+        ->editColumn('type', function ($posopname) {
+            switch ($posopname->type) {
+                case 0: return 'Global';
+                case 1: return 'Partial';
+                case 2: return 'Per Item';
+                default: return 'Unknown';
+            }
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+}
 
-    //              <button type="submit" class="btn btn-sm btn-outline-secondary mx-1" data-bs-toggle="tooltip" title="Scan mtokodetsoglo: {{ e($mtokodetsoglo->KDTOKO) }}">
-    //     Scan
-    // </button>
-    //             ';
-    //             return $mtokodetsoglo;
-    //         });
-    //     return DataTables::of($mtokodetsoglos)
-    //         ->rawColumns(['action'])
-    //         ->make(true);
-    // }
-    public function getMtokodetsoglo(Request $request)
+    public function getPosopnamesublocations(Request $request)
     {
-        $query = Mtokodetsoglo::select(['KDTOKO', 'BARA', 'NOURUT', 'FISIK', 'BARCODE', 'ID']);
-        // Jika ada input search, filter di sini
+        $query = Posopnamesublocation::select(['opname_sub_location_id', 'opname_id', 'sub_location_id', 'sub_location_name', 'status', 'user_id','form_number','date'])->with('sublocation','opname.location','users');
         if ($search = $request->input('search.value')) {
             $query->where(function ($q) use ($search) {
-                $q->where('KDTOKO', 'like', "%{$search}%")
-                    ->orWhere('BARA', 'like', "%{$search}%")
-                    ->orWhere('NOURUT', 'like', "%{$search}%")
-                    ->orWhere('FISIK', 'like', "%{$search}%")
-                    ->orWhere('BARCODE', 'like', "%{$search}%")
-                    ->orWhere('ID', 'like', "%{$search}%");
+                $q->where('opname_sub_location_id', 'like', "%{$search}%")
+                    ->orWhere('opname_id', 'like', "%{$search}%")
+                    ->orWhere('sub_location_id', 'like', "%{$search}%")
+                    ->orWhere('sub_location_name', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhere('form_number', 'like', "%{$search}%")
+                    ->orWhere('date', 'like', "%{$search}%")
+                    ->orWhere('user_id', 'like', "%{$search}%");
             });
         }
         return DataTables::of($query)
-            ->addColumn('action', function ($mtokodetsoglo) {
-                return '
-                 <button type="submit" class="btn btn-sm btn-outline-secondary mx-1" data-bs-toggle="tooltip" title="Scan mtokodetsoglo: {{ e($mtokodetsoglo->KDTOKO) }}">Edit Scan</button>
-                ';
-            })
-            ->rawColumns(['action'])
+
             ->make(true);
     }
-    public function edit($kdtoko)
+    //             ->addColumn('action', function ($posopnamesublocation) {
+//               $url = route('importso.use', ['opname_id' => $posopnamesublocation->opname_id]);
+
+//     return '<a href="'.$url.'" class="btn btn-sm btn-primary">Import SO</a>';
+// })
+//             ->rawColumns(['action'])
+     public function indexso($opname_id)
+{
+    $files = Storage::disk('public')->files('templateso');
+    $posopnamesublocation = Posopnamesublocation::select([
+            'opname_sub_location_id',
+            'opname_id',
+            'sub_location_id',
+            'sub_location_name',
+            'status',
+            'user_id',
+            'form_number',
+            'date'
+        ])
+        ->with('sublocation', 'opname.location', 'users')
+        ->where('opname_id', $opname_id)
+        ->first(); // <- penting
+
+    return view('pages.Importso.Importso', compact('files', 'posopnamesublocation'));
+}
+//      public function indexso($opname_id)
+// {
+//     $files = Storage::disk('public')->files('templateso');
+//     $posopnamesublocation = Posopnamesublocation::select([
+//             'opname_sub_location_id',
+//             'opname_id',
+//             'sub_location_id',
+//             'sub_location_name',
+//             'status',
+//             'user_id',
+//             'form_number',
+//             'date'
+//         ])
+//         ->with('sublocation', 'opname.location', 'users')
+//         ->where('opname_id', $opname_id)
+//         ->first(); // <- penting
+
+//     return view('pages.Importso.Importso', compact('files', 'posopnamesublocation'));
+// }
+
+     // if ($posopnamesublocation->isEmpty()) {
+        //     Log::warning('Data tidak ditemukan di method show', ['opname_id' => $opname_id]);
+        //     abort(404, 'Data not found.');
+        // }
+    public function show($opname_id)
     {
-        Log::info('Masuk ke method editRole', ['kdtoko' => $kdtoko]);
-        $mtokosoglo = Mtokosoglo::find($kdtoko);
-        if (!$mtokosoglo) {
-            Log::warning('Data tidak ditemukan di method edit', ['kdtoko' => $kdtoko]);
+    Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
+    
+    $posopnamesublocation = Posopnamesublocation::with('opname','sublocation.location','users')
+    ->where('opname_id', $opname_id)
+        ->get();
+
+       
+        
+        return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id'));
+    }
+    public function edit($opname_id)
+    {
+        Log::info('Masuk ke method editRole', ['opname_id' => $opname_id]);
+        $posopnamesublocation = Posopnamesublocation::with('opname')
+    ->where('opname_id', $opname_id)
+    ->get();
+
+        if (!$posopnamesublocation) {
+            Log::warning('Data tidak ditemukan di method edit', ['opname_id' => $opname_id]);
             abort(404, 'Data not found.');
         }
         $userName = Auth::user()->name;
-        return view('pages.editdashboard', compact('mtokosoglo', 'kdtoko', 'userName'));
-    }
-    public function show($kdtoko)
-    {
-        Log::info('Masuk ke method editRole', ['kdtoko' => $kdtoko]);
-        $mtokosoglo = Mtokosoglo::find($kdtoko);
-        if (!$mtokosoglo) {
-            Log::warning('Data tidak ditemukan di method show', ['kdtoko' => $kdtoko]);
-            abort(404, 'Data not found.');
-        }
-        return view('pages.showdashboard', compact('mtokosoglo', 'kdtoko'));
+        return view('pages.editdashboard', compact('posopnamesublocation', 'opname_id', 'userName'));
     }
     public function update(Request $request, $kdtoko)
     {
         Log::info('Masuk ke method update', ['kdtoko' => $kdtoko]);
-        // Validasi data input
         $validated = $request->validate([
             'kdtoko' => 'required|string|max:255',
             'kettoko' => 'required|string|max:255',
             'personil' => 'required|string|max:255',
-            // tambahkan field lainnya sesuai kebutuhan tabel mtokosoglo
         ]);
-        // Cari data berdasarkan primary key kdtoko
         $mtokosoglo = Mtokosoglo::find($kdtoko);
         if (!$mtokosoglo) {
             Log::warning('Data tidak ditemukan di method update', ['kdtoko' => $kdtoko]);
             abort(404, 'Data not found.');
         }
         $validated['inpmasuk'] = Auth::user()->name;
-        // Update sekaligus
         $mtokosoglo->update($validated);
-        // return view('pages.dashboard', [
-        //     'success' => 'Data berhasil diperbarui.',
-        // ]);
+      
         return redirect()->route('dashboard')->with('success', 'Data berhasil diperbarui.');
     }
 
+  
+    public function downloadso($filename)
+    {
+        $path = 'templateso/' . $filename;
+
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->download($path);
+        }
+        abort(404);
+    }
+//      public function Importso(Request $request)
+// {
+//         ini_set('max_execution_time', 180);
+//     $request->validate([
+//         'file' => 'required|mimes:xlsx,csv,xls'
+//     ]);
+//     $errors = [];
+//     $import = new SoImport($errors);
+//     $import->import($request->file('file'));
+//     if ($import->failures()->isNotEmpty()) {
+//     return back()->with([
+//         'failures' => $import->failures(), // INI YANG WAJIB
+//         'errors' => $errors, // opsional
+//     ]);
+// }
+//     if (!empty($errors)) {
+//         return back()->with('failures', $errors);
+//     }
+//     return back()->with('success', 'SO import successfully!');
+// }
+public function Importso(Request $request, $opname_id)
+{
+    $request->validate([
+        'file' => 'required|mimes:xlsx,csv,xls'
+    ]);
+
+    $errors = [];
+
+    // Ambil data patokan dari opname_id yang dikirim
+    $sublocation = Posopnamesublocation::where('opname_id', $opname_id)->first();
+
+    if (!$sublocation) {
+        return back()->with('failures', ['Gagal menemukan data SO berdasarkan Opname ID']);
+    }
+
+    $import = new SoImport(
+        $errors,
+        $sublocation->opname_id,
+        $sublocation->sub_location_id,
+        $sublocation->date,
+        $sublocation->status ?? 'DRAFT'
+    );
+
+    $import->import($request->file('file'));
+
+    if ($import->failures()->isNotEmpty()) {
+        return back()->with([
+            'failures' => $import->failures(),
+            'errors' => $errors,
+        ]);
+    }
+
+    // if (!empty($errors)) {
+    //     return back()->with('failures', $errors);
+    // }
+    if (!empty($errors)) {
+    return back()->with([
+        'failures' => collect($errors), // <-- dijamin jadi Collection
+        'errors' => $errors,            // opsional tambahan
+    ]);
 }
 
-// public function getMtokosoglo()
-// {
-//     $mtokosoglos = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk',])
-//         ->get()
-//         ->map(function ($mtokosoglo) {
-//             $mtokosoglo->action = '
-//             <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit mtokosoglo" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
-//                 <i class="fas fa-user-edit text-secondary"></i>
-//             </a>
-//             <a href="' . route('pages.showdashboard', $mtokosoglo->kdtoko) . '" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit mtokosoglo" title="Show mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
-//                 <i class="fas fa-user-edit text-dark"></i>
-//             </a>
-//              <button type="submit" class="btn btn-sm btn-outline-secondary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: {{ e($mtokosoglo->kdtoko) }}">
-//     Edit
-// </button>
-//             ';
-//             return $mtokosoglo;
-//         });
-//     return DataTables::of($mtokosoglos)
-//         ->rawColumns(['action'])
-//         ->make(true);
-// }
-//     public function getMtokosoglo()
-// {
-//     // Jangan gunakan ->get() dulu, biarkan DataTables yang handle query
-//     $query = Mtokosoglo::select(['kdtoko', 'kettoko', 'personil', 'inpmasuk']);
+    return back()->with('success', 'SO import berhasil!');
+}
 
-//     return DataTables::of($query)
-//         ->addColumn('action', function ($mtokosoglo) {
-//             return '
-//                 <a href="' . route('pages.editdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-primary mx-1" data-bs-toggle="tooltip" title="Edit mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
-//                     <i class="fas fa-user-edit"></i> Edit
-//                 </a>
-//                 <a href="' . route('pages.showdashboard', $mtokosoglo->kdtoko) . '" class="btn btn-sm btn-outline-info mx-1" data-bs-toggle="tooltip" title="Show mtokosoglo: ' . e($mtokosoglo->kdtoko) . '">
-//                     <i class="fas fa-eye"></i> Show
-//                 </a>
-//             ';
-//         })
-//         ->rawColumns(['action'])
-//         ->make(true);
-// }
+}

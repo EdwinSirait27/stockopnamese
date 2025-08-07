@@ -1,4 +1,115 @@
-<div class="main-sidebar sidebar-style-2">
+@if (!request()->query('webview'))
+    <div class="main-sidebar sidebar-style-2" style="overflow-y:auto; max-height:100vh;">
+        <aside id="sidebar-wrapper">
+            <div class="sidebar-brand">
+                <a href="/dashboard">Stock Opname</a>
+            </div>
+            <div class="sidebar-brand sidebar-brand-sm">
+                <a href="index.html">SO</a>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-header">Dashboard</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('features-profile') }}">Profile</a>
+                        </li>
+                        <li class='{{ Request::is('dashboard') ? 'active' : '' }}'>
+                            <a class="nav-link" href="{{ url('dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class='{{ Request::is('scanbarcode') ? 'active' : '' }}'>
+                            <a class="nav-link" href="{{ url('scanbarcode') }}">Scan Barcode</a>
+                        </li>
+                        <li class="{{ Request::is('blank-page') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('blank-page') }}">
+                                <i class="far fa-square"></i> <span>Blank Page</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('Opname') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('blank-page') }}">
+                                <i class="far fa-square"></i> <span>Blank Page</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                @role('Bos')
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="{{ Request::is('DB') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('DB') }}">Import Database</a>
+                            </li>
+                            <li class="{{ Request::is('Currentdb') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('Currentdb') }}">Current Database</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Roles & Permissions</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="{{ Request::is('users') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('users') }}">Users</a>
+                            </li>
+                            <li class="{{ Request::is('roles') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('roles') }}">Roles</a>
+                            </li>
+                            <li class='{{ Request::is('permissions') ? 'active' : '' }}'>
+                                <a class="nav-link" href="{{ url('permissions') }}">Permissions</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Turn On & Off</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="{{ Request::is('buttons') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('buttons') }}">Turn On SO</a>
+                            </li>
+                        </ul>
+                    </li>
+                @endrole
+                {{-- @role('Admin')
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="{{ Request::is('DB') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('DB') }}">Import Database</a>
+                            </li>
+                            <li class="{{ Request::is('Currentdb') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('Currentdb') }}">Current Database</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Roles & Permissions</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="{{ Request::is('users') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('users') }}">Users</a>
+                            </li>
+                            <li class="{{ Request::is('roles') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('roles') }}">Roles</a>
+                            </li>
+                            <li class='{{ Request::is('permissions') ? 'active' : '' }}'>
+                                <a class="nav-link" href="{{ url('permissions') }}">Permissions</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Turn On & Off</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="{{ Request::is('buttons') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('buttons') }}">Turn On SO</a>
+                            </li>
+                        </ul>
+                    </li>
+                @endrole --}}
+            </ul>
+        </aside>
+    </div>
+@endif
+
+{{-- <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
             <a href="/dashboard">Stock Opname</a>
@@ -28,45 +139,84 @@
                 </ul>
             </li>
             @role('Admin')
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('DB') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('DB') }}">Import Database</a>
-                    </li>
-                    <li class="{{ Request::is('Currentdb') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('Currentdb') }}">Current Database</a>
-                    </li>
-                </ul>
-            </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown"><i
+                            class="fas fa-database"></i><span>Databases</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('DB') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('DB') }}">Import Database</a>
+                        </li>
+                        <li class="{{ Request::is('Currentdb') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('Currentdb') }}">Current Database</a>
+                        </li>
+                    </ul>
+                </li>
             @endrole
             @role('Admin')
-
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Roles & Permissions</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('users') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('users') }}">Users</a>
-                    </li>
-                    <li class="{{ Request::is('roles') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('roles') }}">Roles</a>
-                    </li>
-                    <li class='{{ Request::is('permissions') ? 'active' : '' }}'>
-                        <a class="nav-link" href="{{ url('permissions') }}">Permissions</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Turn On & Off</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('buttons') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('buttons') }}">Turn On SO</a>
-                    </li>
-                </ul>
-            </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Roles &
+                            Permissions</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('users') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('users') }}">Users</a>
+                        </li>
+                        <li class="{{ Request::is('roles') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('roles') }}">Roles</a>
+                        </li>
+                        <li class='{{ Request::is('permissions') ? 'active' : '' }}'>
+                            <a class="nav-link" href="{{ url('permissions') }}">Permissions</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Turn On &
+                            Off</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('buttons') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('buttons') }}">Turn On SO</a>
+                        </li>
+                    </ul>
+                </li>
             @endrole
+        </ul>
+    </aside>
+</div> --}}
 
-            {{-- <li class="menu-header">Starter</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{-- <li class="menu-header">Starter</li>
             <li class="nav-item dropdown ">
                 <a href="#"
                     class="nav-link has-dropdown"
@@ -251,7 +401,7 @@
                     </li>
                 </ul>
             </li> --}}
-            {{-- <li class="nav-item dropdown">
+{{-- <li class="nav-item dropdown">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-map-marker-alt"></i> <span>Google
                         Maps</span></a>
@@ -266,7 +416,7 @@
                     <li><a href="gmaps-simple.html">Simple</a></li>
                 </ul>
             </li> --}}
-            {{-- <li class="nav-item dropdown ">
+{{-- <li class="nav-item dropdown ">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-plug"></i> <span>Modules</span></a>
                 <ul class="dropdown-menu">
@@ -320,9 +470,9 @@
                     </li>
                 </ul>
             </li> --}}
-            {{-- <li class="menu-header">Pages</li> --}}
-            {{-- <li class="nav-item dropdown {{ $type_menu === 'auth' ? 'active' : '' }}"> --}}
-            {{-- <li class="nav-item dropdown">
+{{-- <li class="menu-header">Pages</li> --}}
+{{-- <li class="nav-item dropdown {{ $type_menu === 'auth' ? 'active' : '' }}"> --}}
+{{-- <li class="nav-item dropdown">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Auth</span></a>
                 <ul class="dropdown-menu">
@@ -421,13 +571,13 @@
                     </i> <span>Credits</span>
                 </a>
             </li> --}}
-        </ul>
+{{-- </ul> --}}
 
-        {{-- <div class="hide-sidebar-mini mt-4 mb-4 p-3">
+{{-- <div class="hide-sidebar-mini mt-4 mb-4 p-3">
             <a href="https://getstisla.com/docs"
                 class="btn btn-primary btn-lg btn-block btn-icon-split">
                 <i class="fas fa-rocket"></i> Documentation
             </a>
         </div> --}}
-    </aside>
-</div>
+{{-- </aside> --}}
+{{-- </div> --}}

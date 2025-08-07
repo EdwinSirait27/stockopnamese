@@ -43,8 +43,10 @@
                                         <thead>
                                             <tr>
                                                 <th scope="col">No</th>
+                                                <th scope="col" class="text-center">User ID</th>
                                                 <th scope="col" class="text-center">Username</th>
                                                 <th scope="col" class="text-center">Name</th>
+                                                <th scope="col" class="text-center">Location Name</th>
                                                 <th scope="col" class="text-center">Roles</th>
                                                 <th scope="col" class="text-center">Action</th>
 
@@ -93,6 +95,12 @@
                     },
 
                     {
+                        data: 'id',
+                        name: 'id',
+                        className: 'text-center'
+
+                    },
+                    {
                         data: 'username',
                         name: 'username',
                         className: 'text-center'
@@ -101,6 +109,11 @@
                     {
                         data: 'name',
                         name: 'name',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'location_name',
+                        name: 'location_name',
                         className: 'text-center'
                     },
 

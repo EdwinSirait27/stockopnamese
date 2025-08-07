@@ -56,26 +56,19 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-        'mysql2' => [
-            'driver' => 'mysql',
-            'host' => env('DB_HOST_SECOND', '127.0.0.1'),
-            'port' => env('DB_PORT_SECOND', '3306'),
-            'database' => env('DB_DATABASE_SECOND', 'se002'),
-            'username' => env('DB_USERNAME_SECOND', 'root'),
-            'password' => env('DB_PASSWORD_SECOND', ''),
-            'unix_socket' => env('DB_SOCKET_SECOND', ''),
-            // 'charset' => 'utf8mb4',
-            // 'collation' => 'utf8mb4_unicode_ci',
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA_SECOND'),
-            ]) : [],
-        ],
+         'mysql_second' => [
+        'driver' => 'mysql',
+        'host' => env('DB_SECOND_HOST', '103.139.193.173'),
+        'port' => env('DB_SECOND_PORT', '3307'),
+        'database' => env('DB_SECOND_DATABASE', 'oxysystem_unclejo'),
+        'username' => env('DB_SECOND_USERNAME', 'root'),
+        'password' => env('DB_SECOND_PASSWORD', 'Damai123$'),
+        'charset' => 'utf8', // Untuk MySQL 5
+        'collation' => 'utf8_general_ci', // Disarankan untuk MySQL 5.x
+        'prefix' => '',
+        'strict' => false, // Sesuaikan untuk MySQL 5
+        'engine' => null,
+    ],
         // 'mysql3' => [
         //     'driver' => 'mysql',
         //     'host' => env('DB_HOST_THIRD', '127.0.0.1'),

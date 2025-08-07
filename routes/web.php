@@ -39,22 +39,22 @@ Route::middleware('guest')->group(function () {
     Route::get('/', function (LoginController $controller) {
         return Auth::check() ? redirect('/dashboard') : $controller->index();
     })->middleware('throttle:5,1')->name('login');
-    Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
     Route::post('/auth-login', [LoginController::class, 'login'])->name('auth-login.login');
-    Route::get('/auth-register', function () {
-        return view('pages.auth-register', ['type_menu' => 'auth']);
-    });
+ 
 });
-Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
-Route::middleware(['auth', 'role:Admin|Penginput'])->group(function () {
-
+Route::middleware(['auth', 'role:Bos|Admin|Penginput'])->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+   Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
+   Route::get('/auth-register', [RegisterController::class, 'index'])->name('auth-register.auth-register');
+    // Route::get('/auth-register', function () {
+    //     return view('pages.auth-register', ['type_menu' => 'auth']);
+    // });
     Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
-    Route::get('/mtokosoglo/mtokosoglo', [dashboardController::class, 'getMtokosoglo'])->name('mtokosoglo.mtokosoglo');
-    Route::get('/editdashboard/{kdtoko}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
-    Route::get('/showdashboard/{kdtoko}', [dashboardController::class, 'show'])->name('pages.showdashboard');
-    Route::put('/editdashboard/{kdtoko}', [dashboardController::class, 'update'])->name('pages.editdashboard.update');
-    Route::get('/mtokodetsoglo/mtokodetsoglo', [dashboardController::class, 'getMtokodetsoglo'])->name('mtokodetsoglo.mtokodetsoglo');
-
+    Route::get('/posopname/posopname', [dashboardController::class, 'getPosopnames'])->name('posopname.posopname');
+    // Route::get('/editdashboard/{opanme_id}', [dashboardController::class, 'edit'])->name('pages.editdashboard');
+    Route::get('/showdashboard/{opname_id}', [dashboardController::class, 'show'])->name('pages.showdashboard');
+    // Route::put('/editdashboard/{opanme_id}', [dashboardController::class, 'update'])->name('pages.editdashboard.update');
+    Route::get('/posopnamesublocations/posopnamesublocations', [dashboardController::class, 'getPosopnamesublocations'])->name('posopnamesublocations.posopnamesublocations');
     Route::get('/features-profile', function () {
         return view('pages.features-profile', ['type_menu' => 'features']);
     });
@@ -66,8 +66,20 @@ Route::middleware(['auth', 'role:Admin|Penginput'])->group(function () {
     })->name('scan.page');
     Route::get('/blank-page', function () {
         return view('pages.blank-page', ['type_menu' => '']);
-
     });
+// Route::get('/Importso', [dashboardController::class, 'indexso'])
+// ->name('pages.Importso');
+Route::get('/importso/use/{opname_id}', [dashboardController::class, 'indexso'])->name('importso.use');
+
+// Route::post('/Importso', [dashboardController::class, 'Importso'])->name('Importpayroll.payrolls');
+Route::post('/Importso/{opname_id}', [dashboardController::class, 'Importso'])->name('Importso.use');
+    Route::get('/Importso/downloadso/{filename}', [dashboardController::class, 'downloadso'])->name('Importso.downloadso');
+
+
+
+
+
+
 
 });
 Route::middleware(['auth', 'role:Admin'])->group(function () {
@@ -102,14 +114,14 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/users/edit/{hashedId}', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{hashedId}', [userController::class, 'update'])->name('users.update');
 
-      Route::get('/Currentdb', [CurrentdbController::class, 'index'])->name('Currentdb.index');
+    Route::get('/Currentdb', [CurrentdbController::class, 'index'])->name('Currentdb.index');
     Route::get('/currentdb/currentdb', [CurrentdbController::class, 'getCurrentdb'])->name('currentdb.currentdb');
-  Route::get('/import-progress', function () {
-    return response()->json([
-        'progress' => Cache::get('import_progress', 0),
-        'done' => Cache::get('import_progress_done', false),
-    ]);
-})->name('import.progress');
+    Route::get('/import-progress', function () {
+        return response()->json([
+            'progress' => Cache::get('import_progress', 0),
+            'done' => Cache::get('import_progress_done', false),
+        ]);
+    })->name('import.progress');
 });
 
 
