@@ -12,8 +12,8 @@
         <section class="section">
             <div class="section-header">
 
-                @if ($posopnamesublocation->isNotEmpty())
-                    <h1>Pos Opname : {{ $posopnamesublocation->first()->opname->location->name ?? 'Tidak diketahui' }}
+                @if ($posopname->isNotEmpty())
+                    <h1>Pos Opname : {{ $posopname->first()->ambildarisublocation->location->name ?? 'Tidak diketahui' }}
                     </h1>
                 @endif
 
@@ -28,9 +28,9 @@
                         <div class="card">
                             <div class="card-header">
 
-                                @if ($posopnamesublocation->isNotEmpty())
+                                @if ($posopname->isNotEmpty())
                                     <h4>Pos Sub Opname :
-                                        {{ $posopnamesublocation->first()->sublocation->name ?? 'Tidak diketahui' }}</h4>
+                                        {{ $posopname->first()->ambildarisublocation->name ?? 'Tidak diketahui' }}</h4>
                                 @endif
 
 

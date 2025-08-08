@@ -90,53 +90,17 @@
         }
     </style>
 @endpush
- {{-- @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif --}}
-        {{-- @if(session('failures'))
-    <div class="alert alert-danger">
-        <strong>Error At Line:</strong>
-        <ul>
-            @foreach(session('failures') as $failure)
-                <li>
-                    Line {{ $failure->row() }} - 
-                    Colom: {{ $failure->attribute() }} - 
-                    Message: {{ implode(', ', $failure->errors()) }}
-                </li>
-            @endforeach
-        </ul>
-    </div>
-@endif --}}
+
 {{-- Laravel Excel Failures --}}
 @section('main')<div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Import File SO : {{$posopnamesublocation->opname->location->name}}</h1>
+                <h1>Import File SO : {{$posopname->location->name}}</h1>
                 {{-- <h1>Import File SO : {{$posopnamesublocation->opname->location->name}}</h1> --}}
             </div>
-            <h4>Sub Location : {{$posopnamesublocation->sublocation->name}}</h4>
+            <h4>Sub Location : {{$posopname->ambildarisublocation->name}}</h4>
 
-{{-- @if(session('failures'))
-    <div class="alert alert-danger">
-        <strong>Import Gagal (Validasi Excel):</strong>
-        <ul>
-            @foreach(session('failures') as $failure)
-                @if(is_object($failure) && method_exists($failure, 'row'))
-                    <li>
-                        Baris {{ $failure->row() }} – Kolom: {{ $failure->attribute() }} – 
-                        Pesan: {{ implode(', ', $failure->errors()) }}
-                    </li>
-                @endif
-            @endforeach
-        </ul>
-    </div>
-@endif --}}
+
 @if(session('failures'))
     <div class="alert alert-danger">
         <strong>Import Gagal (Validasi Excel):</strong>
@@ -148,38 +112,10 @@
     </div>
 @endif
 
-
-
-{{-- @if(session('errors'))
-    <div class="alert alert-warning">
-        <strong>Error Kustom:</strong>
-        <ul>
-            @foreach(session('errors') as $err)
-                <li>
-                    Baris {{ $err['row'] ?? '-' }} – Pesan: {{ $err['error'] ?? 'Unknown error' }}
-                </li>
-            @endforeach
-        </ul>
-    </div>
-@endif --}}
-
-
-
-
-
-
-            {{-- <div class="section-body">
-                <form id="import-vendor" action="{{ route('Importvendorgroup.vendorgroup') }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <input type="file" name="file" required>
-                    <button id="create-btn" type="submit">Import</button>
-                </form>
-            </div> --}}
             <div class="section-body">
                 <div class="form-container">
                     {{-- <form id="import-create" action="{{ route('Importso.Importso') }}" method="POST" --}}
-                    <form id="import-create" action="{{ route('Importso.use', $posopnamesublocation->opname_id) }}" method="POST" enctype="multipart/form-data">
+                    <form id="import-create" action="{{ route('Importso.use', $posopname->opname_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="file">Choose your File Excel:</label>

@@ -56,16 +56,26 @@ public function getPosopnames(Request $request)
           ->orderBy('locations.name', $order);
 })
 
+    
         ->addColumn('action', function ($posopname) {
-            return '
-                <a href="' . route('pages.showdashboard', $posopname->opname_id) . '" 
-                   class="btn btn-sm btn-outline-info mx-1" 
-                   data-bs-toggle="tooltip" 
-                   title="Show opname: ' . e($posopname->opname_id) . '">
-                    <i class="fas fa-eye"></i> Show
-                </a>
-            ';
-        })
+    if ($posopname->status === 'CANCELED') {
+        return '
+            <button class="btn btn-sm btn-outline-secondary mx-1" disabled>
+                <i class="fas fa-eye-slash"></i> Locked
+            </button>
+        ';
+    }
+
+    return '
+        <a href="' . route('pages.showdashboard', $posopname->opname_id) . '" 
+           class="btn btn-sm btn-outline-info mx-1" 
+           data-bs-toggle="tooltip" 
+           title="Show opname: ' . e($posopname->opname_id) . '">
+            <i class="fas fa-eye"></i> Show
+        </a>
+    ';
+})
+
         ->editColumn('type', function ($posopname) {
             switch ($posopname->type) {
                 case 0: return 'Global';
@@ -97,31 +107,120 @@ public function getPosopnames(Request $request)
 
             ->make(true);
     }
-    //             ->addColumn('action', function ($posopnamesublocation) {
-//               $url = route('importso.use', ['opname_id' => $posopnamesublocation->opname_id]);
-
-//     return '<a href="'.$url.'" class="btn btn-sm btn-primary">Import SO</a>';
-// })
-//             ->rawColumns(['action'])
-     public function indexso($opname_id)
+public function indexso($opname_id)
 {
     $files = Storage::disk('public')->files('templateso');
-    $posopnamesublocation = Posopnamesublocation::select([
-            'opname_sub_location_id',
-            'opname_id',
-            'sub_location_id',
-            'sub_location_name',
-            'status',
-            'user_id',
-            'form_number',
-            'date'
-        ])
-        ->with('sublocation', 'opname.location', 'users')
-        ->where('opname_id', $opname_id)
-        ->first(); // <- penting
 
-    return view('pages.Importso.Importso', compact('files', 'posopnamesublocation'));
+    // Ambil opname dari Posopname
+    $posopname = Posopname::select('opname_id', 'location_id', 'date')
+        ->with('ambildarisublocation','location')
+        ->where('opname_id', $opname_id)
+        ->firstOrFail();
+
+    // Ambil atau buat sublocation default
+    $posopnamesublocation = Posopnamesublocation::firstOrCreate(
+        ['opname_id' => $posopname->opname_id],
+        [
+            'sub_location_id' => $posopname->location_id, // kalau memang mappingnya begitu
+            'status'          => 'DRAFT',
+            'user_id'         => auth()->id(),
+            'form_number'     => 'AUTO-' . now()->format('YmdHis'),
+            'date'            => $posopname->date ?? now()->toDateString(),
+        ]
+    );
+
+    return view('pages.Importso.Importso', compact('files', 'posopnamesublocation', 'posopname'));
 }
+
+public function Importso(Request $request, $opname_id)
+{
+    $request->validate([
+        'file' => 'required|mimes:xlsx,csv,xls'
+    ]);
+
+    $errors = [];
+
+    // Ambil data patokan
+    $sublocation = Posopnamesublocation::where('opname_id', $opname_id)->first();
+
+    if (!$sublocation) {
+        return back()->with('failures', ['Gagal menemukan data SO berdasarkan Opname ID']);
+    }
+
+    $import = new SoImport(
+        $errors,
+        $sublocation->opname_id,
+        $sublocation->sub_location_id,
+        $sublocation->date,
+        $sublocation->status ?? 'DRAFT'
+    );
+
+    $import->import($request->file('file'));
+
+    if ($import->failures()->isNotEmpty() || !empty($errors)) {
+        return back()->with([
+            'failures' => $import->failures(),
+            'errors'   => $errors,
+        ]);
+    }
+
+    return back()->with('success', 'SO import berhasil!');
+}
+
+// public function indexso($opname_id)
+// {
+//     // Ambil file dari folder templateso
+//     $files = Storage::disk('public')->files('templateso');
+
+//     // Ambil opname_id dan location_id dari Posopname (first)
+//     $posopname = Posopname::select('opname_id', 'location_id')
+//         ->with('ambildarisublocation','location')
+//         ->where('opname_id', $opname_id)
+//         ->first(); // hanya ambil 1 record
+//     return view('pages.Importso.Importso', compact('files', 'posopnamesublocation', 'posopname'));
+// }
+// public function Importso(Request $request, $opname_id)
+// {
+//     $request->validate([
+//         'file' => 'required|mimes:xlsx,csv,xls'
+//     ]);
+
+//     $errors = [];
+
+//     // Ambil data patokan dari opname_id yang dikirim
+//     $sublocation = Posopnamesublocation::where('opname_id', $opname_id)->first();
+
+//     if (!$sublocation) {
+//         return back()->with('failures', ['Gagal menemukan data SO berdasarkan Opname ID']);
+//     }
+
+//     $import = new SoImport(
+//         $errors,
+//         $sublocation->opname_id,
+//         $sublocation->sub_location_id,
+//         $sublocation->date,
+//         $sublocation->status ?? 'DRAFT'
+//     );
+
+//     $import->import($request->file('file'));
+
+//     if ($import->failures()->isNotEmpty()) {
+//         return back()->with([
+//             'failures' => $import->failures(),
+//             'errors' => $errors,
+//         ]);
+//     }
+
+   
+//     if (!empty($errors)) {
+//     return back()->with([
+//         'failures' => collect($errors),
+//         'errors' => $errors,   
+//     ]);
+// }
+
+//     return back()->with('success', 'SO import berhasil!');
+// }
 //      public function indexso($opname_id)
 // {
 //     $files = Storage::disk('public')->files('templateso');
@@ -137,26 +236,23 @@ public function getPosopnames(Request $request)
 //         ])
 //         ->with('sublocation', 'opname.location', 'users')
 //         ->where('opname_id', $opname_id)
-//         ->first(); // <- penting
+//         ->first();
+//          $posopname = Posopname::with('ambildarisublocation','location')
+//     ->where('opname_id', $opname_id)
+//         ->get();
 
-//     return view('pages.Importso.Importso', compact('files', 'posopnamesublocation'));
+//     return view('pages.Importso.Importso', compact('files', 'posopnamesublocation','posopname'));
 // }
-
-     // if ($posopnamesublocation->isEmpty()) {
-        //     Log::warning('Data tidak ditemukan di method show', ['opname_id' => $opname_id]);
-        //     abort(404, 'Data not found.');
-        // }
     public function show($opname_id)
     {
     Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
-    
     $posopnamesublocation = Posopnamesublocation::with('opname','sublocation.location','users','sublocation','opname.ambildarisublocation')
     ->where('opname_id', $opname_id)
         ->get();
-
-       
-        
-        return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id'));
+    $posopname = Posopname::with('ambildarisublocation','location')
+    ->where('opname_id', $opname_id)
+        ->get();
+        return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id','posopname'));
     }
     public function edit($opname_id)
     {
@@ -221,49 +317,6 @@ public function getPosopnames(Request $request)
 //     }
 //     return back()->with('success', 'SO import successfully!');
 // }
-public function Importso(Request $request, $opname_id)
-{
-    $request->validate([
-        'file' => 'required|mimes:xlsx,csv,xls'
-    ]);
 
-    $errors = [];
-
-    // Ambil data patokan dari opname_id yang dikirim
-    $sublocation = Posopnamesublocation::where('opname_id', $opname_id)->first();
-
-    if (!$sublocation) {
-        return back()->with('failures', ['Gagal menemukan data SO berdasarkan Opname ID']);
-    }
-
-    $import = new SoImport(
-        $errors,
-        $sublocation->opname_id,
-        $sublocation->sub_location_id,
-        $sublocation->date,
-        $sublocation->status ?? 'DRAFT'
-    );
-
-    $import->import($request->file('file'));
-
-    if ($import->failures()->isNotEmpty()) {
-        return back()->with([
-            'failures' => $import->failures(),
-            'errors' => $errors,
-        ]);
-    }
-
-    // if (!empty($errors)) {
-    //     return back()->with('failures', $errors);
-    // }
-    if (!empty($errors)) {
-    return back()->with([
-        'failures' => collect($errors), // <-- dijamin jadi Collection
-        'errors' => $errors,            // opsional tambahan
-    ]);
-}
-
-    return back()->with('success', 'SO import berhasil!');
-}
 
 }
