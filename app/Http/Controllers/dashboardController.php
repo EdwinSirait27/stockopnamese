@@ -87,7 +87,17 @@ public function getPosopnames(Request $request)
         ->rawColumns(['action'])
         ->make(true);
 }
-
+ public function show($opname_id)
+    {
+    Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
+    $posopnamesublocation = Posopnamesublocation::with('opname','sublocation.location','users','sublocation','opname.ambildarisublocation')
+    ->where('opname_id', $opname_id)
+        ->get();
+    $posopname = Posopname::with('ambildarisublocation','location')
+    ->where('opname_id', $opname_id)
+        ->get();
+        return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id','posopname'));
+    }
     public function getPosopnamesublocations(Request $request)
     {
         $query = Posopnamesublocation::select(['opname_sub_location_id', 'opname_id', 'sub_location_id', 'sub_location_name', 'status', 'user_id','form_number','date'])->with('sublocation','opname.location','users');
@@ -111,25 +121,11 @@ public function indexso($opname_id)
 {
     $files = Storage::disk('public')->files('templateso');
 
-    // Ambil opname dari Posopname
     $posopname = Posopname::select('opname_id', 'location_id', 'date')
         ->with('ambildarisublocation','location')
         ->where('opname_id', $opname_id)
         ->firstOrFail();
-
-    // Ambil atau buat sublocation default
-    $posopnamesublocation = Posopnamesublocation::firstOrCreate(
-        ['opname_id' => $posopname->opname_id],
-        [
-            'sub_location_id' => $posopname->location_id, // kalau memang mappingnya begitu
-            'status'          => 'DRAFT',
-            'user_id'         => auth()->id(),
-            'form_number'     => 'AUTO-' . now()->format('YmdHis'),
-            'date'            => $posopname->date ?? now()->toDateString(),
-        ]
-    );
-
-    return view('pages.Importso.Importso', compact('files', 'posopnamesublocation', 'posopname'));
+    return view('pages.Importso.Importso', compact('files', 'posopname'));
 }
 
 public function Importso(Request $request, $opname_id)
@@ -139,9 +135,8 @@ public function Importso(Request $request, $opname_id)
     ]);
 
     $errors = [];
-
-    // Ambil data patokan
-    $sublocation = Posopnamesublocation::where('opname_id', $opname_id)->first();
+   
+$sublocation = Posopname::with('ambildarisublocation')->where('opname_id', $opname_id)->first();
 
     if (!$sublocation) {
         return back()->with('failures', ['Gagal menemukan data SO berdasarkan Opname ID']);
@@ -150,19 +145,29 @@ public function Importso(Request $request, $opname_id)
     $import = new SoImport(
         $errors,
         $sublocation->opname_id,
-        $sublocation->sub_location_id,
+        $sublocation->ambildarisublocation->sub_location_id,
         $sublocation->date,
         $sublocation->status ?? 'DRAFT'
     );
 
     $import->import($request->file('file'));
 
-    if ($import->failures()->isNotEmpty() || !empty($errors)) {
-        return back()->with([
-            'failures' => $import->failures(),
-            'errors'   => $errors,
-        ]);
-    }
+    // if ($import->failures()->isNotEmpty() || !empty($errors)) {
+    //     return back()->with([
+    //         'failures' => $import->failures(),
+    //         'errors'   => $errors,
+    //     ]);
+    // }
+   $allFailures = [];
+foreach ($import->failures() as $failure) {
+    $allFailures[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+}
+
+if (!empty($errors) || !empty($allFailures)) {
+    return back()->withErrors(array_merge($errors, $allFailures));
+}
+
+
 
     return back()->with('success', 'SO import berhasil!');
 }
@@ -243,17 +248,7 @@ public function Importso(Request $request, $opname_id)
 
 //     return view('pages.Importso.Importso', compact('files', 'posopnamesublocation','posopname'));
 // }
-    public function show($opname_id)
-    {
-    Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
-    $posopnamesublocation = Posopnamesublocation::with('opname','sublocation.location','users','sublocation','opname.ambildarisublocation')
-    ->where('opname_id', $opname_id)
-        ->get();
-    $posopname = Posopname::with('ambildarisublocation','location')
-    ->where('opname_id', $opname_id)
-        ->get();
-        return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id','posopname'));
-    }
+   
     public function edit($opname_id)
     {
         Log::info('Masuk ke method editRole', ['opname_id' => $opname_id]);

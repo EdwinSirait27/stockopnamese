@@ -101,7 +101,7 @@
             <h4>Sub Location : {{$posopname->ambildarisublocation->name}}</h4>
 
 
-@if(session('failures'))
+{{-- @if(session('failures'))
     <div class="alert alert-danger">
         <strong>Import Gagal (Validasi Excel):</strong>
         <ul>
@@ -110,7 +110,19 @@
             @endforeach
         </ul>
     </div>
+@endif --}}
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <strong>Import Gagal (Validasi Excel):</strong>
+        <ul>
+            @foreach ($errors->all() as $err)
+                <li>{{ $err }}</li>
+            @endforeach
+        </ul>
+    </div>
 @endif
+
+
 
             <div class="section-body">
                 <div class="form-container">
@@ -127,7 +139,7 @@
                           {{-- <a href="javascript:history.back()" class="btn btn-secondary">
     <i class="fas fa-arrow-left"></i> Back
 </a> --}}
-<a href="{{ route('pages.showdashboard', ['opname_id' => $posopnamesublocation->opname_id]) }}" class="btn btn-secondary">
+<a href="{{ route('pages.showdashboard', ['opname_id' => $posopname->opname_id]) }}" class="btn btn-secondary">
     <i class="fas fa-arrow-left"></i> Back
 </a>
 

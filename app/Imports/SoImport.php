@@ -34,34 +34,26 @@ class SoImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailur
         // $this->defaultUserId = $user_id;
         $this->defaultStatus = $status;
     }
-
-
-public function model(array $row)
+ public function model(array $row)
 {
-    // Cek form_number wajib
     if (empty($row['form_number'])) {
         $this->errors[] = 'Form number wajib diisi.';
         return null;
     }
-
-    // Cek duplikat form_number untuk kombinasi opname_id + sub_location_id
     $isDuplicate = Posopnamesublocation::where('form_number', $row['form_number'])
         ->where('opname_id', $this->defaultOpnameId)
         ->where('sub_location_id', $this->defaultSubLocationId)
         ->exists();
-
     if ($isDuplicate) {
         $this->errors[] = "Form number '{$row['form_number']}' sudah ada di lokasi dan opname ini.";
         return null;
     }
-
     // Generate unik ID
     do {
         $time = now()->timestamp;
         $rand = mt_rand(100, 999);
         $id = (int) ($time . $rand);
     } while (Posopnamesublocation::where('opname_sub_location_id', $id)->exists());
-
     return new Posopnamesublocation([
         'opname_sub_location_id' => $id,
         'opname_id'              => $this->defaultOpnameId,
@@ -71,14 +63,12 @@ public function model(array $row)
         'date'                   => $this->defaultDate,
     ]);
 }
-
     public function rules(): array
     {
         return [
             '*.form_number' => ['required'],
         ];
     }
-
     public function chunkSize(): int
     {
         return 500;
