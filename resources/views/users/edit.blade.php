@@ -135,10 +135,10 @@
 
                                         <!-- New Password Field -->
                                         <div class="form-group col-md-6 col-12">
-                                            <label for="newPassword">New Password</label>
+                                            <label for="password">New Password</label>
                                             <div class="password-wrapper position-relative">
-                                                <input type="password" class="form-control pwstrength" id="newPassword"
-                                                    data-indicator="pwindicator" name="new_password">
+                                                <input type="password" class="form-control pwstrength" id="password"
+                                                    data-indicator="pwindicator" name="password">
                                                 <span
                                                     class="toggle-password position-absolute top-50 end-0 translate-middle-y pe-3"
                                                     onclick="togglePassword()">

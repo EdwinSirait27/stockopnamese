@@ -5,6 +5,7 @@ use App\Http\Controllers\ScanbarcodeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ButtonsController;
+use App\Http\Controllers\dashboardAdminController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\RoleController;
@@ -33,8 +34,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/auth-login', [LoginController::class, 'login'])->name('auth-login.login');
 
 });
-Route::middleware(['auth', 'role:Bos|Admin|Penginput'])->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
     Route::get('/auth-register', [RegisterController::class, 'index'])->name('auth-register.auth-register');
     Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
@@ -44,8 +44,7 @@ Route::middleware(['auth', 'role:Bos|Admin|Penginput'])->group(function () {
     Route::get('/features-profile', function () {
         return view('pages.features-profile', ['type_menu' => 'features']);
     });
-    Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
-    Route::put('/features-profile', [UserRoleController::class, 'index'])->name('features-profile');
+  
     Route::post('/scan-barcode', [ScanbarcodeController::class, 'scanBarcode'])->name('scan.barcode');
     Route::get('/scanbarcode', function () {
         return view('pages.scanbarcode');
@@ -56,11 +55,7 @@ Route::middleware(['auth', 'role:Bos|Admin|Penginput'])->group(function () {
     Route::get('/importso/use/{opname_id}', [dashboardController::class, 'indexso'])->name('importso.use');
     Route::post('/Importso/{opname_id}', [dashboardController::class, 'Importso'])->name('Importso.use');
     Route::get('/Importso/downloadso/{filename}', [dashboardController::class, 'downloadso'])->name('Importso.downloadso');
-});
-
-Route::middleware(['auth', 'role:Bos'])->group(function () {
-
-    Route::get('/roles', [RoleController::class, 'index'])
+     Route::get('/roles', [RoleController::class, 'index'])
         ->name('roles.index');
     Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
@@ -98,6 +93,30 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
             'done' => Cache::get('import_progress_done', false),
         ]);
     })->name('import.progress');
+});
+
+
+ 
+
+
+
+
+
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+
+   Route::get('/dashboardadmin', [dashboardAdminController::class, 'index'])->name('dashboardadmin');
+    Route::get('/posopnameadmin/posopnameadmin', [dashboardAdminController::class, 'getPosopnamesadmin'])->name('posopnameadmin.posopnameadmin');
+    Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
+    Route::get('/posopnamesublocationsadmin/posopnamesublocationsadmin', [dashboardAdminController::class, 'getPosopnamesublocationsadmin'])->name('posopnamesublocationsadmin.posopnamesublocationsadmin');
+     Route::get('/importsoadmin/use/{opname_id}', [dashboardAdminController::class, 'indexsoadmin'])->name('importsoadmin.use');
+    Route::post('/importsoadmin/{opname_id}', [dashboardAdminController::class, 'Importsoadmin'])->name('Importsoadmin.use');
+    Route::get('/Importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('Importsoadmin.downloadsoadmin');
+});
+Route::middleware(['auth', 'role:Admin|Bos'])->group(function () {
+    
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
+    Route::put('/features-profile', [UserRoleController::class, 'index'])->name('features-profile');
 });
 
 

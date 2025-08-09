@@ -56,21 +56,17 @@
             align-items: center;
             gap: 5px;
         }
-
         .btn-secondary {
             background-color: #6c757d;
             color: white;
         }
-
         .btn-secondary:hover {
             background-color: #5a6268;
         }
-
         .btn-primary {
             background-color: #007bff;
             color: white;
         }
-
         .btn-primary:hover {
             background-color: #0056b3;
         }
@@ -108,10 +104,13 @@
                     </ul>
                 </div>
             @endif
+
+
+
             <div class="section-body">
                 <div class="form-container">
                     {{-- <form id="import-create" action="{{ route('Importso.Importso') }}" method="POST" --}}
-                    <form id="import-create" action="{{ route('Importso.use', $posopname->opname_id) }}" method="POST"
+                    <form id="import-create" action="{{ route('Importsoadmin.use', $posopname->opname_id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
@@ -124,7 +123,7 @@
                             {{-- <a href="javascript:history.back()" class="btn btn-secondary">
     <i class="fas fa-arrow-left"></i> Back
 </a> --}}
-                            <a href="{{ route('pages.showdashboard', ['opname_id' => $posopname->opname_id]) }}"
+                            <a href="{{ route('pages.showdashboardadmin', ['opname_id' => $posopname->opname_id]) }}"
                                 class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back
                             </a>
@@ -144,7 +143,7 @@
             @forelse($files as $file)
                 <li>
                     {{ basename($file) }} -
-                    <a href="{{ route('Importso.downloadso', ['filename' => basename($file)]) }}">
+                    <a href="{{ route('Importsoadmin.downloadsoadmin', ['filename' => basename($file)]) }}">
                         Download
                     </a>
                 </li>

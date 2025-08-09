@@ -66,12 +66,12 @@
                                     </table>
                                 </div>
                              <div class="action-buttons d-flex align-items-center gap-2">
-    <button type="button" onclick="window.location='{{ route('dashboard') }}'"
+    <button type="button" onclick="window.location='{{ route('dashboardadmin') }}'"
         class="btn btn-danger btn-sm">
         <i class="fas fa-users"></i> Back
     </button>
 
-    <a href="{{ route('importso.use', $opname_id) }}" class="btn btn-primary btn-sm">
+    <a href="{{ route('importsoadmin.use', $opname_id) }}" class="btn btn-primary btn-sm">
         <i class="fas fa-file-import"></i> Import Stock Opname
     </a>
 </div>
@@ -100,11 +100,8 @@
                 serverSide: true,
                 // scrollX: true,
                 ajax: {
-                    url: '{{ route('posopnamesublocations.posopnamesublocations') }}',
-                    type: 'GET',
-                     data: function (d) {
-                d.opname_id = '{{ $opname_id }}'; // ini akan dikirim ke controller
-            }
+                    url: '{{ route('posopnamesublocationsadmin.posopnamesublocationsadmin') }}',
+                    type: 'GET'
                 },
                 responsive: true,
                 lengthMenu: [
@@ -118,15 +115,7 @@
                         name: 'opname_sub_location_id',
                         className: 'text-center'
                     },
-                    // {
-                    //     data: null,
-                    //     name: 'rownum',
-                    //     render: function(data, type, row, meta) {
-                    //         return meta.row + meta.settings._iDisplayStart + 1;
-                    //     },
-                    //     orderable: false,
-                    //     searchable: false
-                    // },
+                   
 
                     {
                         data: 'opname.location.name',
@@ -158,13 +147,7 @@
                         name: 'date',
                         className: 'text-center'
                     }
-                    // {
-                    //     data: 'action',
-                    //     name: 'action',
-                    //     orderable: false,
-                    //     searchable: false,
-                    //     className: 'text-center'
-                    // }
+                   
                 ],
             });
         });
