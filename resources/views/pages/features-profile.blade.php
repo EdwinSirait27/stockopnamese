@@ -131,7 +131,13 @@
                                     </div>
                                 </div>
                                 <div class="card-footer d-flex justify-content-between">
-                                    <a href="{{ url('/dashboard') }}" class="btn btn-secondary">Back</a>
+                                    {{-- <a href="{{ url('/dashboard') }}" class="btn btn-secondary">Back</a> --}}
+                                    @if(auth()->user()->hasRole('Bos'))
+    <a href="{{ url('/dashboard') }}" class="btn btn-secondary">Back</a>
+@elseif(auth()->user()->hasRole('Admin'))
+    <a href="{{ url('/dashboardadmin') }}" class="btn btn-secondary">Back</a>
+@endif
+
                                     <button type="submit" class="btn btn-primary">Save Changes</button>
                                 </div>
 
