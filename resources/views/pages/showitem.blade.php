@@ -65,10 +65,8 @@
                                     </table>
                                 </div>
                              <div class="action-buttons d-flex align-items-center gap-2">
-    <button type="button" onclick="window.location='{{ route('dashboard') }}'"
-        class="btn btn-danger btn-sm">
-        <i class="fas fa-users"></i> Back
-    </button>
+    <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+
 
     {{-- <a href="{{ route('importsoadmin.use', $opname_id) }}" class="btn btn-primary btn-sm">
         <i class="fas fa-file-import"></i> Import Stock Opname

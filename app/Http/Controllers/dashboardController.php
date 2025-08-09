@@ -187,7 +187,7 @@ class dashboardController extends Controller
         ->where('opname_id', $opname_id)
         ->get();
 
-    return view('pages.showitem', compact('posopnamesublocation', 'form_number', 'posopname'));
+    return view('pages.showitem', compact('posopnamesublocation', 'form_number', 'posopname','opname_id'));
 }
 
 
