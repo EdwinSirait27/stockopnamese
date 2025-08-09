@@ -197,15 +197,16 @@
     </tbody>
 
     <tfoot>
-        <tr>
+        {{-- <tr>
             <th colspan="4" style="text-align:right;">TOTAL ITEM</th>
             <th colspan="2">{{ $posopnameitems->count() }}</th>
-        </tr>
-        {{-- <tr>
-            <th colspan="4" style="text-align:right;">TOTAL QTY REAL</th>
-            <th>{{ $posopnameitems->sum('qty_real') }}</th>
-            <th></th>
         </tr> --}}
+        <tr>
+            <th colspan="4" style="text-align:right;">TOTAL QTY REAL</th>
+            {{-- <th>{{ $posopnameitems->sum('qty_real') }}</th> --}}
+            
+            <th></th>
+        </tr>
     </tfoot>
 </table>
 
