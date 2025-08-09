@@ -41,9 +41,7 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::get('/posopname/posopname', [dashboardController::class, 'getPosopnames'])->name('posopname.posopname');
     Route::get('/showdashboard/{opname_id}', [dashboardController::class, 'show'])->name('pages.showdashboard');
     Route::get('/posopnamesublocations/posopnamesublocations', [dashboardController::class, 'getPosopnamesublocations'])->name('posopnamesublocations.posopnamesublocations');
-    Route::get('/features-profile', function () {
-        return view('pages.features-profile', ['type_menu' => 'features']);
-    });
+   
   
     Route::post('/scan-barcode', [ScanbarcodeController::class, 'scanBarcode'])->name('scan.barcode');
     Route::get('/scanbarcode', function () {
@@ -117,6 +115,9 @@ Route::middleware(['auth', 'role:Admin|Bos'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
     Route::put('/features-profile', [UserRoleController::class, 'index'])->name('features-profile');
+     Route::get('/features-profile', function () {
+        return view('pages.features-profile', ['type_menu' => 'features']);
+    });
 });
 
 
