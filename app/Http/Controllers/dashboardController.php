@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Imports\SoImport;
 use App\Models\Posopname;
 use App\Models\Location;
+use App\Models\Posopnameitem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -41,6 +42,7 @@ class dashboardController extends Controller
             'type_opname'
         ])
             ->with('location', 'ambildarisublocation', 'ambildarisublocation.location');
+            // ->with('location', 'ambildarisublocation', 'ambildarisublocation.location')->where('status', 'DRAFT');
         if ($request->filled('location_name')) {
             $query->whereHas('location', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->location_name . '%');
@@ -104,35 +106,178 @@ class dashboardController extends Controller
         return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id', 'posopname'));
     }
     public function getPosopnamesublocations(Request $request)
-    {
-        $query = Posopnamesublocation::select([
-            'opname_sub_location_id',
-            'opname_id',
-            'sub_location_id',
-            'sub_location_name',
-            'status',
-            'user_id',
-            'form_number',
-            'date'
-        ])
-            ->with('sublocation', 'opname.location', 'users');
-        if ($request->has('opname_id')) {
-            $query->where('opname_id', $request->opname_id);
-        }
-        if ($search = $request->input('search.value')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('opname_sub_location_id', 'like', "%{$search}%")
-                    ->orWhere('opname_id', 'like', "%{$search}%")
-                    ->orWhere('sub_location_id', 'like', "%{$search}%")
-                    ->orWhere('sub_location_name', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%")
-                    ->orWhere('form_number', 'like', "%{$search}%")
-                    ->orWhere('date', 'like', "%{$search}%")
-                    ->orWhere('user_id', 'like', "%{$search}%");
-            });
-        }
-        return DataTables::of($query)->make(true);
+{
+    $query = Posopnamesublocation::select([
+        'opname_sub_location_id',
+        'opname_id',
+        'sub_location_id',
+        'sub_location_name',
+        'status',
+        'user_id',
+        'form_number',
+        'date'
+    ])
+    ->with('sublocation', 'opname.location', 'users');
+
+    if ($request->has('opname_id')) {
+        $query->where('opname_id', $request->opname_id);
     }
+
+    if ($search = $request->input('search.value')) {
+        $query->where(function ($q) use ($search) {
+            $q->where('opname_sub_location_id', 'like', "%{$search}%")
+                ->orWhere('opname_id', 'like', "%{$search}%")
+                ->orWhere('sub_location_id', 'like', "%{$search}%")
+                ->orWhere('sub_location_name', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%")
+                ->orWhere('form_number', 'like', "%{$search}%")
+                ->orWhere('date', 'like', "%{$search}%")
+                ->orWhere('user_id', 'like', "%{$search}%");
+        });
+    }
+
+    // return DataTables::of($query)
+    //     ->addColumn('action', function ($row) {
+    //         return '<a href="' . route('opname.showitem', $row->form_number) . '" 
+    //                    class="btn btn-sm btn-primary">
+    //                     <i class="fas fa-eye"></i> Show
+    //                 </a>
+    //                 ';
+    //     })
+    //     ->rawColumns(['action']) // Supaya HTML button tidak di-escape
+    //     ->make(true);
+    return DataTables::of($query)
+    ->addColumn('action', function ($row) {
+        return '
+            <a href="' . route('opname.showitem', $row->form_number) . '" 
+               class="btn btn-sm btn-primary">
+                <i class="fas fa-eye"></i> Show
+            </a>
+            <a href="' . route('opname.printitem', $row->form_number) . '" 
+               class="btn btn-sm btn-success" target="_blank">
+                <i class="fas fa-print"></i> Print
+            </a>
+        ';
+    })
+    ->rawColumns(['action']) // Supaya HTML button tidak di-escape
+    ->make(true);
+
+}
+
+ public function showitem($form_number)
+{
+    Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
+
+    // Ambil data sublocation
+    $posopnamesublocation = Posopnamesublocation::with(
+        'opname',
+        'sublocation.location',
+        'users',
+        'sublocation',
+        'opname.ambildarisublocation'
+    )
+    ->where('form_number', $form_number)
+    ->get();
+
+    // Ambil opname_id dari hasil di atas
+    $opname_id = optional($posopnamesublocation->first())->opname_id;
+
+    // Ambil data opname berdasarkan opname_id
+    $posopname = Posopname::with('ambildarisublocation', 'location')
+        ->where('opname_id', $opname_id)
+        ->get();
+
+    return view('pages.showitem', compact('posopnamesublocation', 'form_number', 'posopname'));
+}
+
+
+   public function getshowitem(Request $request)
+{
+    $query = Posopnameitem::select([
+        'opname_item_id',
+        'opname_id',
+        'item_master_id',
+        'qty_system',
+        'qty_real',
+        'note',
+        'type',
+        'company_id',
+        'sub_location_id',
+        'opname_sub_location_id'
+    ])
+    ->with('sublocation', 'opname', 'posopnamesublocation','opname.location','item');
+
+    // Filter berdasarkan form_number di relasi posopnamesublocation
+    if ($request->has('form_number')) {
+        $query->whereHas('posopnamesublocation', function ($q) use ($request) {
+            $q->where('form_number', $request->form_number);
+        });
+    }
+
+    // Search global untuk DataTables
+    if ($search = $request->input('search.value')) {
+        $query->where(function ($q) use ($search) {
+            $q->where('opname_item_id', 'like', "%{$search}%")
+                ->orWhere('opname_id', 'like', "%{$search}%")
+                ->orWhere('item_master_id', 'like', "%{$search}%")
+                ->orWhere('qty_system', 'like', "%{$search}%")
+                ->orWhere('qty_real', 'like', "%{$search}%")
+                ->orWhere('note', 'like', "%{$search}%")
+                ->orWhere('type', 'like', "%{$search}%")
+                ->orWhere('company_id', 'like', "%{$search}%")
+                ->orWhere('sub_location_id', 'like', "%{$search}%")
+                ->orWhere('opname_sub_location_id', 'like', "%{$search}%");
+        });
+    }
+
+    return DataTables::of($query)->make(true);
+}
+
+public function printitem(Request $request, $form_number)
+{
+    Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
+
+    // Ambil data sublocation
+    $posopnamesublocation = Posopnamesublocation::with(
+        'opname',
+        'sublocation.location',
+        'users',
+        'sublocation',
+        'opname.ambildarisublocation'
+    )
+    ->where('form_number', $form_number)
+    ->get();
+
+    $opname_id = optional($posopnamesublocation->first())->opname_id;
+
+    // Ambil opname
+    $posopname = Posopname::with('ambildarisublocation', 'location')
+        ->where('opname_id', $opname_id)
+        ->first();
+
+    // Ambil item terkait
+    $posopnameitems = Posopnameitem::select([
+            'opname_item_id',
+            'opname_id',
+            'item_master_id',
+            'qty_system',
+            'qty_real',
+            'note',
+            'type',
+            'company_id',
+            'sub_location_id',
+            'opname_sub_location_id'
+        ])
+        ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item')
+        ->whereHas('posopnamesublocation', function ($q) use ($form_number) {
+            $q->where('form_number', $form_number);
+        })
+        ->get();
+
+    return view('pages.printitem', compact('posopnamesublocation', 'form_number', 'posopname', 'posopnameitems'));
+}
+
+
     public function indexso($opname_id)
     {
         $files = Storage::disk('public')->files('templateso');

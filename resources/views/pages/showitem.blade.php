@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Show Dashboard')
+@section('title', 'Show Item')
 @push('style')
     <style>
         .text-center {
@@ -16,8 +16,7 @@
                     <h1>Pos Opname : {{ $posopname->first()->ambildarisublocation->location->name ?? 'Tidak diketahui' }}
                     </h1>
                 @endif
-
-
+                
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="/dashboard">Stock Opname</a></div>
                 </div>
@@ -27,11 +26,13 @@
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
                             <div class="card-header">
-
-                                @if ($posopname->isNotEmpty())
-                                    <h4>Pos Sub Opname :
-                                        {{ $posopname->first()->ambildarisublocation->name ?? 'Tidak diketahui' }}</h4>
-                                @endif
+                                
+                                {{-- @if ($posopname->isNotEmpty())
+                              
+                                    @endif --}}
+                                     <h4>Pos Sub Opname :
+                                    {{ $posopname->first()->ambildarisublocation->name ?? 'Tidak diketahui' }}</h4>
+                                    <h4>Detail Item - Form Number: {{ $form_number }}</h4>
 
 
 
@@ -49,17 +50,14 @@
                                     <table class="table-sm table" id="users-table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">No</th>
-                                                {{-- <th scope="col" class="text-center">Opname Sub Location ID</th> --}}
-                                                {{-- <th scope="col" class="text-center">Opname ID</th> --}}
-                                                <th scope="col" class="text-center">Opname</th>
-                                                {{-- <th scope="col" class="text-center">Sub Location ID </th> --}}
-                                                <th scope="col" class="text-center">Sub Location </th>
-                                                <th scope="col" class="text-center">Status</th>
-                                                <th scope="col" class="text-center">User</th>
+                                                <th scope="col">Opname Item ID</th>
+                                                <th scope="col">SKU</th>
+                                                <th scope="col" class="text-center">Barcode</th>
+                                                <th scope="col" class="text-center">Name </th>
+                                                <th scope="col" class="text-center">Quantity</th>
+                                                {{-- <th scope="col" class="text-center">User</th>
                                                 <th scope="col" class="text-center">Form Number</th>
-                                                <th scope="col" class="text-center">date</th>
-                                                <th scope="col" class="text-center">Action</th>
+                                                <th scope="col" class="text-center">date</th> --}}
                                                 {{-- <th scope="col" class="text-center">Action</th> --}}
                                             </tr>
                                         </thead>
@@ -72,9 +70,9 @@
         <i class="fas fa-users"></i> Back
     </button>
 
-    <a href="{{ route('importso.use', $opname_id) }}" class="btn btn-primary btn-sm">
+    {{-- <a href="{{ route('importsoadmin.use', $opname_id) }}" class="btn btn-primary btn-sm">
         <i class="fas fa-file-import"></i> Import Stock Opname
-    </a>
+    </a> --}}
 </div>
 
                                 {{-- <div class="d-flex flex-wrap gap-2 align-items-stretch"> --}}
@@ -90,6 +88,7 @@
         </section>
     </div>
 @endsection
+
 @push('scripts')
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -99,12 +98,11 @@
             var table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
-                // scrollX: true,
                 ajax: {
-                    url: '{{ route('posopnamesublocations.posopnamesublocations') }}',
+                    url: '{{ route('opname.getshowitem') }}',
                     type: 'GET',
-                     data: function (d) {
-                d.opname_id = '{{ $opname_id }}'; // ini akan dikirim ke controller
+                    data: {
+                form_number: '{{ $form_number }}'
             }
                 },
                 responsive: true,
@@ -114,58 +112,77 @@
                 ],
 
                 columns: [
-                    {
-                        data: 'opname_sub_location_id',
-                        name: 'opname_sub_location_id',
+                                       {
+                        data: 'opname_item_id',
+                        name: 'opname_item_id',
                         className: 'text-center'
                     },
-                    // {
-                    //     data: null,
-                    //     name: 'rownum',
-                    //     render: function(data, type, row, meta) {
-                    //         return meta.row + meta.settings._iDisplayStart + 1;
-                    //     },
-                    //     orderable: false,
-                    //     searchable: false
-                    // },
-
-                    {
-                        data: 'opname.location.name',
-                        name: 'opname.location.name',
+                                       {
+                        data: 'item.code',
+                        name: 'item.code',
                         className: 'text-center'
                     },
-                    {
-                        data: 'sublocation.name',
-                        name: 'sublocation.name',
+                                       {
+                        data: 'item.barcode',
+                        name: 'item.barcode',
                         className: 'text-center'
                     },
-                    {
-                        data: 'status',
-                        name: 'status',
+                                       {
+                        data: 'item.name',
+                        name: 'item.name',
                         className: 'text-center'
                     },
-                    {
-                        data: 'users.name',
-                        name: 'users.name',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'form_number',
-                        name: 'form_number',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'date',
-                        name: 'date',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
+                      {
+                        data: 'qty_real',
+                        name: 'qty_real',
                         className: 'text-center'
                     }
+
+                    // ,
+                    //                    {
+                    //     data: 'qty_real',
+                    //     name: 'qty_real',
+                    //     className: 'text-center'
+                    // }
+                    //                   {
+                    //     data: 'opname_item_id',
+                    //     name: 'opname_item_id',
+                    //     className: 'text-center'
+                    // },
+
+                   
+
+                    // {
+                    //     data: 'opname.location.name',
+                    //     name: 'opname.location.name',
+                    //     className: 'text-center'
+                    // },
+                    // {
+                    //     data: 'sublocation.name',
+                    //     name: 'sublocation.name',
+                    //     className: 'text-center'
+                    // },
+                    // {
+                    //     data: 'qty_real',
+                    //     name: 'qty_real',
+                    //     className: 'text-center'
+                    // },
+                    // {
+                    //     data: 'users.name',
+                    //     name: 'users.name',
+                    //     className: 'text-center'
+                    // },
+                    // {
+                    //     data: 'form_number',
+                    //     name: 'form_number',
+                    //     className: 'text-center'
+                    // },
+                    // {
+                    //     data: 'date',
+                    //     name: 'date',
+                    //     className: 'text-center'
+                    // }
+                   
                 ],
             });
         });
