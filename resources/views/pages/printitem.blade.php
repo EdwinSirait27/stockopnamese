@@ -203,8 +203,8 @@
         </tr> --}}
         <tr>
             <th colspan="4" style="text-align:right;">TOTAL QTY REAL</th>
-            {{-- <th>{{ $posopnameitems->sum('qty_real') }}</th> --}}
-            
+            <th>{{ $posopnameitems->sum('qty_real') }}</th>
+
             <th></th>
         </tr>
     </tfoot>
