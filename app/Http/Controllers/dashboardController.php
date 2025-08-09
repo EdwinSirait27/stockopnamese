@@ -273,7 +273,9 @@ public function printitem(Request $request, $form_number)
             $q->where('form_number', $form_number);
         })
         ->get();
-        $totalQtyReal = $posopnameitems->sum('qty_real');
+       $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
+    return bcadd($carry, $item->qty_real, 3); // 3 = jumlah desimal
+}, '0');
 
     return view('pages.printitem', compact('posopnamesublocation', 'form_number', 'posopname', 'posopnameitems','totalQtyReal'));
 }

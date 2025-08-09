@@ -53,6 +53,7 @@
         <br>
         <tr>
             <th>No</th>
+            <th>item master id</th>
             <th>Kode Item</th>
             <th>Barcode</th>
             <th>Nama Item</th>
@@ -65,6 +66,7 @@
         @foreach ($posopnameitems as $index => $item)
         <tr>
             <td>{{ $index + 1 }}</td>
+            <td>{{ $item->item_master_id ?? '-' }}</td>
             <td>{{ $item->item->code ?? '-' }}</td>
             <td>{{ $item->item->barcode ?? '-' }}</td>
             <td>{{ $item->item->name ?? '-' }}</td>
@@ -77,9 +79,13 @@
 </table>
 <tfoot>
   
-  <div style="page-break-inside: avoid; margin-top: 10px; font-weight: bold;">
+  {{-- <div style="page-break-inside: avoid; margin-top: 10px; font-weight: bold;">
     Total Qty Real: {{ number_format($totalQtyReal, 0, ',', '.') }}
+</div> --}}
+<div style="page-break-inside: avoid; margin-top: 10px; font-weight: bold;">
+    Total Qty Real: {{ rtrim(rtrim($totalQtyReal, '0'), '.') }}
 </div>
+
 </tfoot>
 
 </body>

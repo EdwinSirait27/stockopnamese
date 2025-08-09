@@ -30,7 +30,9 @@ class Posopnameitem extends Model
         'item_master_id' => 'string',
         'sub_location_id' => 'string',
         'opname_sub_location_id' => 'string',
+         'qty_real' => 'decimal:3',
     ];
+
 
     public function opname()
     {
