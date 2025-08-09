@@ -117,6 +117,8 @@
                     {
                         data: 'opname_sub_location_id',
                         name: 'opname_sub_location_id',
+                          orderable: false,
+                        searchable: false,
                         className: 'text-center'
                     },
                     // {
@@ -132,6 +134,7 @@
                     {
                         data: 'opname.location.name',
                         name: 'opname.location.name',
+
                         className: 'text-center'
                     },
                     {
@@ -147,11 +150,14 @@
                     {
                         data: 'users.name',
                         name: 'users.name',
+                          orderable: false,
+                        searchable: false,
                         className: 'text-center'
                     },
                     {
                         data: 'form_number',
                         name: 'form_number',
+                        
                         className: 'text-center'
                     },
                     {

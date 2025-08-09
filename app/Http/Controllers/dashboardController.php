@@ -273,9 +273,12 @@ public function printitem(Request $request, $form_number)
             $q->where('form_number', $form_number);
         })
         ->get();
+        $totalQtyReal = $posopnameitems->sum('qty_real');
 
-    return view('pages.printitem', compact('posopnamesublocation', 'form_number', 'posopname', 'posopnameitems'));
+    return view('pages.printitem', compact('posopnamesublocation', 'form_number', 'posopname', 'posopnameitems','totalQtyReal'));
 }
+
+
 
 
     public function indexso($opname_id)
