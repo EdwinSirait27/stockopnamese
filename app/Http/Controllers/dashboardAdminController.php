@@ -15,10 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class dashboardAdminController extends Controller
 {
-    public function index()
-    {
-        return view('pages.dashboardadmin');
-    }
+   
     // public function getPosopnamesadmin(Request $request)
     // {
     //     $query = Posopname::select([
@@ -90,6 +87,10 @@ class dashboardAdminController extends Controller
     //         ->rawColumns(['action'])
     //         ->make(true);
     // }
+     public function index()
+    {
+        return view('pages.dashboardadmin');
+    }
     public function getPosopnamesadmin(Request $request)
 {
     $userLocationId = auth()->user()->location_id;

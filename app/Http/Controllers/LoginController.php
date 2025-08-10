@@ -85,7 +85,11 @@ public function login(Request $request)
             return redirect()->intended('/dashboard')->with('success', 'Login sebagai Bos');
         } elseif ($user->hasRole('Admin')) {
             return redirect()->intended('/dashboardadmin')->with('success', 'Login sebagai Admin');
-        } else {
+        }
+        elseif ($user->hasRole('Penginput')) {
+            return redirect()->intended('/dashboardpenginput')->with('success', 'Login sebagai Penginput');
+        } 
+        else {
             Auth::logout();
             return redirect('/')->withErrors([
                 'username' => 'Role tidak diizinkan mengakses sistem ini.',

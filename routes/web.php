@@ -10,6 +10,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\dasboardPenginputController;
 use App\Http\Controllers\CurrentdbController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\DbController;
@@ -137,8 +138,27 @@ Route::middleware(['auth', 'role:Admin|Bos'])->group(function () {
         return view('pages.features-profile', ['type_menu' => 'features']);
     });
 });
+Route::middleware(['auth', 'role:Penginput'])->group(function () {
+
+    Route::get('/dashboardpenginput', [dasboardPenginputController::class, 'index'])->name('dashboardpenginput');
+    Route::get('/posopnamepenginput/posopnamepenginput', [dasboardPenginputController::class, 'getPosopnamepenginput'])->name('posopnamepenginput.posopnamepenginput');
+});
 
 
 
 
+
+Route::get('/redirect-by-role', function () {
+    $user = Auth::user();
+
+    if ($user->hasRole('Bos')) {
+        return redirect('/dashboard');
+    } elseif ($user->hasRole('Admin')) {
+        return redirect('/dashboardadmin');
+    } elseif ($user->hasRole('Penginput')) {
+        return redirect('/dashboardpenginput');
+    }
+
+    return redirect('/dashboard'); // fallback
+})->middleware('auth');
 

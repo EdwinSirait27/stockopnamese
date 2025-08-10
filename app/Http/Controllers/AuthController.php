@@ -30,7 +30,49 @@ class AuthController extends Controller
         return response()->json($user);
     }
 
- public function login(Request $request)
+//  public function login(Request $request)
+// {
+//     $credentials = $request->only($this->username(), 'password');
+
+//     $request->validate([
+//         $this->username() => 'required|string',
+//         'password' => 'required|string',
+//     ]);
+//     try {
+//         if (! $token = JWTAuth::attempt($credentials)) {
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'Invalid credentials'
+//             ], 401);
+//         }
+        
+
+//         try {
+//             $user = Auth::user();
+//         } catch (\Exception $e) {
+//             Log::error('Error ambil user: '.$e->getMessage());
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'Token created but failed to retrieve user.',
+//                 'token' => $token,
+//             ], 500);
+//         }
+//         return response()->json([
+//             'success' => true,
+//             'message' => 'Login berhasil',
+//             'user' => $user,
+//             'token' => $token,
+//         ]);
+//     } catch (JWTException $e) {
+//         Log::error('JWT Error: '.$e->getMessage());
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Could not create token',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+public function login(Request $request)
 {
     $credentials = $request->only($this->username(), 'password');
 
@@ -38,6 +80,7 @@ class AuthController extends Controller
         $this->username() => 'required|string',
         'password' => 'required|string',
     ]);
+
     try {
         if (! $token = JWTAuth::attempt($credentials)) {
             return response()->json([
@@ -45,24 +88,33 @@ class AuthController extends Controller
                 'message' => 'Invalid credentials'
             ], 401);
         }
-        
 
-        try {
-            $user = Auth::user();
-        } catch (\Exception $e) {
-            Log::error('Error ambil user: '.$e->getMessage());
+        $user = Auth::user();
+
+        // Cek role hanya Bos atau Admin yang boleh login
+        if (! $user->hasRole('Penginput')) {
+            // Logout paksa, invalidate token
+            JWTAuth::invalidate($token);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Token created but failed to retrieve user.',
-                'token' => $token,
-            ], 500);
+                'message' => 'Anda tidak memiliki akses untuk login.'
+            ], 403);
         }
+
+        // Ambil role & permission kalau perlu
+        $roles = $user->getRoleNames();
+        $permissions = $user->getAllPermissions()->pluck('name');
+
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil',
             'user' => $user,
+            'roles' => $roles,
+            'permissions' => $permissions,
             'token' => $token,
         ]);
+
     } catch (JWTException $e) {
         Log::error('JWT Error: '.$e->getMessage());
         return response()->json([
@@ -72,6 +124,7 @@ class AuthController extends Controller
         ], 500);
     }
 }
+
   public function profile()
 {
     try {
