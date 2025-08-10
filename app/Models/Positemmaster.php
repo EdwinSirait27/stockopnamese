@@ -18,5 +18,11 @@ class Positemmaster extends Model
         'name',
         'barcode_2',
         'barcode_3',
+        'uom_stock_id',
     ];
+  public function posunit()
+{
+    return $this->belongsTo(Posunit::class, 'uom_stock_id', 'uom_id');
+}
+
 }

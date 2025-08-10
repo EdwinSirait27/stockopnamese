@@ -141,8 +141,8 @@
                         className: 'text-center'
                     },
                                        {
-                        data: 'item.uom_stock_id',
-                        name: 'item.uom_stock_id',
+                        data: 'item.posunit.unit',
+                        name: 'item.posunit.unit',
                         className: 'text-center'
                     },
                       {

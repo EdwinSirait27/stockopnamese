@@ -77,7 +77,7 @@
     }}
 </td>
 
-            <td>{{ $item->item->uom_stock_id ?? '-' }}</td>
+            <td>{{ $item->item->posunit->unit ?? '-' }}</td>
             <td>{{ $item->item->name ?? '-' }}</td>
             <td>{{ $item->qty_real }}</td>
             <td></td>

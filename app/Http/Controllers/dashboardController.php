@@ -205,7 +205,7 @@ class dashboardController extends Controller
         'sub_location_id',
         'opname_sub_location_id'
     ])
-    ->with('sublocation', 'opname', 'posopnamesublocation','opname.location','item');
+    ->with('sublocation', 'opname', 'posopnamesublocation','opname.location','item','item.posunit');
 
     // Filter berdasarkan form_number di relasi posopnamesublocation
     if ($request->has('form_number')) {
@@ -268,7 +268,7 @@ public function printitem(Request $request, $form_number)
             'sub_location_id',
             'opname_sub_location_id'
         ])
-        ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item')
+        ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item','item.posunit')
         ->whereHas('posopnamesublocation', function ($q) use ($form_number) {
             $q->where('form_number', $form_number);
         })
