@@ -59,7 +59,7 @@
                                                 <th scope="col" class="text-center">User</th>
                                                 <th scope="col" class="text-center">Form Number</th>
                                                 <th scope="col" class="text-center">date</th>
-                                                {{-- <th scope="col" class="text-center">Action</th> --}}
+                                                <th scope="col" class="text-center">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -145,6 +145,13 @@
                     {
                         data: 'date',
                         name: 'date',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
                         className: 'text-center'
                     }
                    

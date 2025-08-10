@@ -40,8 +40,8 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::get('/posopname/posopname', [dashboardController::class, 'getPosopnames'])->name('posopname.posopname');
     Route::get('/showdashboard/{opname_id}', [dashboardController::class, 'show'])->name('pages.showdashboard');
     Route::get('/posopnamesublocations/posopnamesublocations', [dashboardController::class, 'getPosopnamesublocations'])->name('posopnamesublocations.posopnamesublocations');
-   
-  
+
+
     Route::post('/scan-barcode', [ScanbarcodeController::class, 'scanBarcode'])->name('scan.barcode');
     Route::get('/scanbarcode', function () {
         return view('pages.scanbarcode');
@@ -52,7 +52,7 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::get('/importso/use/{opname_id}', [dashboardController::class, 'indexso'])->name('importso.use');
     Route::post('/Importso/{opname_id}', [dashboardController::class, 'Importso'])->name('Importso.use');
     Route::get('/Importso/downloadso/{filename}', [dashboardController::class, 'downloadso'])->name('Importso.downloadso');
-     Route::get('/roles', [RoleController::class, 'index'])
+    Route::get('/roles', [RoleController::class, 'index'])
         ->name('roles.index');
     Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
@@ -92,33 +92,48 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     })->name('import.progress');
 
     // Halaman Show Item berdasarkan form_number
-Route::get('/opname/showitem/{form_number}', [dashboardController::class, 'showitem'])
-    ->name('opname.showitem');
+    Route::get('/opname/showitem/{form_number}', [dashboardController::class, 'showitem'])
+        ->name('opname.showitem');
 
-// Endpoint DataTables untuk item berdasarkan form_number
-Route::get('/opname/getshowitem', [dashboardController::class, 'getshowitem'])
-    ->name('opname.getshowitem');
-// routes/web.php
+    // Endpoint DataTables untuk item berdasarkan form_number
+    Route::get('/opname/getshowitem', [dashboardController::class, 'getshowitem'])
+        ->name('opname.getshowitem');
+    // routes/web.php
 // Route::get('/printitem/{form_number}', [dashboardController::class, 'printitem'])->name('printitem.print');
-Route::get('/opname/printitem/{form_number}', [dashboardController::class, 'printitem'])
-    ->name('opname.printitem');
+    Route::get('/opname/printitem/{form_number}', [dashboardController::class, 'printitem'])
+        ->name('opname.printitem');
 });
 Route::middleware(['auth', 'role:Admin'])->group(function () {
 
-   Route::get('/dashboardadmin', [dashboardAdminController::class, 'index'])->name('dashboardadmin');
+    Route::get('/dashboardadmin', [dashboardAdminController::class, 'index'])->name('dashboardadmin');
     Route::get('/posopnameadmin/posopnameadmin', [dashboardAdminController::class, 'getPosopnamesadmin'])->name('posopnameadmin.posopnameadmin');
+    // Route::get('/admin/show/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
+
     Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
+    // Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
     Route::get('/posopnamesublocationsadmin/posopnamesublocationsadmin', [dashboardAdminController::class, 'getPosopnamesublocationsadmin'])->name('posopnamesublocationsadmin.posopnamesublocationsadmin');
-     Route::get('/importsoadmin/use/{opname_id}', [dashboardAdminController::class, 'indexsoadmin'])->name('importsoadmin.use');
+    Route::get('/importsoadmin/use/{opname_id}', [dashboardAdminController::class, 'indexsoadmin'])->name('importsoadmin.use');
     Route::post('/importsoadmin/{opname_id}', [dashboardAdminController::class, 'Importsoadmin'])->name('Importsoadmin.use');
     Route::get('/Importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('Importsoadmin.downloadsoadmin');
+
+    Route::get('/opname/showitemadmin/{form_number}', [dashboardAdminController::class, 'showitemadmin'])
+        ->name('opname.showitemadmin');
+
+    // Endpoint DataTables untuk item berdasarkan form_number
+    Route::get('/opname/getshowitemadmin', [dashboardAdminController::class, 'getshowitemadmin'])
+        ->name('opname.getshowitemadmin');
+    // routes/web.php
+// Route::get('/printitem/{form_number}', [dashboardController::class, 'printitem'])->name('printitem.print');
+    Route::get('/opname/printitemadmin/{form_number}', [dashboardAdminController::class, 'printitemadmin'])
+        ->name('opname.printitemadmin');
+
 });
 Route::middleware(['auth', 'role:Admin|Bos'])->group(function () {
-    
+
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
     Route::put('/features-profile', [UserRoleController::class, 'index'])->name('features-profile');
-     Route::get('/features-profile', function () {
+    Route::get('/features-profile', function () {
         return view('pages.features-profile', ['type_menu' => 'features']);
     });
 });

@@ -98,7 +98,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{ route('opname.getshowitem') }}',
+                    url: '{{ route('opname.getshowitemadmin') }}',
                     type: 'GET',
                     data: {
                 form_number: '{{ $form_number }}'
@@ -121,7 +121,12 @@
                         name: 'item.code',
                         className: 'text-center'
                     },
-                  {
+                    //                    {
+                    //     data: 'item.barcode',
+                    //     name: 'item.barcode',
+                    //     className: 'text-center'
+                    // },
+                    {
     data: null, 
     name: 'note_or_barcode',
     className: 'text-center',
@@ -129,12 +134,6 @@
         return row.note ?? (row.item?.barcode ?? '');
     }
 },
-
-                    //                    {
-                    //     data: 'item.barcode',
-                    //     name: 'item.barcode',
-                    //     className: 'text-center'
-                    // },
                                        {
                         data: 'item.name',
                         name: 'item.name',

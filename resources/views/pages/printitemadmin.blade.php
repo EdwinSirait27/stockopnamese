@@ -24,7 +24,7 @@
 
 <div class="no-print">
     <button onclick="window.print()">🖨 Print</button>
-     <a href="{{ route('pages.showdashboard', ['opname_id' => $posopname->opname_id]) }}"
+     <a href="{{ route('pages.showdashboardadmin', ['opname_id' => $posopname->opname_id]) }}"
                                 class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back
                             </a>
@@ -53,7 +53,7 @@
         <br>
         <tr>
             <th>No</th>
-            {{-- <th>item master id</th> --}}
+            <th>item master id</th>
             <th>Kode Item</th>
             <th>Barcode</th>
             <th>Uom</th>
@@ -67,7 +67,7 @@
         @foreach ($posopnameitems as $index => $item)
         <tr>
             <td>{{ $index + 1 }}</td>
-            {{-- <td>{{ $item->item_master_id ?? '-' }}</td> --}}
+            <td>{{ $item->item_master_id ?? '-' }}</td>
             <td>{{ $item->item->code ?? '-' }}</td>
             {{-- <td>{{ $item->item->barcode ?? '-' }}</td> --}}
             <td>
