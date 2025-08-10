@@ -129,7 +129,7 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
         ->name('opname.printitemadmin');
 
 });
-Route::middleware(['auth', 'role:Admin|Bos'])->group(function () {
+Route::middleware(['auth', 'role:Admin|Bos|Penginput'])->group(function () {
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
