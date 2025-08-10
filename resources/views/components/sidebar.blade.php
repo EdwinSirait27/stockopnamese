@@ -21,7 +21,7 @@
                             <a class="nav-link" href="{{ url('dashboard') }}">Dashboard</a>
                         </li>
               
-                        <li class='{{ Request::is('scanbarcode') ? 'active' : '' }}'>
+                        {{-- <li class='{{ Request::is('scanbarcode') ? 'active' : '' }}'>
                             <a class="nav-link" href="{{ url('scanbarcode') }}">Scan Barcode</a>
                         </li>
                         <li class="{{ Request::is('blank-page') ? 'active' : '' }}">
@@ -33,11 +33,11 @@
                             <a class="nav-link" href="{{ url('blank-page') }}">
                                 <i class="far fa-square"></i> <span>Blank Page</span>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 
-                    <li class="nav-item dropdown">
+                    {{-- <li class="nav-item dropdown">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
                         <ul class="dropdown-menu">
                             <li class="{{ Request::is('DB') ? 'active' : '' }}">
@@ -47,7 +47,7 @@
                                 <a class="nav-link" href="{{ url('Currentdb') }}">Current Database</a>
                             </li>
                         </ul>
-                    </li>
+                    </li> --}}
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Roles & Permissions</span></a>
                         <ul class="dropdown-menu">

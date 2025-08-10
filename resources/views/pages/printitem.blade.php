@@ -62,7 +62,6 @@
             <th>Catatan</th>
         </tr>
     </thead>
-
     <tbody>
         @foreach ($posopnameitems as $index => $item)
         <tr>
