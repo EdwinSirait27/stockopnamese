@@ -116,7 +116,7 @@ class dashboardAdminController extends Controller
         'type_opname'
     ])
     ->where('location_id', $userLocationId) 
-    ->with('location', 'ambildarisublocation', 'ambildarisublocation.location');
+    ->with('location', 'ambildarisublocation', 'ambildarisublocation.location')->where('status', 'DRAFT');
 
     if ($search = $request->input('search.value')) {
         $query->where(function ($q) use ($search) {
@@ -218,22 +218,85 @@ class dashboardAdminController extends Controller
         });
     }
 
-  return DataTables::of($query)
+//   return DataTables::of($query)
+//     ->addColumn('action', function ($row) {
+//         return '
+//             <a href="' . route('opname.showitemadmin', $row->form_number) . '" 
+//                class="btn btn-sm btn-primary">
+//                 <i class="fas fa-eye"></i> Show
+//             </a>
+//             <a href="' . route('opname.printitemadmin', $row->form_number) . '" 
+//                class="btn btn-sm btn-success" target="_blank">
+//                 <i class="fas fa-print"></i> Print
+//             </a>
+//         ';
+//     })
+//     ->rawColumns(['action']) // Supaya HTML button tidak di-escape
+//     ->make(true);
+// }
+// return DataTables::of($query)
+//     ->addColumn('action', function ($row) {
+//         $buttons = '
+//             <a href="' . route('opname.showitemadmin', $row->form_number) . '" 
+//                class="btn btn-sm btn-primary">
+//                 <i class="fas fa-eye"></i> Show
+//             </a>
+//         ';
+
+//         if ($row->status === 'REQ PRINT') {
+//             // Status REQ PRINT → Print aktif
+//             $buttons .= '
+//                 <a href="' . route('opname.printitemadmin', $row->form_number) . '" 
+//                    class="btn btn-sm btn-success" target="_blank">
+//                     <i class="fas fa-print"></i> Print
+//                 </a>
+//             ';
+//         } elseif ($row->status === 'DRAFT') {
+//             // Status DRAFT → Print terkunci (disable)
+//             $buttons .= '
+//                 <button class="btn btn-sm btn-secondary" disabled>
+//                     <i class="fas fa-print"></i> Print
+//                 </button>
+//             ';
+//         }
+
+//         return $buttons;
+//     })
+//     ->rawColumns(['action'])
+//     ->make(true);
+// }
+return DataTables::of($query)
     ->addColumn('action', function ($row) {
-        return '
+        $buttons = '
             <a href="' . route('opname.showitemadmin', $row->form_number) . '" 
                class="btn btn-sm btn-primary">
                 <i class="fas fa-eye"></i> Show
             </a>
-            <a href="' . route('opname.printitemadmin', $row->form_number) . '" 
-               class="btn btn-sm btn-success" target="_blank">
-                <i class="fas fa-print"></i> Print
-            </a>
         ';
+
+        if ($row->status === 'REQ PRINT' || $row->status === 'PRINTED') {
+            // Status REQ PRINT atau PRINTED → Print aktif
+            $buttons .= '
+                <a href="' . route('opname.printitemadmin', $row->form_number) . '" 
+                   class="btn btn-sm btn-success" target="_blank">
+                    <i class="fas fa-print"></i> Print
+                </a>
+            ';
+        } elseif ($row->status === 'DRAFT') {
+            // Status DRAFT → Print terkunci
+            $buttons .= '
+                <button class="btn btn-sm btn-secondary" disabled>
+                    <i class="fas fa-print"></i> Print
+                </button>
+            ';
+        }
+
+        return $buttons;
     })
-    ->rawColumns(['action']) // Supaya HTML button tidak di-escape
+    ->rawColumns(['action'])
     ->make(true);
 }
+
  public function showitemadmin($form_number)
 {
     Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
@@ -300,6 +363,52 @@ class dashboardAdminController extends Controller
 
     return DataTables::of($query)->make(true);
 }
+// public function printitemadmin(Request $request, $form_number)
+// {
+//     Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
+
+//     // Ambil data sublocation
+//     $posopnamesublocation = Posopnamesublocation::with(
+//         'opname',
+//         'sublocation.location',
+//         'users',
+//         'sublocation',
+//         'opname.ambildarisublocation'
+//     )
+//     ->where('form_number', $form_number)
+//     ->get();
+
+//     $opname_id = optional($posopnamesublocation->first())->opname_id;
+
+//     // Ambil opname
+//     $posopname = Posopname::with('ambildarisublocation', 'location')
+//         ->where('opname_id', $opname_id)
+//         ->first();
+
+//     // Ambil item terkait
+//     $posopnameitems = Posopnameitem::select([
+//             'opname_item_id',
+//             'opname_id',
+//             'item_master_id',
+//             'qty_system',
+//             'qty_real',
+//             'note',
+//             'type',
+//             'company_id',
+//             'sub_location_id',
+//             'opname_sub_location_id'
+//         ])
+//         ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item','item.posunit')
+//         ->whereHas('posopnamesublocation', function ($q) use ($form_number) {
+//             $q->where('form_number', $form_number);
+//         })
+//         ->get();
+//        $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
+//     return bcadd($carry, $item->qty_real, 3); // 3 = jumlah desimal
+// }, '0');
+
+//     return view('pages.printitemadmin', compact('posopnamesublocation', 'form_number', 'posopname', 'posopnameitems','totalQtyReal'));
+// }
 public function printitemadmin(Request $request, $form_number)
 {
     Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
@@ -314,6 +423,14 @@ public function printitemadmin(Request $request, $form_number)
     )
     ->where('form_number', $form_number)
     ->get();
+
+    // ✅ Update status jika masih REQ PRINT
+    if ($posopnamesublocation->isNotEmpty()) {
+        $firstData = $posopnamesublocation->first();
+        if ($firstData->status === 'REQ PRINT') {
+            $firstData->update(['status' => 'PRINTED']);
+        }
+    }
 
     $opname_id = optional($posopnamesublocation->first())->opname_id;
 
@@ -335,17 +452,26 @@ public function printitemadmin(Request $request, $form_number)
             'sub_location_id',
             'opname_sub_location_id'
         ])
-        ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item','item.posunit')
+        ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item', 'item.posunit')
         ->whereHas('posopnamesublocation', function ($q) use ($form_number) {
             $q->where('form_number', $form_number);
         })
         ->get();
-       $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
-    return bcadd($carry, $item->qty_real, 3); // 3 = jumlah desimal
-}, '0');
 
-    return view('pages.printitemadmin', compact('posopnamesublocation', 'form_number', 'posopname', 'posopnameitems','totalQtyReal'));
+    // Hitung total qty real
+    $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
+        return bcadd($carry, $item->qty_real, 3); // 3 = jumlah desimal
+    }, '0');
+
+    return view('pages.printitemadmin', compact(
+        'posopnamesublocation',
+        'form_number',
+        'posopname',
+        'posopnameitems',
+        'totalQtyReal'
+    ));
 }
+
 
 
     public function indexsoadmin($opname_id)

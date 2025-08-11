@@ -14,7 +14,6 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
        protected $connection = 'mysql'; // koneksi ke database kedua
-
     /**
      * The attributes that are mass assignable.
      *

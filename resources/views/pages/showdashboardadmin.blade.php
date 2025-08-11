@@ -90,6 +90,44 @@
     </div>
 @endsection
 @push('scripts')
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    jQuery(document).ready(function($) {
+        var table = $('#users-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route('posopnamesublocationsadmin.posopnamesublocationsadmin') }}',
+                type: 'GET'
+            },
+            responsive: true,
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            columns: [
+                { data: 'opname_sub_location_id', name: 'opname_sub_location_id', className: 'text-center' },
+                { data: 'opname.location.name', name: 'opname.location.name', className: 'text-center' },
+                { data: 'sublocation.name', name: 'sublocation.name', className: 'text-center' },
+                { data: 'status', name: 'status', className: 'text-center' },
+                { data: 'users.name', name: 'users.name', orderable: false, searchable: false, className: 'text-center' },
+                { data: 'form_number', name: 'form_number', className: 'text-center' },
+                { data: 'date', name: 'date', className: 'text-center' },
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+            ],
+        });
+
+        // Auto refresh setiap 5 detik tanpa reload halaman
+        setInterval(function() {
+            table.ajax.reload(null, false); // false = biar tetap di halaman yang sama
+        }, 5000); // 5000ms = 5 detik
+    });
+</script>
+@endpush
+
+{{-- @push('scripts')
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -135,6 +173,8 @@
                     {
                         data: 'users.name',
                         name: 'users.name',
+                           orderable: false,
+                        searchable: false,
                         className: 'text-center'
                     },
                     {
@@ -159,4 +199,4 @@
             });
         });
     </script>
-@endpush
+@endpush --}}

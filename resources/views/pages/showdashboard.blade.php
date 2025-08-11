@@ -121,16 +121,6 @@
                         searchable: false,
                         className: 'text-center'
                     },
-                    // {
-                    //     data: null,
-                    //     name: 'rownum',
-                    //     render: function(data, type, row, meta) {
-                    //         return meta.row + meta.settings._iDisplayStart + 1;
-                    //     },
-                    //     orderable: false,
-                    //     searchable: false
-                    // },
-
                     {
                         data: 'opname.location.name',
                         name: 'opname.location.name',

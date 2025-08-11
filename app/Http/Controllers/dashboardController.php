@@ -42,7 +42,7 @@ class dashboardController extends Controller
             'type_opname'
         ])
             // ->with('location', 'ambildarisublocation', 'ambildarisublocation.location');
-            ->with('location', 'ambildarisublocation', 'ambildarisublocation.location')->where('status', 'DRAFT');
+            ->with('location', 'ambildarisublocation', 'ambildarisublocation.location');
         if ($request->filled('location_name')) {
             $query->whereHas('location', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->location_name . '%');
