@@ -41,4 +41,9 @@ class Posopnamesublocation extends Model
 {
     return $this->belongsTo(User::class, 'user_id', 'id');
 }
+public function posopnameitems()
+{
+    return $this->hasMany(Posopnameitem::class, 'opname_sub_location_id', 'opname_sub_location_id');
+}
+
 }
