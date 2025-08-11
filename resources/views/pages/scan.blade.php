@@ -14,6 +14,26 @@
             </div>
 
             <div class="section-body">
+                @if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
+
+<form action="{{ route('scan.post', $posopnamesublocation->opname_sub_location_id) }}" method="POST">
+    @csrf
+    <label for="barcode">Scan Barcode:</label>
+    <input type="text" name="barcode" id="barcode" autofocus autocomplete="off">
+    <button type="submit">Cari</button>
+</form>
+
+{{-- @if(isset($posopnameitem)) --}}
+@if(isset($posopnameitem))
+    <h3>Detail Item</h3>
+    <p>Nama Item: {{ $posopnameitem->item->item_name ?? 'N/A' }}</p>
+    <p>Barcode: {{ $posopnameitem->item->barcode ?? 'N/A' }}</p>
+    <p>Status Item: {{ $posopnameitem->status ?? 'N/A' }}</p>
+@endif
+
+
             </div>
         </section>
     </div>
