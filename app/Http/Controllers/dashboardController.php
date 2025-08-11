@@ -96,13 +96,18 @@ class dashboardController extends Controller
     }
     public function show($opname_id)
     {
+        
         Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
         $posopnamesublocation = Posopnamesublocation::with('opname', 'sublocation.location', 'users', 'sublocation', 'opname.ambildarisublocation')
-            ->where('opname_id', $opname_id)
-            ->get();
+        ->where('opname_id', $opname_id)
+        ->get();
         $posopname = Posopname::with('ambildarisublocation', 'location')
-            ->where('opname_id', $opname_id)
-            ->get();
+        ->where('opname_id', $opname_id)
+        ->get();
+    //       dd([
+    //     'request_all' => request()->all(),
+    //     'posopname' => $posopname->toArray(),
+    // ]);
         return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id', 'posopname'));
     }
     public function getPosopnamesublocations(Request $request)
@@ -135,17 +140,6 @@ class dashboardController extends Controller
                 ->orWhere('user_id', 'like', "%{$search}%");
         });
     }
-
-    // return DataTables::of($query)
-    //     ->addColumn('action', function ($row) {
-    //         return '<a href="' . route('opname.showitem', $row->form_number) . '" 
-    //                    class="btn btn-sm btn-primary">
-    //                     <i class="fas fa-eye"></i> Show
-    //                 </a>
-    //                 ';
-    //     })
-    //     ->rawColumns(['action']) // Supaya HTML button tidak di-escape
-    //     ->make(true);
     return DataTables::of($query)
     ->addColumn('action', function ($row) {
         return '
@@ -159,7 +153,7 @@ class dashboardController extends Controller
             </a>
         ';
     })
-    ->rawColumns(['action']) // Supaya HTML button tidak di-escape
+    ->rawColumns(['action']) 
     ->make(true);
 
 }

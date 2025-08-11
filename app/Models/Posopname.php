@@ -11,6 +11,8 @@ class Posopname extends Model
     protected $connection = 'mysql_second'; // koneksi ke database kedua
     protected $table = 'pos_opname';   
     protected $primaryKey = 'opname_id';
+    public $incrementing = false; // kalau ID bukan auto increment integer
+protected $keyType = 'string';
      protected $fillable = [
         'opname_id',
         'date',

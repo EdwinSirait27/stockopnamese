@@ -10,71 +10,70 @@ use App\Models\Posopnamesublocation;
 use Illuminate\Support\Facades\Log;
 class dasboardPenginputController extends Controller
 {
-      public function index()
+    
+
+    public function show($opname_id)
     {
-        return view('pages.dashboardpenginput');
+        Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
+        $posopnamesublocation = Posopnamesublocation::with('opname', 'sublocation.location', 'users', 'sublocation', 'opname.ambildarisublocation')
+            ->where('opname_id', $opname_id)
+            ->get();
+        $posopname = Posopname::with('ambildarisublocation.location', 'location')->get();
+// dd([
+//     'opname_id' => $opname_id,
+//     'posopname_count' => $posopname->count(),
+//     'posopname_first' => $posopname->first(),
+// ]);
+
+
+        return view('pages.dashboardpenginput', compact('posopnamesublocation', 'opname_id', 'posopname'));
     }
-    public function getPosopnamepenginput(Request $request)
+ 
+    public function getPosopnamesublocationspenginput(Request $request)
 {
     $userLocationId = auth()->user()->location_id;
 
-    $query = Posopname::select([
+    $query = Posopnamesublocation::select([
+        'opname_sub_location_id',
         'opname_id',
-        'date',
+        'sub_location_id',
+        'sub_location_name',
         'status',
-        'location_id',
-        'note',
-        'type'
-        
+        'user_id',
+        'form_number',
+        'date'
     ])
-    ->where('location_id', $userLocationId) 
-    ->with('location', 'ambildarisublocation', 'ambildarisublocation.location');
-
-    if ($search = $request->input('search.value')) {
-        $query->where(function ($q) use ($search) {
-            $q->where('opname_id', 'like', "%{$search}%")
-              ->orWhere('status', 'like', "%{$search}%")
-              ->orWhereHas('location', function ($q2) use ($search) {
-                  $q2->where('name', 'like', "%{$search}%");
-              });
+        ->with('sublocation', 'opname.location', 'users', 'opname')
+        ->whereHas('opname.location', function ($q) use ($userLocationId) {
+            $q->where('location_id', $userLocationId);
         });
+    if ($request->filled('opname_id')) {
+        $query->where('opname_id', $request->opname_id);
     }
-
-    return DataTables::of($query)
-        ->orderColumn('location.name', function ($query, $order) {
-            $query->join('locations', 'locations.id', '=', 'posopnames.location_id')
-                  ->orderBy('locations.name', $order);
-        })
-        ->addColumn('action', function ($posopname) {
-            if ($posopname->status === 'CANCELED') {
-                return '
-                    <button class="btn btn-sm btn-outline-secondary mx-1" disabled>
-                        <i class="fas fa-eye-slash"></i> Locked
-                    </button>
-                ';
-            }
-            return '
-                <a href="' . route('pages.showdashboardadmin', $posopname->opname_id) . '" 
-                   class="btn btn-sm btn-outline-info mx-1" 
-                   data-bs-toggle="tooltip" 
-                   title="Show opname: ' . e($posopname->opname_id) . '">
-                    <i class="fas fa-eye"></i> Show
-                </a>
-            ';
-        })
-        // ->editColumn('type', function ($posopname) {
-        //     switch ($posopname->type) {
-        //         case 0:
-        //             return 'Global';
-        //         case 1:
-        //             return 'Partial';
-        //         case 2:
-        //             return 'Per Item';
-        //         default:
-        //             return 'Unknown';
-        //     }
-        // })
-        ->rawColumns(['action'])
-        ->make(true);
+    $searchValue = $request->input('search.value');
+    if (!empty($searchValue)) {
+        $query->where('form_number', 'like', "%{$searchValue}%");
+    }
+    return DataTables::of($query)->make(true);
 }
+    public function scan($opname_sub_location_id)
+{
+    Log::info('Masuk ke method scan', ['opname_sub_location_id' => $opname_sub_location_id]);
+    $posopnamesublocation = Posopnamesublocation::with([
+            'opname',
+            'sublocation.location',
+            'users',
+            'sublocation',
+            'opname.ambildarisublocation'
+        ])
+        ->where('opname_sub_location_id', $opname_sub_location_id)
+        ->firstOrFail();
+    $opname_id = $posopnamesublocation->opname_id;
+    $posopname = Posopname::with(['ambildarisublocation', 'location'])
+        ->where('opname_id', $opname_id)
+        ->first();
+
+    return view('pages.scan', compact('posopnamesublocation', 'opname_id', 'posopname'));
+}
+
 }

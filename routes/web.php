@@ -116,10 +116,8 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/importsoadmin/use/{opname_id}', [dashboardAdminController::class, 'indexsoadmin'])->name('importsoadmin.use');
     Route::post('/importsoadmin/{opname_id}', [dashboardAdminController::class, 'Importsoadmin'])->name('Importsoadmin.use');
     Route::get('/Importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('Importsoadmin.downloadsoadmin');
-
     Route::get('/opname/showitemadmin/{form_number}', [dashboardAdminController::class, 'showitemadmin'])
         ->name('opname.showitemadmin');
-
     // Endpoint DataTables untuk item berdasarkan form_number
     Route::get('/opname/getshowitemadmin', [dashboardAdminController::class, 'getshowitemadmin'])
         ->name('opname.getshowitemadmin');
@@ -127,10 +125,8 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
 // Route::get('/printitem/{form_number}', [dashboardController::class, 'printitem'])->name('printitem.print');
     Route::get('/opname/printitemadmin/{form_number}', [dashboardAdminController::class, 'printitemadmin'])
         ->name('opname.printitemadmin');
-
 });
 Route::middleware(['auth', 'role:Admin|Bos|Penginput'])->group(function () {
-
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::put('/features-profile/update', [UserRoleController::class, 'updatePassword'])->name('features-profile.update');
     Route::put('/features-profile', [UserRoleController::class, 'index'])->name('features-profile');
@@ -139,15 +135,10 @@ Route::middleware(['auth', 'role:Admin|Bos|Penginput'])->group(function () {
     });
 });
 Route::middleware(['auth', 'role:Penginput'])->group(function () {
-
-    Route::get('/dashboardpenginput', [dasboardPenginputController::class, 'index'])->name('dashboardpenginput');
-    Route::get('/posopnamepenginput/posopnamepenginput', [dasboardPenginputController::class, 'getPosopnamepenginput'])->name('posopnamepenginput.posopnamepenginput');
+    Route::get('/dashboardpenginput/{opname_id}', [dasboardPenginputController::class, 'show'])->name('pages.dashboardpenginput');
+    Route::get('/posopnamesublocationpenginput/posopnamesublocationpenginput', [dasboardPenginputController::class, 'getPosopnamesublocationspenginput'])->name('posopnamesublocationpenginput.posopnamesublocationpenginput');
+    Route::get('/scan/{opname_sub_location_id}', [dasboardPenginputController::class, 'scan'])->name('scan');
 });
-
-
-
-
-
 Route::get('/redirect-by-role', function () {
     $user = Auth::user();
 
@@ -156,9 +147,17 @@ Route::get('/redirect-by-role', function () {
     } elseif ($user->hasRole('Admin')) {
         return redirect('/dashboardadmin');
     } elseif ($user->hasRole('Penginput')) {
-        return redirect('/dashboardpenginput');
+        $opnameId = $user->location_id; // ambil dari kolom location_id user
+
+        if (!$opnameId) {
+            // Jika tidak ada location_id, redirect ke halaman lain atau beri error
+            return redirect('/')->withErrors(['error' => 'Location ID tidak ditemukan.']);
+        }
+
+        return redirect("/dashboardpenginput/{$opnameId}");
     }
 
     return redirect('/dashboard'); // fallback
 })->middleware('auth');
+
 

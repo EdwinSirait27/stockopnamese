@@ -14,7 +14,7 @@
             <div class="section-header">
                 <h1>Stock Opname</h1>
                 <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="/dashboard">Stock Opname</a></div>
+                    <div class="breadcrumb-item active"><a href="/dashboardadmin">Stock Opname</a></div>
                 </div>
 
             </div>

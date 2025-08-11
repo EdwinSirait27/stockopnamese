@@ -85,6 +85,20 @@
                     </ul>
                 </li>
                 @endrole
+                @role('Penginput')
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('features-profile') }}">Profile</a>
+                        </li>
+
+                        {{-- <li class='{{ Request::is('dashboardadmin') ? 'active' : '' }}'>
+                            <a class="nav-link" href="{{ url('dashboardadmin') }}">Dashboard</a>
+                        </li> --}}
+                    </ul>
+                </li>
+                @endrole
                 {{-- @role('Admin')
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i><span>Databases</span></a>
