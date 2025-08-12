@@ -321,7 +321,6 @@ $(document).ready(function() {
                     </div>
                 </form>
 
-                {{-- Preview hasil scan tanpa tabel --}}
                 <div id="preview-container" class="card p-3">
                     <h5>Preview Item</h5>
                     <div class="preview-row">
@@ -330,6 +329,10 @@ $(document).ready(function() {
                     </div>
                     <div class="preview-row">
                         <div class="preview-label">Nama Item</div>
+                        <div class="preview-value" id="preview-name"></div>
+                    </div>
+                    <div class="preview-row">
+                        <div class="preview-label">Warning</div>
                         <div class="preview-value" id="preview-name"></div>
                     </div>
                     <div class="preview-row">
@@ -450,5 +453,10 @@ $(document).ready(function() {
         });
     });
 });
+</script>
+<script>
+  window.onload = function() {
+    document.getElementById('barcode').focus();
+  };
 </script>
 @endpush
