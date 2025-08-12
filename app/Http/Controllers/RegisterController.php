@@ -88,7 +88,7 @@ class RegisterController extends Controller
             'required',
             'string',
             'max:255',
-            'regex:/^[A-Za-z\s]+$/', // hanya huruf dan spasi
+            'regex:/^[A-Za-z\s]+$/',
             Rule::unique('users', 'name')->where(function ($query) use ($request) {
                 return $query->whereRaw('LOWER(name) = ?', [strtolower($request->input('name'))]);
             }),
@@ -96,12 +96,12 @@ class RegisterController extends Controller
         'username' => [
             'required',
             'string',
-            'min:8',
+            'min:3',
             'max:255',
             'regex:/^\d+$/',
             Rule::unique('users', 'username'),
         ],
-        'password' => ['required','regex:/^\S+$/','min:8', 'max:255'],
+        'password' => ['required','regex:/^\S+$/','min:3', 'max:255'],
         'role' => ['required', 'string', 'exists:roles,name'], // validasi role yang dikirim dari form
     ]);
 

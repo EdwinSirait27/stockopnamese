@@ -116,7 +116,6 @@ public function scan($opname_sub_location_id)
         ])
         ->where('opname_sub_location_id', $opname_sub_location_id)
         ->firstOrFail();
-
     // Ambil data opname terkait (opsional kalau dibutuhkan di view)
     $posopname = Posopname::with(['ambildarisublocation', 'location'])
         ->where('opname_id', $posopnamesublocation->opname_id)
@@ -128,6 +127,16 @@ public function scan($opname_sub_location_id)
         'posopname'            => $posopname
     ]);
 }
+public function reqPrint($id)
+{
+    $posopnamesublocation = Posopnamesublocation::findOrFail($id);
+    $posopnamesublocation->status = 'REQ PRINT';
+      $posopnamesublocation->user_id = Auth::id();
+    $posopnamesublocation->save();
+
+    return redirect()->back()->with('success', 'Status berhasil diubah menjadi REQ PRINT');
+}
+
 // public function scanBarcodePreview(Request $request, $opname_sub_location_id)
 // {
 //     $request->validate([
@@ -242,13 +251,7 @@ public function getPosopnameItems($opname_sub_location_id)
         ->where('opname_sub_location_id', $opname_sub_location_id)
         ->get();
 
-    // Tambahkan kolom action
-    // $posopnameitems = $posopnameitems->map(function ($item) {
-    //     $item->action = '
-    //         <button onclick="editItem('.$item->opname_item_id.')">Edit</button>
-    //     ';
-    //     return $item;
-    // });
+   
     $posopnameitems = $posopnameitems->map(function ($item) {
     $item->action = '
                <button class="btn btn-sm btn-primary" onclick="editItem('.$item->opname_item_id.')">Edit</button>

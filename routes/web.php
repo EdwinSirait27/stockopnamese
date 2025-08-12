@@ -146,6 +146,8 @@ Route::post('/posopname/{opname_sub_location_id}/scan-preview', [dasboardPenginp
 Route::post('/save-scanned-item/{opname_sub_location_id}', [dasboardPenginputController::class, 'saveScannedItem']);
 Route::get('/posopname-item/{id}', [dasboardPenginputController::class, 'showposopnameitem']);
 Route::put('/posopname-item/{id}', [dasboardPenginputController::class, 'update']);
+Route::post('/posopnamesublocation/{id}/req-print', [dasboardPenginputController::class, 'reqPrint'])
+    ->name('posopnamesublocation.reqPrint');
 
 });
 Route::get('/redirect-by-role', function () {
