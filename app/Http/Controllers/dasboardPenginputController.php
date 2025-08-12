@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Posopnameitem;
 use App\Models\Positemmaster;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\Posopnamesublocation;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
