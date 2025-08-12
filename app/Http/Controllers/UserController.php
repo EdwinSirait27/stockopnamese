@@ -142,6 +142,7 @@ class UserController extends Controller
 
     // Validasi input
     $validatedData = $request->validate([
+        'username' => ['required','min:3', 'max:255'],
         'password' => ['nullable', 'regex:/^\S+$/', 'min:3', 'max:255'],
         'name' => ['required', 'min:3', 'max:255'],
         'role' => ['required', 'string', 'exists:roles,name'],
@@ -168,6 +169,7 @@ class UserController extends Controller
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
+         $user->username = $validatedData['username'];
          $user->location_id = $validatedData['location_id'];
          $user->name = $validatedData['name'];
 

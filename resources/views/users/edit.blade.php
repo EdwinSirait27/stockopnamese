@@ -170,6 +170,18 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+
+
+
+
+                                          <div class="form-group col-md-6 col-12">
+                                            <label for="username">Username</label>
+                                            <input type="text" class="form-control" id="username" name="username"
+                                                value="{{ old('username', $user->username) }}">
+                                            <div class="invalid-feedback">
+                                                Please fill in the Username
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <script>

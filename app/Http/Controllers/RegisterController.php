@@ -118,17 +118,12 @@ class RegisterController extends Controller
     $user->assignRole($request->role);
     Log::info('Role assigned', ['user_id' => $user->id, 'role' => $request->role]);
 
-    // Login otomatis user yang baru dibuat
-    Auth::login($user);
-    Log::info('User logged in', ['user_id' => $user->id]);
-
+    
     // Regenerasi session untuk keamanan
     $request->session()->regenerate();
     Log::info('Session regenerated');
 
-    // Redirect ke halaman dashboard
-    // Log::info('Redirecting to /features-profile');
-    // return redirect()->intended('/features-profile')->with('success', 'User Created Successfully!');
-    return redirect()->intended('/auth-register')->with('success', 'User Created Successfully!');
+   
+    return redirect()->intended('/dashboard')->with('success', 'User Created Successfully!');
 }
 }
