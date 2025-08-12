@@ -142,7 +142,7 @@ class UserController extends Controller
 
     // Validasi input
     $validatedData = $request->validate([
-        'password' => ['nullable', 'regex:/^\S+$/', 'min:8', 'max:255'],
+        'password' => ['nullable', 'regex:/^\S+$/', 'min:3', 'max:255'],
         'role' => ['required', 'string', 'exists:roles,name'],
        'location_id' => [
         'required',
