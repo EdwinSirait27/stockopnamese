@@ -139,8 +139,11 @@ Route::middleware(['auth', 'role:Penginput'])->group(function () {
     Route::get('/posopnamesublocationpenginput/posopnamesublocationpenginput', [dasboardPenginputController::class, 'getPosopnamesublocationspenginput'])->name('posopnamesublocationpenginput.posopnamesublocationpenginput');
     Route::get('/scan/{opname_sub_location_id}', [dasboardPenginputController::class, 'scan'])->name('scan');
     Route::post('/scan/{opname_sub_location_id}', [dasboardPenginputController::class, 'scanPost'])->name('scan.post');
-    Route::get('/posopnameitems/{opname_sub_location_id}', [dasboardPenginputController::class, 'getPosopnameItems'])
-    ->name('posopnameitems.list');
+  Route::get('/posopname/items/{id}', [dasboardPenginputController::class, 'getPosopnameItems'])
+    ->name('posopname.items');
+Route::post('/posopname/{opname_sub_location_id}/scan-preview', [dasboardPenginputController::class, 'scanBarcodePreview'])
+    ->name('posopname.scanBarcodePreview');
+
 });
 Route::get('/redirect-by-role', function () {
     $user = Auth::user();

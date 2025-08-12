@@ -51,6 +51,269 @@ class dasboardPenginputController extends Controller
     }
     return DataTables::of($query)->make(true);
 }
+
+// public function scan($opname_sub_location_id)
+// {
+//     Log::info('Masuk ke method scan', ['opname_sub_location_id' => $opname_sub_location_id]);
+
+//     // Ambil Posopnamesublocation beserta relasi yang diperlukan
+//     $posopnamesublocation = Posopnamesublocation::with([
+//             'opname',
+//             'sublocation.location',
+//             'users',
+//             'sublocation',
+//             'opname.ambildarisublocation',
+//             'posopnameitems.item' // relasi ke posopnameitems + item
+//         ])
+//         ->where('opname_sub_location_id', $opname_sub_location_id)
+//         ->firstOrFail();
+
+//     $opname_id = $posopnamesublocation->opname_id;
+
+//     // Ambil data opname untuk informasi tambahan
+//     $posopname = Posopname::with(['ambildarisublocation', 'location'])
+//         ->where('opname_id', $opname_id)
+//         ->first();
+
+//     // Ambil semua Posopnameitem berdasarkan opname_sub_location_id
+//     // $posopnameitems_by_location = $posopnamesublocation->posopnameitems;
+
+//     return view('pages.scan', compact(
+//         'posopnamesublocation',
+//         'opname_id',
+//         'posopname'
+//     ));
+// }
+// public function getPosopnameItems($opname_sub_location_id)
+// {
+//     // Ambil Posopnamesublocation dulu, agar validasi jika id tidak ada
+//     $posopnamesublocation = Posopnamesublocation::findOrFail($opname_sub_location_id);
+
+//     // Ambil semua posopnameitems beserta relasi item untuk opname_sub_location_id tersebut
+//     $posopnameitems = Posopnameitem::with('item')
+//         ->where('opname_sub_location_id', $opname_sub_location_id)
+//         ->get();
+
+//     // Return JSON untuk datatables
+//     return response()->json([
+//         'data' => $posopnameitems
+//     ]);
+// }
+public function scan($opname_sub_location_id)
+{
+    Log::info('Masuk ke method scan', [
+        'opname_sub_location_id' => $opname_sub_location_id
+    ]);
+
+    // Ambil Posopnamesublocation + relasi yang dibutuhkan untuk header halaman
+    $posopnamesublocation = Posopnamesublocation::with([
+            'opname',
+            'sublocation.location',
+            'users',
+            'opname.ambildarisublocation'
+        ])
+        ->where('opname_sub_location_id', $opname_sub_location_id)
+        ->firstOrFail();
+
+    // Ambil data opname terkait (opsional kalau dibutuhkan di view)
+    $posopname = Posopname::with(['ambildarisublocation', 'location'])
+        ->where('opname_id', $posopnamesublocation->opname_id)
+        ->first();
+
+    return view('pages.scan', [
+        'posopnamesublocation' => $posopnamesublocation,
+        'opname_id'            => $posopnamesublocation->opname_id,
+        'posopname'            => $posopname
+    ]);
+}
+
+public function getPosopnameItems($opname_sub_location_id)
+{
+    // Validasi apakah ID sub-location ada
+    if (!Posopnamesublocation::where('opname_sub_location_id', $opname_sub_location_id)->exists()) {
+        abort(404, 'Opname Sub Location tidak ditemukan');
+    }
+
+    // Ambil semua item terkait + relasi item
+    $posopnameitems = Posopnameitem::with('item')
+        ->where('opname_sub_location_id', $opname_sub_location_id)
+        ->get();
+
+    return response()->json([
+        'data' => $posopnameitems
+    ]);
+}
+
+
+
+public function scanBarcodePreview(Request $request, $opname_sub_location_id)
+{
+    $request->validate([
+        'barcode' => 'required|string|max:255'
+    ]);
+
+    $barcode = trim($request->barcode);
+    Log::info('Barcode yang dicari', ['input' => $barcode]);
+
+    $item = Positemmaster::where('barcode', 'LIKE', "%{$barcode}%")
+        ->orWhere('code', 'LIKE', "%{$barcode}%")
+        ->orWhere('barcode_2', 'LIKE', "%{$barcode}%")
+        ->orWhere('barcode_3', 'LIKE', "%{$barcode}%")
+        ->first();
+
+    if (!$item) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Barcode tidak ditemukan'
+        ], 404);
+    }
+
+    // Return tanpa simpan ke DB
+    return response()->json([
+        'success' => true,
+        'message' => 'Item ditemukan',
+        'data' => [
+            'item_master_id' => $item->item_master_id,
+            'barcode'        => $item->barcode,
+            'name'           => $item->name,
+            'qty'            => 1
+        ]
+    ]);
+}
+public function saveScannedItem(Request $request, $opname_sub_location_id)
+{
+    $validated = $request->validate([
+        'item_master_id' => 'required|integer',
+        'qty' => 'required|integer|min:1'
+    ]);
+
+    Posopnameitem::create([
+        'opname_sub_location_id' => $opname_sub_location_id,
+        'item_master_id'         => $validated['item_master_id'],
+        'qty_real'               => $validated['qty']
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Item berhasil disimpan'
+    ]);
+}
+
+
+
+
+
+
+}
+
+// public function scanPost(Request $request, $opname_sub_location_id)
+// {
+//     $barcodeInput = $request->input('barcode');
+//     if (!$barcodeInput) {
+//         return redirect()->back()->with('error', 'Barcode harus diisi');
+//     }
+
+//     // Fungsi bantu cari item master di kolom barcode, code, barcode2, barcode3 berturut-turut
+//     $itemMaster = Positemmaster::where('barcode', $barcodeInput)
+//         ->orWhere('code', $barcodeInput)
+//         ->orWhere('barcode_2', $barcodeInput)
+//         ->orWhere('barcode_3', $barcodeInput)
+//         ->first();
+
+//     if (!$itemMaster) {
+//         return redirect()->back()->with('error', 'Item tidak ditemukan di semua kolom barcode.');
+//     }
+
+//     // Cari semua posopnameitem yang pakai item_master_id ini
+//     $posopnameitems = Posopnameitem::where('item_master_id', $itemMaster->item_master_id)
+//         ->with('item')
+//         ->get();
+
+//     // Ambil data Posopnamesublocation dan Posopname untuk konteks lokasi
+//     $posopnamesublocation = Posopnamesublocation::with([
+//             'opname',
+//             'sublocation.location',
+//             'users',
+//             'sublocation',
+//             'opname.ambildarisublocation'
+//         ])
+//         ->where('opname_sub_location_id', $opname_sub_location_id)
+//         ->firstOrFail();
+
+//     $opname_id = $posopnamesublocation->opname_id;
+
+//     $posopname = Posopname::with(['ambildarisublocation', 'location'])
+//         ->where('opname_id', $opname_id)
+//         ->first();
+
+//     if ($posopnameitems->isEmpty()) {
+//         // Belum ada item di opname manapun, kirim info dan itemMaster
+//         return view('pages.scan', compact(
+//             'posopnamesublocation',
+//             'opname_id',
+//             'posopname',
+//             'itemMaster'
+//         ))->with('info', 'Item belum masuk dalam opname manapun.');
+//     }
+
+//     // Kirim semua posopnameitems ke view
+//     return view('pages.scan', compact(
+//         'posopnamesublocation',
+//         'opname_id',
+//         'posopname',
+//         'posopnameitems'
+//     ));
+// }
+
+// public function scanBarcode(Request $request, $opname_sub_location_id)
+// {
+//     $request->validate([
+//         'barcode' => 'required|string|max:255'
+//     ]);
+
+//     // Pastikan sub-location ada
+//     $posopnamesublocation = Posopnamesublocation::findOrFail($opname_sub_location_id);
+
+//     $barcode = $request->barcode;
+
+//     // Cari item di kolom barcode -> code -> barcode_2 -> barcode_3
+//     $item = Positemmaster::where('barcode', $barcode)
+//         ->orWhere('code', $barcode)
+//         ->orWhere('barcode_2', $barcode)
+//         ->orWhere('barcode_3', $barcode)
+//         ->first();
+
+//     if (!$item) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Barcode tidak ditemukan di semua kolom'
+//         ], 404);
+//     }
+
+//     // Cek apakah item ini sudah ada di opname_sub_location
+//     $existing = Posopnameitem::where('opname_sub_location_id', $posopnamesublocation->opname_sub_location_id)
+//         ->where('item_id', $item->item_master_id) // pakai primary key Positemmaster
+//         ->first();
+
+//     if ($existing) {
+//         // Kalau sudah ada → tambah qty_real
+//         $existing->increment('qty_real', 1);
+//         $posopnameitem = $existing;
+//     } else {
+//         // Kalau belum ada → buat baru
+//         $posopnameitem = Posopnameitem::create([
+//             'opname_sub_location_id' => $posopnamesublocation->opname_sub_location_id,
+//             'item_id' => $item->item_master_id,
+//             'qty_real' => 1
+//         ]);
+//     }
+
+//     return response()->json([
+//         'success' => true,
+//         'message' => 'Item berhasil ditambahkan / diperbarui',
+//         'data'    => $posopnameitem->load('item')
+//     ]);
+// }
 //     public function scan($opname_sub_location_id)
 // {
 //     Log::info('Masuk ke method scan', ['opname_sub_location_id' => $opname_sub_location_id]);
@@ -70,121 +333,6 @@ class dasboardPenginputController extends Controller
 
 //     return view('pages.scan', compact('posopnamesublocation', 'opname_id', 'posopname'));
 // }
-public function scan($opname_sub_location_id)
-{
-    Log::info('Masuk ke method scan', ['opname_sub_location_id' => $opname_sub_location_id]);
-
-    // Ambil Posopnamesublocation beserta relasi yang diperlukan
-    $posopnamesublocation = Posopnamesublocation::with([
-            'opname',
-            'sublocation.location',
-            'users',
-            'sublocation',
-            'opname.ambildarisublocation',
-            'posopnameitems.item' // relasi ke posopnameitems + item
-        ])
-        ->where('opname_sub_location_id', $opname_sub_location_id)
-        ->firstOrFail();
-
-    $opname_id = $posopnamesublocation->opname_id;
-
-    // Ambil data opname untuk informasi tambahan
-    $posopname = Posopname::with(['ambildarisublocation', 'location'])
-        ->where('opname_id', $opname_id)
-        ->first();
-
-    // Ambil semua Posopnameitem berdasarkan opname_sub_location_id
-    // $posopnameitems_by_location = $posopnamesublocation->posopnameitems;
-
-    return view('pages.scan', compact(
-        'posopnamesublocation',
-        'opname_id',
-        'posopname'
-    ));
-}
-public function getPosopnameItems($opname_sub_location_id)
-{
-    // Ambil Posopnamesublocation dulu, agar validasi jika id tidak ada
-    $posopnamesublocation = Posopnamesublocation::findOrFail($opname_sub_location_id);
-
-    // Ambil semua posopnameitems beserta relasi item untuk opname_sub_location_id tersebut
-    $posopnameitems = Posopnameitem::with('item')
-        ->where('opname_sub_location_id', $opname_sub_location_id)
-        ->get();
-
-    // Return JSON untuk datatables
-    return response()->json([
-        'data' => $posopnameitems
-    ]);
-}
-
-public function scanPost(Request $request, $opname_sub_location_id)
-{
-    $barcodeInput = $request->input('barcode');
-    if (!$barcodeInput) {
-        return redirect()->back()->with('error', 'Barcode harus diisi');
-    }
-
-    // Fungsi bantu cari item master di kolom barcode, code, barcode2, barcode3 berturut-turut
-    $itemMaster = Positemmaster::where('barcode', $barcodeInput)
-        ->orWhere('code', $barcodeInput)
-        ->orWhere('barcode_2', $barcodeInput)
-        ->orWhere('barcode_3', $barcodeInput)
-        ->first();
-
-    if (!$itemMaster) {
-        return redirect()->back()->with('error', 'Item tidak ditemukan di semua kolom barcode.');
-    }
-
-    // Cari semua posopnameitem yang pakai item_master_id ini
-    $posopnameitems = Posopnameitem::where('item_master_id', $itemMaster->item_master_id)
-        ->with('item')
-        ->get();
-
-    // Ambil data Posopnamesublocation dan Posopname untuk konteks lokasi
-    $posopnamesublocation = Posopnamesublocation::with([
-            'opname',
-            'sublocation.location',
-            'users',
-            'sublocation',
-            'opname.ambildarisublocation'
-        ])
-        ->where('opname_sub_location_id', $opname_sub_location_id)
-        ->firstOrFail();
-
-    $opname_id = $posopnamesublocation->opname_id;
-
-    $posopname = Posopname::with(['ambildarisublocation', 'location'])
-        ->where('opname_id', $opname_id)
-        ->first();
-
-    if ($posopnameitems->isEmpty()) {
-        // Belum ada item di opname manapun, kirim info dan itemMaster
-        return view('pages.scan', compact(
-            'posopnamesublocation',
-            'opname_id',
-            'posopname',
-            'itemMaster'
-        ))->with('info', 'Item belum masuk dalam opname manapun.');
-    }
-
-    // Kirim semua posopnameitems ke view
-    return view('pages.scan', compact(
-        'posopnamesublocation',
-        'opname_id',
-        'posopname',
-        'posopnameitems'
-    ));
-}
-
-
-
-
-
-
-
-}
-
 // public function scan($opname_sub_location_id)
 // {
 //     $posopnamesublocation = Posopnamesublocation::with([
