@@ -94,14 +94,28 @@ public function scan($opname_sub_location_id)
         ->first();
 
     // Ambil semua Posopnameitem berdasarkan opname_sub_location_id
-    $posopnameitems_by_location = $posopnamesublocation->posopnameitems;
+    // $posopnameitems_by_location = $posopnamesublocation->posopnameitems;
 
     return view('pages.scan', compact(
         'posopnamesublocation',
         'opname_id',
-        'posopname',
-        'posopnameitems_by_location'
+        'posopname'
     ));
+}
+public function getPosopnameItems($opname_sub_location_id)
+{
+    // Ambil Posopnamesublocation dulu, agar validasi jika id tidak ada
+    $posopnamesublocation = Posopnamesublocation::findOrFail($opname_sub_location_id);
+
+    // Ambil semua posopnameitems beserta relasi item untuk opname_sub_location_id tersebut
+    $posopnameitems = Posopnameitem::with('item')
+        ->where('opname_sub_location_id', $opname_sub_location_id)
+        ->get();
+
+    // Return JSON untuk datatables
+    return response()->json([
+        'data' => $posopnameitems
+    ]);
 }
 
 public function scanPost(Request $request, $opname_sub_location_id)

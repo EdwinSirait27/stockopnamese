@@ -139,6 +139,8 @@ Route::middleware(['auth', 'role:Penginput'])->group(function () {
     Route::get('/posopnamesublocationpenginput/posopnamesublocationpenginput', [dasboardPenginputController::class, 'getPosopnamesublocationspenginput'])->name('posopnamesublocationpenginput.posopnamesublocationpenginput');
     Route::get('/scan/{opname_sub_location_id}', [dasboardPenginputController::class, 'scan'])->name('scan');
     Route::post('/scan/{opname_sub_location_id}', [dasboardPenginputController::class, 'scanPost'])->name('scan.post');
+    Route::get('/posopnameitems/{opname_sub_location_id}', [dasboardPenginputController::class, 'getPosopnameItems'])
+    ->name('posopnameitems.list');
 });
 Route::get('/redirect-by-role', function () {
     $user = Auth::user();
@@ -162,3 +164,13 @@ Route::get('/redirect-by-role', function () {
 })->middleware('auth');
 
 
+        //   @foreach($posopnameitems_by_location as $item)
+        //             <tr>
+        //                 <td>{{ $item->opname_item_id }}</td>
+        //                 <td>{{ $item->item->name ?? 'N/A' }}</td>
+        //                 <td>{{ $item->item->barcode ?? 'N/A' }}</td>
+        //                 <td>{{ $item->qty_system }}</td>
+        //                 <td>{{ $item->qty_real }}</td>
+        //                 <td>{{ $item->note ?? '-' }}</td>
+        //             </tr>
+        //         @endforeach
