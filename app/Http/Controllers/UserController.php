@@ -168,6 +168,7 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
          $user->location_id = $validatedData['location_id'];
+         $user->name = $validatedData['name'];
 
         // Update role
         $role = Role::findByName($validatedData['role']);

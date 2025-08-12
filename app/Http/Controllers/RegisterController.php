@@ -88,7 +88,6 @@ class RegisterController extends Controller
             'required',
             'string',
             'max:255',
-            'regex:/^[A-Za-z\s]+$/',
             Rule::unique('users', 'name')->where(function ($query) use ($request) {
                 return $query->whereRaw('LOWER(name) = ?', [strtolower($request->input('name'))]);
             }),

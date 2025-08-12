@@ -271,7 +271,7 @@ return DataTables::of($query)
             <a href="' . route('opname.showitemadmin', $row->form_number) . '" 
                class="btn btn-sm btn-primary">
                 <i class="fas fa-eye"></i> Show
-            </a>
+            </a>d
         ';
 
         if ($row->status === 'REQ PRINT' || $row->status === 'PRINTED') {
