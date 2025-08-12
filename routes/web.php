@@ -143,6 +143,9 @@ Route::middleware(['auth', 'role:Penginput'])->group(function () {
     ->name('posopname.items');
 Route::post('/posopname/{opname_sub_location_id}/scan-preview', [dasboardPenginputController::class, 'scanBarcodePreview'])
     ->name('posopname.scanBarcodePreview');
+Route::post('/save-scanned-item/{opname_sub_location_id}', [dasboardPenginputController::class, 'saveScannedItem']);
+Route::get('/posopname-item/{id}', [dasboardPenginputController::class, 'showposopnameitem']);
+Route::put('/posopname-item/{id}', [dasboardPenginputController::class, 'update']);
 
 });
 Route::get('/redirect-by-role', function () {

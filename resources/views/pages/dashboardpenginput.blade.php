@@ -56,65 +56,67 @@
                 font-size: 0.9rem;
             }
         }
-    </style>--}}
+    </style> --}}
     <style>
-    .box-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* tetap 2 kolom */
-        gap: 0.5rem;
-        padding: 0.5rem;
-    }
-    .box {
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-        width: 100%; /* otomatis isi 1 kolom */
-        aspect-ratio: 1 / 1; /* kotak sama sisi */
-        box-sizing: border-box;
-        transition: transform 0.2s ease;
-        font-size: 1rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .box:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
-    }
-
-    .box-header {
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        color: #222;
-    }
-
-    .box-content p {
-        margin: 0;
-        font-size: 0.9rem;
-        line-height: 1.3;
-    }
-
-    @media (max-width: 576px) {
-        .box {
-            font-size: 0.85rem; /* biar muat teks di HP kecil */
+        .box-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* tetap 2 kolom */
+            gap: 0.5rem;
+            padding: 0.5rem;
         }
-    }
-</style>
 
-@endpush 
+        .box {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+            width: 100%;
+            /* otomatis isi 1 kolom */
+            aspect-ratio: 1 / 1;
+            /* kotak sama sisi */
+            box-sizing: border-box;
+            transition: transform 0.2s ease;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
+        }
+
+        .box-header {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #222;
+        }
+
+        .box-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+
+        @media (max-width: 576px) {
+            .box {
+                font-size: 0.85rem;
+                /* biar muat teks di HP kecil */
+            }
+        }
+    </style>
+@endpush
 
 @section('main')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                                {{-- @if ($posopname)
-    <h1>Pos Opname: {{ $posopname->ambildarisublocation->location->name ?? 'Tidak diketahui' }}</h1>
-@endif --}}
-<h1>stockopname</h1>
+
+                <h1>stockopname</h1>
             </div>
             <div class="section-body">
                 <input type="text" id="search-input" placeholder="Cari hanya angka Rak" class="form-control mb-3"

@@ -11,6 +11,9 @@ class Posopnameitem extends Model
     protected $connection = 'mysql_second'; // koneksi ke database kedua
     protected $table = 'pos_opname_item';
     protected $primaryKey = 'opname_item_id';
+    public $incrementing = false;
+      public $timestamps = false;
+      protected $keyType = 'int';
     protected $fillable = [
         'opname_item_id',
         'opname_id',

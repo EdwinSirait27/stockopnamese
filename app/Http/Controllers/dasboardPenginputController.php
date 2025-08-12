@@ -9,6 +9,8 @@ use App\Models\Posopnameitem;
 use App\Models\Positemmaster;
 use App\Models\Posopnamesublocation;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 class dasboardPenginputController extends Controller
 {
     
@@ -126,26 +128,40 @@ public function scan($opname_sub_location_id)
         'posopname'            => $posopname
     ]);
 }
+// public function scanBarcodePreview(Request $request, $opname_sub_location_id)
+// {
+//     $request->validate([
+//         'barcode' => 'required|string|max:255'
+//     ]);
 
-public function getPosopnameItems($opname_sub_location_id)
-{
-    // Validasi apakah ID sub-location ada
-    if (!Posopnamesublocation::where('opname_sub_location_id', $opname_sub_location_id)->exists()) {
-        abort(404, 'Opname Sub Location tidak ditemukan');
-    }
+//     $barcode = trim($request->barcode);
+//     Log::info('Barcode yang dicari', ['input' => $barcode]);
 
-    // Ambil semua item terkait + relasi item
-    $posopnameitems = Posopnameitem::with('item')
-        ->where('opname_sub_location_id', $opname_sub_location_id)
-        ->get();
+//     $item = Positemmaster::where('barcode', 'LIKE', "%{$barcode}%")
+//         ->orWhere('code', 'LIKE', "%{$barcode}%")
+//         ->orWhere('barcode_2', 'LIKE', "%{$barcode}%")
+//         ->orWhere('barcode_3', 'LIKE', "%{$barcode}%")
+//         ->first();
 
-    return response()->json([
-        'data' => $posopnameitems
-    ]);
-}
+//     if (!$item) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Barcode tidak ditemukan'
+//         ], 404);
+//     }
 
-
-
+//     // Return tanpa simpan ke DB
+//     return response()->json([
+//         'success' => true,
+//         'message' => 'Item ditemukan',
+//         'data' => [
+//             'item_master_id' => $item->item_master_id,
+//             'barcode'        => $item->barcode,
+//             'name'           => $item->name,
+//             'qty'            => 0
+//         ]
+//     ]);
+// }
 public function scanBarcodePreview(Request $request, $opname_sub_location_id)
 {
     $request->validate([
@@ -168,7 +184,25 @@ public function scanBarcodePreview(Request $request, $opname_sub_location_id)
         ], 404);
     }
 
-    // Return tanpa simpan ke DB
+    // Cek apakah item sudah masuk di opname_sub_location_id ini
+    $exists = Posopnameitem::where('opname_sub_location_id', $opname_sub_location_id)
+        ->where('item_master_id', $item->item_master_id)
+        ->exists();
+
+    if ($exists) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Item sudah pernah masuk sebelumnya',
+            'data' => [
+                'item_master_id' => $item->item_master_id,
+                'barcode'        => $item->barcode,
+                'name'           => $item->name,
+                'qty'            => 1
+            ]
+        ], 409); // kode 409 Conflict sebagai tanda warning
+    }
+
+    // Jika belum ada, return data item seperti biasa tanpa simpan
     return response()->json([
         'success' => true,
         'message' => 'Item ditemukan',
@@ -176,21 +210,88 @@ public function scanBarcodePreview(Request $request, $opname_sub_location_id)
             'item_master_id' => $item->item_master_id,
             'barcode'        => $item->barcode,
             'name'           => $item->name,
-            'qty'            => 1
+            'qty'            => 0
         ]
     ]);
 }
+// public function getPosopnameItems($opname_sub_location_id)
+// {
+//     // Validasi apakah ID sub-location ada
+//     if (!Posopnamesublocation::where('opname_sub_location_id', $opname_sub_location_id)->exists()) {
+//         abort(404, 'Opname Sub Location tidak ditemukan');
+//     }
+
+//     // Ambil semua item terkait + relasi item
+//     $posopnameitems = Posopnameitem::with('item')
+//         ->where('opname_sub_location_id', $opname_sub_location_id)
+//         ->get();
+
+//     return response()->json([
+//         'data' => $posopnameitems
+//     ]);
+// }
+public function getPosopnameItems($opname_sub_location_id)
+{
+    // Validasi apakah ID sub-location ada
+    if (!Posopnamesublocation::where('opname_sub_location_id', $opname_sub_location_id)->exists()) {
+        abort(404, 'Opname Sub Location tidak ditemukan');
+    }
+
+    // Ambil semua item terkait + relasi item
+    $posopnameitems = Posopnameitem::with('item')
+        ->where('opname_sub_location_id', $opname_sub_location_id)
+        ->get();
+
+    // Tambahkan kolom action
+    // $posopnameitems = $posopnameitems->map(function ($item) {
+    //     $item->action = '
+    //         <button onclick="editItem('.$item->opname_item_id.')">Edit</button>
+    //     ';
+    //     return $item;
+    // });
+    $posopnameitems = $posopnameitems->map(function ($item) {
+    $item->action = '
+               <button class="btn btn-sm btn-primary" onclick="editItem('.$item->opname_item_id.')">Edit</button>
+    ';
+    return $item;
+});
+
+
+    return response()->json([
+        'data' => $posopnameitems
+    ]);
+}
+
+
+
+
+
+
+
 public function saveScannedItem(Request $request, $opname_sub_location_id)
 {
     $validated = $request->validate([
         'item_master_id' => 'required|integer',
-        'qty' => 'required|integer|min:1'
+        'qty'            => 'required|numeric|min:0.001',
+        'barcode'        => 'nullable|string|max:255' // untuk simpan di note
     ]);
 
+    // Ambil data sub location yang sedang diakses
+    $subLocation = Posopnamesublocation::with('opname')
+        ->findOrFail($opname_sub_location_id);
+
+    // Generate opname_item_id unik
+   $opnameItemId = (int) (microtime(true) * 10000);; // bisa juga pakai format lain jika perlu
+    // Buat data baru
     Posopnameitem::create([
-        'opname_sub_location_id' => $opname_sub_location_id,
+        'opname_item_id'         => $opnameItemId,
+        'opname_id'              => $subLocation->opname_id, // dari relasi
         'item_master_id'         => $validated['item_master_id'],
-        'qty_real'               => $validated['qty']
+        'qty_real'               => (float) $validated['qty'],
+        'note'                   => $validated['barcode'] ?? '', // simpan barcode hasil scan
+        'sub_location_id'        => $subLocation->sub_location_id,
+        'opname_sub_location_id' => $opname_sub_location_id,
+        'date'                   => Carbon::now(), // timestamp sekarang
     ]);
 
     return response()->json([
@@ -199,9 +300,52 @@ public function saveScannedItem(Request $request, $opname_sub_location_id)
     ]);
 }
 
+// public function saveScannedItem(Request $request, $opname_sub_location_id)
+// {
+//     $validated = $request->validate([
+//         'item_master_id' => 'required|integer',
+//         'qty'            => 'required|numeric|min:0.001' // biar cocok sama decimal:3
+//     ]);
+
+//     Posopnameitem::create([
+//         'opname_sub_location_id' => $opname_sub_location_id,
+//         'item_master_id'         => $validated['item_master_id'],
+//         'qty_real'               => (float) $validated['qty'] // simpan sebagai float
+//     ]);
+
+//     return response()->json([
+//         'success' => true,
+//         'message' => 'Item berhasil disimpan'
+//     ]);
+// }
 
 
 
+
+// PosopnameItemController.php
+public function showposopnameitem($id)
+{
+    $item = Posopnameitem::with('item')->findOrFail($id);
+
+    return response()->json([
+        'data' => $item
+    ]);
+}
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'qty_real' => 'required|numeric|min:0.001'
+    ]);
+
+    $item = Posopnameitem::findOrFail($id);
+    $item->qty_real = $request->qty_real;
+    $item->save();
+
+    return response()->json([
+        'message' => 'Data berhasil diperbarui'
+    ]);
+}
 
 
 }
