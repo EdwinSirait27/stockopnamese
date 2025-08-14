@@ -272,28 +272,34 @@ public function getPosopnameItems($opname_sub_location_id)
 
 public function saveScannedItem(Request $request, $opname_sub_location_id)
 {
+    // Log semua request yang masuk
+    \Log::info('Payload saveScannedItem:', $request->all());
+
     $validated = $request->validate([
         'item_master_id' => 'required|integer',
-        'qty'            => 'required|numeric',
-        'barcode'        => 'nullable|string|max:255' // untuk simpan di note
+        'qty'       => 'nullable',
+        'barcode'        => 'nullable|string|max:255' 
     ]);
 
-    // Ambil data sub location yang sedang diakses
     $subLocation = Posopnamesublocation::with('opname')
         ->findOrFail($opname_sub_location_id);
 
-    // Generate opname_item_id unik
-   $opnameItemId = (int) (microtime(true) * 10000);; // bisa juga pakai format lain jika perlu
-    // Buat data baru
+    $opnameItemId = (int) (microtime(true) * 10000);
+
     Posopnameitem::create([
         'opname_item_id'         => $opnameItemId,
-        'opname_id'              => $subLocation->opname_id, // dari relasi
+        'opname_id'              => $subLocation->opname_id,
         'item_master_id'         => $validated['item_master_id'],
         'qty_real'               => (float) $validated['qty'],
-        'note'                   => $validated['barcode'] ?? '', // simpan barcode hasil scan
+        'note'                   => $validated['barcode'] ?? '',
         'sub_location_id'        => $subLocation->sub_location_id,
         'opname_sub_location_id' => $opname_sub_location_id,
-        'date'                   => Carbon::now(), // timestamp sekarang
+        'date'                   => Carbon::now(),
+    ]);
+
+    \Log::info('Item berhasil disimpan', [
+        'opname_item_id' => $opnameItemId,
+        'sub_location_id' => $subLocation->sub_location_id
     ]);
 
     return response()->json([
@@ -301,6 +307,7 @@ public function saveScannedItem(Request $request, $opname_sub_location_id)
         'message' => 'Item berhasil disimpan'
     ]);
 }
+
 
 // public function saveScannedItem(Request $request, $opname_sub_location_id)
 // {

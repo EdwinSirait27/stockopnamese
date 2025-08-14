@@ -88,7 +88,7 @@
                     </div>
                     <div class="preview-row">
                         <div class="preview-label">Qty</div>
-                        <input type="number" id="preview-qty" min="1" value="1" class="form-control"
+                        <input type="number" id="preview-qty" min="0" class="form-control"
                             style="max-width: 80px;">
                     </div>
                     <button id="btn-save" class="btn btn-success">Save</button>
