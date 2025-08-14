@@ -88,7 +88,7 @@
                     </div>
                     <div class="preview-row">
                         <div class="preview-label">Qty</div>
-                        <input type="number" id="preview-qty" min="0" class="form-control"
+                        <input type="number" id="preview-qty" min="0" autofocus autocomplete="off" class="form-control"
                             style="max-width: 80px;">
                     </div>
                     <button id="btn-save" class="btn btn-success">Save</button>
@@ -306,4 +306,35 @@
 
         });
     </script>
+   <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const barcodeInput = document.getElementById("barcode");
+    const previewQty = document.getElementById("preview-qty");
+    const btnSave = document.getElementById("btn-save");
+
+    // Autofocus pertama kali
+    barcodeInput.focus();
+
+    function showPreview() {
+        document.getElementById("preview-container").style.display = "block";
+        previewQty.focus(); // pindah fokus ke qty
+    }
+
+    // Enter di qty sama seperti klik save
+    previewQty.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            btnSave.click();
+        }
+    });
+
+    // Trigger preview setelah submit scanForm
+    document.querySelector("#scanForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        showPreview();
+    });
+});
+</script>
+
+
 @endpush
