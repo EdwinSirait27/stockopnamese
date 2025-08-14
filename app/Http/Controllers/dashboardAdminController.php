@@ -279,11 +279,72 @@ return DataTables::of($query)
 
     return DataTables::of($query)->make(true);
 }
+// public function printitemadmin(Request $request, $form_number)
+// {
+//     Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
+
+//     // Ambil data sublocation
+//     $posopnamesublocation = Posopnamesublocation::with(
+//         'opname',
+//         'sublocation.location',
+//         'users',
+//         'sublocation',
+//         'opname.ambildarisublocation'
+//     )
+//     ->where('form_number', $form_number)
+//     ->get();
+
+//     // ✅ Update status jika masih REQ PRINT
+//     if ($posopnamesublocation->isNotEmpty()) {
+//         $firstData = $posopnamesublocation->first();
+//         if ($firstData->status === 'REQ PRINT') {
+//             $firstData->update(['status' => 'PRINTED']);
+//         }
+//     }
+
+//     $opname_id = optional($posopnamesublocation->first())->opname_id;
+
+//     // Ambil opname
+//     $posopname = Posopname::with('ambildarisublocation', 'location')
+//         ->where('opname_id', $opname_id)
+//         ->first();
+
+//     // Ambil item terkait
+//     $posopnameitems = Posopnameitem::select([
+//             'opname_item_id',
+//             'opname_id',
+//             'item_master_id',
+//             'qty_system',
+//             'qty_real',
+//             'note',
+//             'type',
+//             'company_id',
+//             'sub_location_id',
+//             'opname_sub_location_id'
+//         ])
+//         ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item', 'item.posunit')
+//         ->whereHas('posopnamesublocation', function ($q) use ($form_number) {
+//             $q->where('form_number', $form_number);
+//         })
+//         ->get();
+
+//     // Hitung total qty real
+//     $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
+//         return bcadd($carry, $item->qty_real, 3); // 3 = jumlah desimal
+//     }, '0');
+
+//     return view('pages.printitemadmin', compact(
+//         'posopnamesublocation',
+//         'form_number',
+//         'posopname',
+//         'posopnameitems',
+//         'totalQtyReal'
+//     ));
+// }
 public function printitemadmin(Request $request, $form_number)
 {
     Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
 
-    // Ambil data sublocation
     $posopnamesublocation = Posopnamesublocation::with(
         'opname',
         'sublocation.location',
@@ -304,12 +365,10 @@ public function printitemadmin(Request $request, $form_number)
 
     $opname_id = optional($posopnamesublocation->first())->opname_id;
 
-    // Ambil opname
     $posopname = Posopname::with('ambildarisublocation', 'location')
         ->where('opname_id', $opname_id)
         ->first();
 
-    // Ambil item terkait
     $posopnameitems = Posopnameitem::select([
             'opname_item_id',
             'opname_id',
@@ -330,17 +389,24 @@ public function printitemadmin(Request $request, $form_number)
 
     // Hitung total qty real
     $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
-        return bcadd($carry, $item->qty_real, 3); // 3 = jumlah desimal
+        return bcadd($carry, $item->qty_real, 3);
     }, '0');
+
+    // 🔍 Hitung jumlah kemunculan setiap code untuk deteksi duplikat
+    $codeCounts = $posopnameitems->groupBy(function ($item) {
+        return $item->item->code ?? '-';
+    })->map->count();
 
     return view('pages.printitemadmin', compact(
         'posopnamesublocation',
         'form_number',
         'posopname',
         'posopnameitems',
-        'totalQtyReal'
+        'totalQtyReal',
+        'codeCounts' // kirim ke view
     ));
 }
+
 
 
 

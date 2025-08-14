@@ -50,7 +50,12 @@
             tfoot {
                 display: table-footer-group;
             }
+            .highlight-duplicate {
+            background-color: yellow !important;
+            -webkit-print-color-adjust: exact; /* Chrome/Safari */
+            print-color-adjust: exact;  
         }
+    }
     </style>
 </head>
 
@@ -80,10 +85,9 @@
                 <td><strong>User</strong></td>
                 {{-- <td>{{ $posopnamesublocation->first()->users->name ?? '-' }}</td> --}}
                 <td>
-    {{ optional($posopnamesublocation->first()->oxy)->full_name 
-        ?? optional($posopnamesublocation->first()->users)->name 
-        ?? '-' }}
-</td>
+                    {{ optional($posopnamesublocation->first()->oxy)->full_name ??
+                        (optional($posopnamesublocation->first()->users)->name ?? '-') }}
+                </td>
 
             </tr>
             <tr class="header-row">
@@ -94,7 +98,7 @@
             <tr>
                 <th>No</th>
                 {{-- <th>item master id</th> --}}
-                <th>Kode Item</th>
+                <th>SKU</th>
                 <th>Barcode</th>
                 <th>Uom</th>
                 <th>Nama Item</th>
@@ -104,12 +108,10 @@
         </thead>
 
         <tbody>
-            @foreach ($posopnameitems as $index => $item)
+            {{-- @foreach ($posopnameitems as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    {{-- <td>{{ $item->item_master_id ?? '-' }}</td> --}}
                     <td>{{ $item->item->code ?? '-' }}</td>
-                    {{-- <td>{{ $item->item->barcode ?? '-' }}</td> --}}
                     <td>
                         {{ $item->note ? $item->note : $item->item->barcode ?? '-' }}
                     </td>
@@ -119,7 +121,46 @@
                     <td>{{ $item->qty_real }}</td>
                     <td></td>
                 </tr>
-            @endforeach
+            @endforeach --}}
+            {{-- @foreach ($posopnameitems as $index => $item)
+    @php
+        $code = $item->item->code ?? '-';
+        $isDuplicate = ($codeCounts[$code] ?? 0) > 1;
+    @endphp
+    <tr>
+        <td>{{ $index + 1 }}</td>
+        <td style="{{ $isDuplicate ? 'background-color: yellow;' : '' }}">
+            {{ $code }}
+        </td>
+        <td>
+            {{ $item->note ? $item->note : ($item->item->barcode ?? '-') }}
+        </td>
+        <td>{{ $item->item->posunit->unit ?? '-' }}</td>
+        <td>{{ $item->item->name ?? '-' }}</td>
+        <td>{{ $item->qty_real }}</td>
+        <td></td>
+    </tr>
+@endforeach --}}
+@foreach ($posopnameitems as $index => $item)
+    @php
+        $code = $item->item->code ?? '-';
+        $isDuplicate = ($codeCounts[$code] ?? 0) > 1;
+    @endphp
+    <tr>
+        <td>{{ $index + 1 }}</td>
+        <td class="{{ $isDuplicate ? 'highlight-duplicate' : '' }}">
+            {{ $code }}
+        </td>
+        <td>
+            {{ $item->note ? $item->note : ($item->item->barcode ?? '-') }}
+        </td>
+        <td>{{ $item->item->posunit->unit ?? '-' }}</td>
+        <td>{{ $item->item->name ?? '-' }}</td>
+        <td>{{ $item->qty_real }}</td>
+        <td></td>
+    </tr>
+@endforeach
+
         </tbody>
 
     </table>
