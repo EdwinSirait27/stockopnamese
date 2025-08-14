@@ -30,9 +30,11 @@
                                 {{-- @if ($posopname->isNotEmpty())
                               
                                     @endif --}}
-                                <h4>Pos Sub Opname :
-                                    {{ $posopname->first()->ambildarisublocation->name ?? 'Tidak diketahui' }}</h4>
-                                <h4>Detail Item - Form Number: {{ $form_number }}</h4>
+                                <h4>Pos Sub Opname : </h4>
+                                    {{-- {{ $posopname->first()->ambildarisublocation->name ?? 'Tidak diketahui' }}</h4> --}}
+                                    {{ Auth::user()->location->name ?? '-' }}
+                                {{-- <h4>Detail Item - Form Number: {{ $form_number }}</h4> --}}
+ {{-- <p><strong>Lokasi User:</strong> {{ Auth::user()->location->name ?? '-' }}</p> --}}
 
 
 
@@ -89,10 +91,11 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{ route('opname.getshowitemadmin') }}',
+                    url: '{{ route('getshowitemadmin') }}',
                     type: 'GET',
                     data: {
-                        form_number: '{{ $form_number }}'
+                       opname_id: "{{ $opname_id }}",
+                form_number: "{{ $form_number }}"
                     }
                 },
                 responsive: true,

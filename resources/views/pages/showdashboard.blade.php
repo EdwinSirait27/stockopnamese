@@ -141,14 +141,30 @@
                         name: 'status',
                         className: 'text-center'
                     },
-                    {
-                        data: 'users.name',
-                        name: 'users.name',
-                        orderable: false,
-                        searchable: false,
+                    // {
+                    //     data: 'users.name',
+                    //     name: 'users.name',
+                    //     orderable: false,
+                    //     searchable: false,
 
-                        className: 'text-center'
-                    },
+                    //     className: 'text-center'
+                    // },
+                    {
+    data: null, // ambil semua supaya bisa cek relasi
+    name: 'oxy.full_name', // tetap set name untuk sorting/search server-side
+    orderable: false,
+    searchable: false,
+    className: 'text-center',
+    render: function (data, type, row) {
+        if (row.oxy && row.oxy.full_name) {
+            return row.oxy.full_name;
+        } else if (row.users && row.users.name) {
+            return row.users.name;
+        } else {
+            return '-';
+        }
+    }
+},
                     {
                         data: 'date',
                         name: 'date',
@@ -163,6 +179,9 @@
                     }
                 ],
             });
+             setInterval(function() {
+                table.ajax.reload(null, false); // false = biar tetap di halaman yang sama
+            }, 5000);
         });
     </script>
 @endpush

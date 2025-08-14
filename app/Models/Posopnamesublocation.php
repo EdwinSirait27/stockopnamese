@@ -26,8 +26,6 @@ class Posopnamesublocation extends Model
     'opname_sub_location_id' => 'string',
     'opname_id' => 'string',
     'sub_location_id' => 'string',
-    // 'date' => 'date',
-
 ];
      public function opname()
 {

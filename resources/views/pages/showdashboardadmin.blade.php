@@ -11,13 +11,10 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-
                 @if ($posopname->isNotEmpty())
                     <h1>Pos Opname : {{ $posopname->first()->ambildarisublocation->location->name ?? 'Tidak diketahui' }}
                     </h1>
                 @endif
-
-
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="/dashboard">Stock Opname</a></div>
                 </div>

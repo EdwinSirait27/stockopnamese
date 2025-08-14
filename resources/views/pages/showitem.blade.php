@@ -28,11 +28,11 @@
                             <div class="card-header">
 
                                 {{-- @if ($posopname->isNotEmpty())
-                              
+
                                     @endif --}}
                                 <h4>Pos Sub Opname :
                                     {{ $posopname->first()->ambildarisublocation->name ?? 'Tidak diketahui' }}</h4>
-                                <h4>Detail Item - Form Number: {{ $form_number }}</h4>
+                                <h4>Detail Item - Form Number: {{ $form_number  }}</h4>
 
 
 
@@ -93,7 +93,7 @@
                     url: '{{ route('opname.getshowitem') }}',
                     type: 'GET',
                     data: {
-                        form_number: '{{ $form_number }}'
+                        opname_sub_location_id: '{{ $opname_sub_location_id }}'
                     }
                 },
                 responsive: true,

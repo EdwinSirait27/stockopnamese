@@ -93,7 +93,7 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     })->name('import.progress');
 
     // Halaman Show Item berdasarkan form_number
-    Route::get('/opname/showitem/{form_number}', [dashboardController::class, 'showitem'])
+    Route::get('/opname/showitem/{opname_sub_location_id}', [dashboardController::class, 'showitem'])
         ->name('opname.showitem');
 
     // Endpoint DataTables untuk item berdasarkan form_number
@@ -101,7 +101,7 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
         ->name('opname.getshowitem');
     // routes/web.php
 // Route::get('/printitem/{form_number}', [dashboardController::class, 'printitem'])->name('printitem.print');
-    Route::get('/opname/printitem/{form_number}', [dashboardController::class, 'printitem'])
+    Route::get('/opname/printitem/{opname_sub_location_id}', [dashboardController::class, 'printitem'])
         ->name('opname.printitem');
 });
 Route::middleware(['auth', 'role:Admin'])->group(function () {

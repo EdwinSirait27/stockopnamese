@@ -9,13 +9,10 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mtokosoglo;
 use App\Models\Posopnameitem;
-
 use App\Models\Posopnamesublocation;
 use Illuminate\Support\Facades\Log;
-
 class dashboardAdminController extends Controller
-{
-   
+{   
      public function index()
     {
         return view('pages.dashboardadmin');
@@ -24,28 +21,7 @@ class dashboardAdminController extends Controller
 {
     $userLocationId = auth()->user()->location_id;
 
-    // $query = Posopname::select([
-    //     'opname_id',
-    //     'date',
-    //     'status',
-    //     'location_id',
-    //     'note',
-    //     'counter',
-    //     'number',
-    //     'approval_1',
-    //     'approval_2',
-    //     'approval_3',
-    //     'user_id',
-    //     'prefix_number',
-    //     'approval_1_date',
-    //     'approval_2_date',
-    //     'approval_3_date',
-    //     'type',
-    //     'company_id',
-    //     'type_opname'
-    // ])
-    // ->where('location_id', $userLocationId) 
-    // ->with('location', 'ambildarisublocation', 'ambildarisublocation.location')->where('status', 'DRAFT');
+    
    $query = Posopname::select('pos_opname.*')
    ->where('location_id', $userLocationId) 
     ->with('location', 'ambildarisublocation', 'ambildarisublocation.location')->where('status', 'DRAFT');
@@ -98,17 +74,50 @@ class dashboardAdminController extends Controller
 }
 
 
+    // public function showadmin($opname_id)
+    // {
+    //     Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
+    //     $posopnamesublocation = Posopnamesublocation::with('opname', 'sublocation.location', 'users', 'sublocation', 'opname.ambildarisublocation')
+    //         ->where('opname_id', $opname_id)
+    //         ->get();
+    //     $posopname = Posopname::with('ambildarisublocation', 'location')
+    //         ->where('opname_id', $opname_id)
+    //         ->get();
+    //     return view('pages.showdashboardadmin', compact('posopnamesublocation', 'opname_id', 'posopname'));
+    // }
     public function showadmin($opname_id)
-    {
-        Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
-        $posopnamesublocation = Posopnamesublocation::with('opname', 'sublocation.location', 'users', 'sublocation', 'opname.ambildarisublocation')
-            ->where('opname_id', $opname_id)
-            ->get();
-        $posopname = Posopname::with('ambildarisublocation', 'location')
-            ->where('opname_id', $opname_id)
-            ->get();
-        return view('pages.showdashboardadmin', compact('posopnamesublocation', 'opname_id', 'posopname'));
-    }
+{
+    $locationId = Auth::user()->location_id;
+
+    Log::info('Masuk ke method show', [
+        'opname_id'   => $opname_id,
+        'location_id' => $locationId
+    ]);
+
+    $posopnamesublocation = Posopnamesublocation::with(
+        'opname',
+        'sublocation.location',
+        'users',
+        'sublocation',
+        'opname.ambildarisublocation'
+    )
+        ->where('opname_id', $opname_id)
+        ->whereHas('sublocation.location', function ($q) use ($locationId) {
+            $q->where('location_id', $locationId);
+        })
+        ->get();
+
+    $posopname = Posopname::with('ambildarisublocation', 'location')
+        ->where('opname_id', $opname_id)
+        ->where('location_id', $locationId)
+        ->get();
+
+    return view('pages.showdashboardadmin', compact(
+        'posopnamesublocation',
+        'opname_id',
+        'posopname'
+    ));
+}
     public function getPosopnamesublocationsadmin(Request $request)
 {
     $userLocationId = auth()->user()->location_id;
@@ -151,12 +160,14 @@ class dashboardAdminController extends Controller
 
 return DataTables::of($query)
     ->addColumn('action', function ($row) {
-        $buttons = '
-            <a href="' . route('opname.showitemadmin', $row->form_number) . '" 
-               class="btn btn-sm btn-primary">
-                <i class="fas fa-eye"></i> Show
-            </a>
-        ';
+        $buttons ='<a href="' . route('showitemadmin', [
+        $row->posopnamesublocation->opname_id ?? $row->opname_id,
+        $row->posopnamesublocation->form_number ?? '-'
+    ]) . '" 
+   class="btn btn-sm btn-primary">
+    <i class="fas fa-eye"></i> Show
+</a>'
+;
 
         if ($row->status === 'REQ PRINT' || $row->status === 'PRINTED') {
             // Status REQ PRINT atau PRINTED → Print aktif
@@ -181,11 +192,38 @@ return DataTables::of($query)
     ->make(true);
 }
 
- public function showitemadmin($form_number)
-{
-    Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
+// public function showitemadmin($form_number)
+//     {
+//         Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
 
-    // Ambil data sublocation
+//         // Ambil data sublocation
+//         $posopnamesublocation = Posopnamesublocation::with(
+//             'opname',
+//             'sublocation.location',
+//             'users',
+//             'sublocation',
+//             'opname.ambildarisublocation'
+//         )
+//             ->where('form_number', $form_number)
+//             ->get();
+
+//         // Ambil opname_id dari hasil di atas
+//         $opname_id = optional($posopnamesublocation->first())->opname_id;
+
+//         // Ambil data opname berdasarkan opname_id
+//         $posopname = Posopname::with('ambildarisublocation', 'location')
+//             ->where('opname_id', $opname_id)
+//             ->get();
+
+//         return view('pages.showitemadmin', compact('posopnamesublocation', 'form_number', 'posopname', 'opname_id'));
+//     }
+public function showitemadmin($opname_id, $form_number)
+{
+    Log::info('Masuk ke method showitem', [
+        'opname_id'   => $opname_id,
+        'form_number' => $form_number
+    ]);
+
     $posopnamesublocation = Posopnamesublocation::with(
         'opname',
         'sublocation.location',
@@ -193,92 +231,108 @@ return DataTables::of($query)
         'sublocation',
         'opname.ambildarisublocation'
     )
-    ->where('form_number', $form_number)
-    ->get();
+        ->where('opname_id', $opname_id)
+        ->where('form_number', $form_number)
+        ->get();
 
-    // Ambil opname_id dari hasil di atas
-    $opname_id = optional($posopnamesublocation->first())->opname_id;
-
-    // Ambil data opname berdasarkan opname_id
     $posopname = Posopname::with('ambildarisublocation', 'location')
         ->where('opname_id', $opname_id)
         ->get();
 
-    return view('pages.showitemadmin', compact('posopnamesublocation', 'form_number', 'posopname','opname_id'));
+    return view('pages.showitemadmin', compact(
+        'posopnamesublocation',
+        'form_number',
+        'posopname',
+        'opname_id'
+    ));
 }
-   public function getshowitemadmin(Request $request)
-{
-    // $query = Posopnameitem::select([
-    //     'opname_item_id',
-    //     'opname_id',
-    //     'item_master_id',
-    //     'qty_system',
-    //     'qty_real',
-    //     'note',
-    //     'type',
-    //     'company_id',
-    //     'sub_location_id',
-    //     'opname_sub_location_id'
-    // ])
-    // ->with('sublocation', 'opname', 'posopnamesublocation','opname.location','item','item.posunit');
-  $query = Posopnameitem::select('pos_opname_item.*')
-            ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item', 'item.posunit');
 
-    // Filter berdasarkan form_number di relasi posopnamesublocation
+
+//    public function getshowitemadmin(Request $request)
+// {
+//     $query = Posopnameitem::select('pos_opname_item.*')
+//             ->with('sublocation', 'opname', 'posopnamesublocation', 'opname.location', 'item', 'item.posunit');
+
+//     // Filter berdasarkan form_number di relasi posopnamesublocation
+//     if ($request->has('form_number')) {
+//         $query->whereHas('posopnamesublocation', function ($q) use ($request) {
+//             $q->where('form_number', $request->form_number);
+//         });
+//     }
+//      if ($search = $request->input('search.value')) {
+//             $query->where(function ($q) use ($search) {
+//                 $q->where('pos_opname_item.opname_item_id', 'like', "%{$search}%")
+//                     ->orWhere('pos_opname_item.opname_id', 'like', "%{$search}%")
+//                     ->orWhere('pos_opname_item.item_master_id', 'like', "%{$search}%")
+//                     ->orWhere('pos_opname_item.qty_system', 'like', "%{$search}%")
+//                     ->orWhereRaw("CAST(qty_real AS DECIMAL(22,1)) LIKE ?", ["%{$search}%"])
+//                ->orWhere('pos_opname_item.note', 'like', "%{$search}%")
+//                     ->orWhere('pos_opname_item.type', 'like', "%{$search}%")
+//                     ->orWhere('pos_opname_item.company_id', 'like', "%{$search}%")
+//                     ->orWhere('pos_opname_item.sub_location_id', 'like', "%{$search}%")
+//                     ->orWhere('pos_opname_item.opname_sub_location_id', 'like', "%{$search}%")
+//                     ->orWhereHas('posopnamesublocation', function ($sub) use ($search) {
+//                         $sub->where('form_number', 'like', "%{$search}%");
+//                     })
+//                     ->orWhereHas('item', function ($item) use ($search) {
+//                         $item->where('name', 'like', "%{$search}%")
+//                             ->orWhere('code', 'like', "%{$search}%")
+//                             ->orWhere('barcode', 'like', "%{$search}%");
+//                     });
+//             });
+//         }
+//     return DataTables::of($query)->make(true);
+// }
+public function getshowitemadmin(Request $request)
+{
+    $query = Posopnameitem::select('pos_opname_item.*')
+        ->with(
+            'sublocation',
+            'opname',
+            'posopnamesublocation',
+            'opname.location',
+            'item',
+            'item.posunit'
+        );
+
+    if ($request->has('opname_id')) {
+        $query->where('pos_opname_item.opname_id', $request->opname_id);
+    }
+
     if ($request->has('form_number')) {
         $query->whereHas('posopnamesublocation', function ($q) use ($request) {
             $q->where('form_number', $request->form_number);
         });
     }
 
-    // Search global untuk DataTables
-    // if ($search = $request->input('search.value')) {
-    //     $query->where(function ($q) use ($search) {
-    //         $q->where('opname_item_id', 'like', "%{$search}%")
-    //             ->orWhere('opname_id', 'like', "%{$search}%")
-    //             ->orWhere('item_master_id', 'like', "%{$search}%")
-    //             ->orWhere('qty_system', 'like', "%{$search}%")
-    //             ->orWhere('qty_real', 'like', "%{$search}%")
-    //             ->orWhere('note', 'like', "%{$search}%")
-    //             ->orWhere('type', 'like', "%{$search}%")
-    //             ->orWhere('company_id', 'like', "%{$search}%")
-    //             ->orWhere('sub_location_id', 'like', "%{$search}%")
-    //             ->orWhere('opname_sub_location_id', 'like', "%{$search}%");
-    //     });
-    // }
-     if ($search = $request->input('search.value')) {
-            $query->where(function ($q) use ($search) {
-                // Kolom di pos_opname_item
-                $q->where('pos_opname_item.opname_item_id', 'like', "%{$search}%")
-                    ->orWhere('pos_opname_item.opname_id', 'like', "%{$search}%")
-                    ->orWhere('pos_opname_item.item_master_id', 'like', "%{$search}%")
-                    ->orWhere('pos_opname_item.qty_system', 'like', "%{$search}%")
-                    //   ->orWhere('pos_opname_item.qty_real', 'like', "%{$search}%")
-                    ->orWhereRaw("CAST(qty_real AS DECIMAL(22,1)) LIKE ?", ["%{$search}%"])
-
-                    ->orWhere('pos_opname_item.note', 'like', "%{$search}%")
-                    ->orWhere('pos_opname_item.type', 'like', "%{$search}%")
-                    ->orWhere('pos_opname_item.company_id', 'like', "%{$search}%")
-                    ->orWhere('pos_opname_item.sub_location_id', 'like', "%{$search}%")
-                    ->orWhere('pos_opname_item.opname_sub_location_id', 'like', "%{$search}%")
-
-
-                    // Search di relasi posopnamesublocation
-                    ->orWhereHas('posopnamesublocation', function ($sub) use ($search) {
-                        $sub->where('form_number', 'like', "%{$search}%");
-                    })
-
-                    // Search di relasi item
-                    ->orWhereHas('item', function ($item) use ($search) {
-                        $item->where('name', 'like', "%{$search}%")
-                            ->orWhere('code', 'like', "%{$search}%")
-                            ->orWhere('barcode', 'like', "%{$search}%");
-                    });
-            });
-        }
+    if ($search = $request->input('search.value')) {
+        $query->where(function ($q) use ($search) {
+            $q->where('pos_opname_item.opname_item_id', 'like', "%{$search}%")
+                ->orWhere('pos_opname_item.opname_id', 'like', "%{$search}%")
+                ->orWhere('pos_opname_item.item_master_id', 'like', "%{$search}%")
+                ->orWhere('pos_opname_item.qty_system', 'like', "%{$search}%")
+                ->orWhereRaw("CAST(qty_real AS DECIMAL(22,1)) LIKE ?", ["%{$search}%"])
+                ->orWhere('pos_opname_item.note', 'like', "%{$search}%")
+                ->orWhere('pos_opname_item.type', 'like', "%{$search}%")
+                ->orWhere('pos_opname_item.company_id', 'like', "%{$search}%")
+                ->orWhere('pos_opname_item.sub_location_id', 'like', "%{$search}%")
+                ->orWhere('pos_opname_item.opname_sub_location_id', 'like', "%{$search}%")
+                ->orWhereHas('posopnamesublocation', function ($sub) use ($search) {
+                    $sub->where('form_number', 'like', "%{$search}%");
+                })
+                ->orWhereHas('item', function ($item) use ($search) {
+                    $item->where('name', 'like', "%{$search}%")
+                        ->orWhere('code', 'like', "%{$search}%")
+                        ->orWhere('barcode', 'like', "%{$search}%");
+                });
+        });
+    }
 
     return DataTables::of($query)->make(true);
 }
+
+
+
 // public function printitemadmin(Request $request, $form_number)
 // {
 //     Log::info('Masuk ke method showitem', ['form_number' => $form_number]);
