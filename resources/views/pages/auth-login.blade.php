@@ -45,23 +45,6 @@
                         Please fill in your username
                     </div>
                 </div>
-                {{-- <div class="form-group">
-                    <div class="d-block">
-                        <label for="password"
-                            class="control-label">Password</label>
-                      
-                    </div>
-                    <input id="password"
-                        type="password"
-                        placeholder="insert your password"
-                        class="form-control"
-                        name="password"
-                        tabindex="2"
-                        required>
-                    <div class="invalid-feedback">
-                        please fill in your password
-                    </div>
-                </div> --}}
                 <div class="form-group">
                     <div class="d-block">
                         <label for="password" class="control-label">Password</label>

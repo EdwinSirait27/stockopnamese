@@ -110,12 +110,11 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/posopnameadmin/posopnameadmin', [dashboardAdminController::class, 'getPosopnamesadmin'])->name('posopnameadmin.posopnameadmin');
     // Route::get('/admin/show/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
 
-    Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
-    // Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
-    Route::get('/posopnamesublocationsadmin/posopnamesublocationsadmin', [dashboardAdminController::class, 'getPosopnamesublocationsadmin'])->name('posopnamesublocationsadmin.posopnamesublocationsadmin');
     Route::get('/importsoadmin/use/{opname_id}', [dashboardAdminController::class, 'indexsoadmin'])->name('importsoadmin.use');
-    Route::post('/importsoadmin/{opname_id}', [dashboardAdminController::class, 'Importsoadmin'])->name('Importsoadmin.use');
-    Route::get('/Importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('Importsoadmin.downloadsoadmin');
+    Route::post('/importsoadmin/{opname_id}', [dashboardAdminController::class, 'importsoadmin'])->name('importsoadminimport.use');
+    Route::get('/importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('importsoadmin.downloadsoadmin');
+    Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
+    Route::get('/posopnamesublocationsadmin/posopnamesublocationsadmin', [dashboardAdminController::class, 'getPosopnamesublocationsadmin'])->name('posopnamesublocationsadmin.posopnamesublocationsadmin');
     Route::get('/opname/showitemadmin/{form_number}', [dashboardAdminController::class, 'showitemadmin'])
         ->name('opname.showitemadmin');
     // Endpoint DataTables untuk item berdasarkan form_number

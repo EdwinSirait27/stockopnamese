@@ -16,7 +16,7 @@
                     <h1>Pos Opname : {{ $posopname->first()->ambildarisublocation->location->name ?? 'Tidak diketahui' }}
                     </h1>
                 @endif
-                
+
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="/dashboard">Stock Opname</a></div>
                 </div>
@@ -26,13 +26,13 @@
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                
+
                                 {{-- @if ($posopname->isNotEmpty())
                               
                                     @endif --}}
-                                     <h4>Pos Sub Opname :
+                                <h4>Pos Sub Opname :
                                     {{ $posopname->first()->ambildarisublocation->name ?? 'Tidak diketahui' }}</h4>
-                                    <h4>Detail Item - Form Number: {{ $form_number }}</h4>
+                                <h4>Detail Item - Form Number: {{ $form_number }}</h4>
 
 
 
@@ -50,35 +50,27 @@
                                     <table class="table-sm table" id="users-table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Opname Item ID</th>
+                                                {{-- <th scope="col">Opname Item ID</th> --}}
                                                 <th scope="col">SKU</th>
                                                 <th scope="col" class="text-center">Barcode</th>
                                                 <th scope="col" class="text-center">Name </th>
                                                 <th scope="col" class="text-center">Uom</th>
                                                 <th scope="col" class="text-center">Quantity</th>
-                                                {{-- <th scope="col" class="text-center">User</th>
-                                                <th scope="col" class="text-center">Form Number</th>
-                                                <th scope="col" class="text-center">date</th> --}}
-                                                {{-- <th scope="col" class="text-center">Action</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
                                     </table>
                                 </div>
-                             <div class="action-buttons d-flex align-items-center gap-2">
-    <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
-
-
-    {{-- <a href="{{ route('importsoadmin.use', $opname_id) }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-file-import"></i> Import Stock Opname
-    </a> --}}
-</div>
-
-                                {{-- <div class="d-flex flex-wrap gap-2 align-items-stretch"> --}}
-
-
-
-                                {{-- </div> --}}
+                                <div class="action-buttons d-flex align-items-center gap-2">
+                                    <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+                                </div>
+                                <div class="alert alert-secondary mt-4" role="alert">
+                                    <span class="text-dark">
+                                        <strong>Important Note:</strong> <br>
+                                        - Fitur search hanya bisa search SKU yaa
+                                        {{-- If you want to print payroll, ignore the day, just look at the year and month, you can only print payrolls once a month, okay.<br><br> --}}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -101,51 +93,44 @@
                     url: '{{ route('opname.getshowitem') }}',
                     type: 'GET',
                     data: {
-                form_number: '{{ $form_number }}'
-            }
+                        form_number: '{{ $form_number }}'
+                    }
                 },
                 responsive: true,
                 lengthMenu: [
                     [10, 25, 50, 100, -1],
                     [10, 25, 50, 100, "All"]
                 ],
-
-                columns: [
-                                       {
-                        data: 'opname_item_id',
-                        name: 'opname_item_id',
-                        className: 'text-center'
-                    },
-                                       {
+                columns: [{
                         data: 'item.code',
                         name: 'item.code',
                         className: 'text-center'
                     },
-                  {
-    data: null, 
-    name: 'note_or_barcode',
-    className: 'text-center',
-    render: function (data, type, row) {
-        return row.note ?? (row.item?.barcode ?? '');
-    }
-},
+                    {
+                        data: null,
+                        name: 'note_or_barcode',
+                        className: 'text-center',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            return row.note ?? (row.item?.barcode ?? '');
+                        }
+                    },
 
-                    //                    {
-                    //     data: 'item.barcode',
-                    //     name: 'item.barcode',
-                    //     className: 'text-center'
-                    // },
-                                       {
+
+
+
+                    {
                         data: 'item.name',
                         name: 'item.name',
                         className: 'text-center'
                     },
-                                       {
+                    {
                         data: 'item.posunit.unit',
                         name: 'item.posunit.unit',
                         className: 'text-center'
                     },
-                      {
+                    {
                         data: 'qty_real',
                         name: 'qty_real',
                         className: 'text-center'
@@ -163,7 +148,7 @@
                     //     className: 'text-center'
                     // },
 
-                   
+
 
                     // {
                     //     data: 'opname.location.name',
@@ -195,7 +180,7 @@
                     //     name: 'date',
                     //     className: 'text-center'
                     // }
-                   
+
                 ],
             });
         });

@@ -142,7 +142,8 @@ class UserController extends Controller
 
     // Validasi input
     $validatedData = $request->validate([
-        'username' => ['required','min:3', 'max:255'],
+        'username' => ['required','min:3', 'max:255',Rule::unique('users')->ignore($user->id), // ignore id user yang sedang diupdate
+    ],
         'password' => ['nullable', 'regex:/^\S+$/', 'min:3', 'max:255'],
         'name' => ['required', 'min:3', 'max:255'],
         'role' => ['required', 'string', 'exists:roles,name'],

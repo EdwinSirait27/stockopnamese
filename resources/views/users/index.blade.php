@@ -33,6 +33,15 @@
                                         data-bs-dismiss="alert" aria-label="Close" style="font-weight: bold;">X</button>
                                 </div>
                             @endif
+                            @if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
+        <div>{{ session('error') }}</div>
+        <button type="button" class="btn btn-sm btn-light border-0 ms-2"
+            data-bs-dismiss="alert" aria-label="Close" style="font-weight: bold;">X</button>
+    </div>
+@endif
+
+
 
 
 

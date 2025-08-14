@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('title', 'Scan Barcode')
 @push('style')
@@ -57,8 +57,7 @@
 
             <div class="section-body">
                 <div class="mb-3">
-                    <strong>Opname ID:</strong> {{ $opname_id }} <br>
-                    <strong>Nama Lokasi:</strong> {{ $posopname->location->name ?? '-' }} <br>
+                    <strong>Sub Lokasi:</strong> {{ $posopname->location->name ?? '-' }} <br>
                     <strong>Tanggal:</strong> {{ $posopnamesublocation->date ?? '-' }}
                 </div>
 
@@ -107,15 +106,7 @@
                         </thead>
                     </table>
                 </div>
-                <form action="{{ route('posopnamesublocation.reqPrint', $posopnamesublocation->opname_sub_location_id) }}" 
-      method="POST" 
-      onsubmit="return confirm('Ubah status menjadi REQ PRINT?')">
-    @csrf
-    <button type="submit" class="btn btn-warning">
-        Request Print
-    </button>
-</form>
-
+                
             </div>
         </section>
     </div>

@@ -39,19 +39,19 @@
 
 
                             <div class="card-body">
-                                
+
 
                                 <div class="table-responsive">
                                     <table class="table-sm table" id="users-table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">No</th>
-                                                <th scope="col" class="text-center">Opname ID</th>
-                                                <th scope="col" class="text-center">Date</th>
-                                                <th scope="col" class="text-center">Status</th>
+                                                <th scope="col" class="text-center">Number</th>
                                                 <th scope="col" class="text-center">Location</th>
                                                 <th scope="col" class="text-center">Sub Location</th>
+                                                <th scope="col" class="text-center">Status</th>
                                                 <th scope="col" class="text-center">Opname Type</th>
+                                                <th scope="col" class="text-center">Date</th>
                                                 <th scope="col" class="text-center">Note</th>
                                                 {{-- <th scope="col" class="text-center">Note</th>
                                                 <th scope="col" class="text-center">Counter</th>
@@ -116,18 +116,28 @@
                     },
 
                     {
-                        data: 'opname_id',
-                        name: 'opname_id',
+                        data: 'number',
+                        name: 'number',
                         className: 'text-center'
-
                     },
                     {
-                        data: 'date',
-                        name: 'date',
+                        data: 'ambildarisublocation.location.name',
+                        name: 'ambildarisublocation.location.name',
                         className: 'text-center'
                     },
+                    {
+                        data: 'ambildarisublocation.name',
+                        name: 'ambildarisublocation.name',
+                        className: 'text-center'
+                    },
+                    // {
+                    //     data: 'opname_id',
+                    //     name: 'opname_id',
+                    //     className: 'text-center'
 
-                  
+                    // },
+
+
                     {
                         data: 'status',
                         name: 'status',
@@ -139,18 +149,13 @@
                     //     className: 'text-center'
                     // },
                     {
-                        data: 'ambildarisublocation.location.name',
-                        name: 'ambildarisublocation.location.name',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'ambildarisublocation.name',
-                        name: 'ambildarisublocation.name',
-                        className: 'text-center'
-                    },
-                    {
                         data: 'type',
                         name: 'type',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'date',
+                        name: 'date',
                         className: 'text-center'
                     },
                     {
@@ -198,10 +203,9 @@
 
                 ],
             });
-                 $('#location_name').change(function () {
-    table.ajax.reload();
-});
+            $('#location_name').change(function() {
+                table.ajax.reload();
+            });
         });
-   
     </script>
 @endpush

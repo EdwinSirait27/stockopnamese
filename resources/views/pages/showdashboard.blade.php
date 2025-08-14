@@ -49,33 +49,28 @@
                                     <table class="table-sm table" id="users-table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">No</th>
-                                                {{-- <th scope="col" class="text-center">Opname Sub Location ID</th> --}}
-                                                {{-- <th scope="col" class="text-center">Opname ID</th> --}}
-                                                <th scope="col" class="text-center">Opname</th>
-                                                {{-- <th scope="col" class="text-center">Sub Location ID </th> --}}
+                                                <th scope="col" class="text-center">Form Number</th>
+                                                <th scope="col" class="text-center">Location</th>
                                                 <th scope="col" class="text-center">Sub Location </th>
                                                 <th scope="col" class="text-center">Status</th>
                                                 <th scope="col" class="text-center">User</th>
-                                                <th scope="col" class="text-center">Form Number</th>
                                                 <th scope="col" class="text-center">date</th>
                                                 <th scope="col" class="text-center">Action</th>
-                                                {{-- <th scope="col" class="text-center">Action</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
                                     </table>
                                 </div>
-                             <div class="action-buttons d-flex align-items-center gap-2">
-    <button type="button" onclick="window.location='{{ route('dashboard') }}'"
-        class="btn btn-danger btn-sm">
-        <i class="fas fa-users"></i> Back
-    </button>
+                                <div class="action-buttons d-flex align-items-center gap-2">
+                                    <button type="button" onclick="window.location='{{ route('dashboard') }}'"
+                                        class="btn btn-danger btn-sm">
+                                        <i class="fas fa-users"></i> Back
+                                    </button>
 
-    <a href="{{ route('importso.use', $opname_id) }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-file-import"></i> Import Stock Opname
-    </a>
-</div>
+                                    <a href="{{ route('importso.use', $opname_id) }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-file-import"></i> Import Stock Opname
+                                    </a>
+                                </div>
 
                                 {{-- <div class="d-flex flex-wrap gap-2 align-items-stretch"> --}}
 
@@ -103,9 +98,9 @@
                 ajax: {
                     url: '{{ route('posopnamesublocations.posopnamesublocations') }}',
                     type: 'GET',
-                     data: function (d) {
-                d.opname_id = '{{ $opname_id }}'; // ini akan dikirim ke controller
-            }
+                    data: function(d) {
+                        d.opname_id = '{{ $opname_id }}'; // ini akan dikirim ke controller
+                    }
                 },
                 responsive: true,
                 lengthMenu: [
@@ -114,22 +109,31 @@
                 ],
 
                 columns: [
+                    // {
+                    //     data: 'opname_sub_location_id',
+                    //     name: 'opname_sub_location_id',
+                    //       orderable: false,
+                    //     searchable: false,
+                    //     className: 'text-center'
+                    // },
                     {
-                        data: 'opname_sub_location_id',
-                        name: 'opname_sub_location_id',
-                          orderable: false,
-                        searchable: false,
+                        data: 'form_number',
+                        name: 'form_number',
+
                         className: 'text-center'
                     },
                     {
                         data: 'opname.location.name',
                         name: 'opname.location.name',
-
+                        orderable: false,
+                        searchable: false,
                         className: 'text-center'
                     },
                     {
                         data: 'sublocation.name',
                         name: 'sublocation.name',
+                        orderable: false,
+                        searchable: false,
                         className: 'text-center'
                     },
                     {
@@ -140,14 +144,9 @@
                     {
                         data: 'users.name',
                         name: 'users.name',
-                          orderable: false,
+                        orderable: false,
                         searchable: false,
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'form_number',
-                        name: 'form_number',
-                        
+
                         className: 'text-center'
                     },
                     {
