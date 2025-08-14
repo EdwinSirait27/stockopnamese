@@ -48,7 +48,7 @@ class dashboardAdminController extends Controller
     // ->with('location', 'ambildarisublocation', 'ambildarisublocation.location')->where('status', 'DRAFT');
    $query = Posopname::select('pos_opname.*')
    ->where('location_id', $userLocationId) 
-    ->with('location', 'ambildarisublocation', 'ambildarisublocation.location');
+    ->with('location', 'ambildarisublocation', 'ambildarisublocation.location')->where('status', 'DRAFT');
     if ($search = $request->input('search.value')) {
         $query->where(function ($q) use ($search) {
             $q->where('opname_id', 'like', "%{$search}%")
