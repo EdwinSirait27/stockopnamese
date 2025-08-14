@@ -274,7 +274,7 @@ public function saveScannedItem(Request $request, $opname_sub_location_id)
 {
     $validated = $request->validate([
         'item_master_id' => 'required|integer',
-        'qty'            => 'required|numeric|min:0.001',
+        'qty'            => 'required|numeric',
         'barcode'        => 'nullable|string|max:255' // untuk simpan di note
     ]);
 
@@ -337,7 +337,7 @@ public function showposopnameitem($id)
 public function update(Request $request, $id)
 {
     $request->validate([
-        'qty_real' => 'required|numeric|min:0.001'
+        'qty_real' => 'required|numeric|min:0'
     ]);
 
     $item = Posopnameitem::findOrFail($id);

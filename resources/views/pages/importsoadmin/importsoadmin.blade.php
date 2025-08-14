@@ -106,7 +106,7 @@
             @endif
             <div class="section-body">
                 <div class="form-container">
-                    <form id="import-create" action="{{ route('importsoadminimport.use', $posopname->opname_id) }}" method="POST"
+                    <form id="import-create" action="{{ route('importsoadmin.use', $posopname->opname_id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">

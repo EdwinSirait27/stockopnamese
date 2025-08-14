@@ -68,7 +68,7 @@
                                         <i class="fas fa-users"></i> Back
                                     </button>
 
-                                    <a href="{{ route('importsoadmin.use', $opname_id) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('importsoadmin', $opname_id) }}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-file-import"></i> Import Stock Opname
                                     </a>
                                 </div>
@@ -124,13 +124,31 @@
                         name: 'status',
                         className: 'text-center'
                     },
+                    // {
+                    //     data: 'oxy.full_name',
+                    //     name: 'oxy.full_name',
+                    //     orderable: false,
+                    //     searchable: false,
+                    //     className: 'text-center'
+                    // },
                     {
-                        data: 'users.name',
-                        name: 'users.name',
-                        orderable: false,
-                        searchable: false,
-                        className: 'text-center'
-                    },
+    data: null, // ambil semua supaya bisa cek relasi
+    name: 'oxy.full_name', // tetap set name untuk sorting/search server-side
+    orderable: false,
+    searchable: false,
+    className: 'text-center',
+    render: function (data, type, row) {
+        if (row.oxy && row.oxy.full_name) {
+            return row.oxy.full_name;
+        } else if (row.users && row.users.name) {
+            return row.users.name;
+        } else {
+            return '-';
+        }
+    }
+},
+
+
                    
                     {
                         data: 'date',

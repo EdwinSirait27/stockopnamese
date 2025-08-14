@@ -63,6 +63,13 @@
                 <div id="posopname-container" class="box-container">
                     <p>Loading data...</p>
                 </div>
+               <form id="logout-form" method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" class="dropdown-item has-icon text-danger" style="background:none; border:none; padding:0;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+</form>
+
             </div>
         </section>
 
@@ -138,146 +145,6 @@
             }
 
         });
-
-
-
-
-        // function renderBoxes(data) {
-        //     container.innerHTML = '';
-        //     if (data.length === 0) {
-        //         container.innerHTML = '<p>Tidak ada data ditemukan.</p>';
-        //         return;
-        //     }
-
-        //     data.forEach(item => {
-        //         const box = document.createElement('div');
-        //         box.classList.add('box');
-
-        //         box.innerHTML = `
-    //             <div class="box-header">
-    //                 Opname: ${item.opname && item.opname.location && item.opname.location.name ? item.opname.location.name : '-'}
-    //             </div>
-    //             <div class="box-content">
-    //                 <p><strong>Opname Sub Location:</strong> ${item.sublocation && item.sublocation.name ? item.sublocation.name : '-'}</p>
-    //                 <p><strong>Opname ID:</strong> ${item.opname_id ?? '-'}</p>
-    //                 <p><strong>Status:</strong> ${item.status ?? '-'}</p>
-    //                 <p><strong>Form Number:</strong> ${item.form_number ?? '-'}</p>
-    //                 <p><strong>Name:</strong> ${item.users && item.users.name ? item.users.name : '-'}</p>
-    //                 <p><strong>Date:</strong> ${item.date ?? '-'}</p>
-    //             </div>
-    //         `;
-
-        //         container.appendChild(box);
-        //     });
-        // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // <div class="box-header">
-        //                 Opname: ${item.opname?.location?.name ?? '-'}
-        //             </div>
-        // <p><strong>Opname Sub Location:</strong> ${item.sublocation?.name ?? '-'}</p>
-        //                 <p><strong>Opname ID:</strong> ${item.opname_id ?? '-'}</p>
-        //                 <p><strong>Status:</strong> ${item.status ?? '-'}</p>
-        //                 <p><strong>Form Number:</strong> ${item.form_number ?? '-'}</p>
-        //                 <p><strong>Name:</strong> ${item.users?.name ?? '-'}</p>
-        //                 <p><strong>Date:</strong> ${item.date ?? '-'}</p>
-
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     const searchInput = document.getElementById('search-input');
-        //     const container = document.getElementById('posopname-container');
-        //     let allData = [];
-        //     fetchPosopnames();
-        //     let debounceTimer;
-        //     searchInput.addEventListener('input', function() {
-        //         clearTimeout(debounceTimer);
-        //         debounceTimer = setTimeout(() => {
-        //             const keyword = this.value.trim().toLowerCase();
-        //             if (keyword === '') {
-        //                 renderBoxes(allData);
-        //             } else {
-        //                 const filtered = allData.filter(item => {
-        //                     return (
-        //                         (item.opname.location && item.users.location && item
-        //                             .users.location.name.toLowerCase().includes(keyword)
-        //                             ) ||
-        //                         (item.sublocation && item.sublocation && item.users
-        //                             .sublocation.name.toLowerCase().includes(keyword)
-        //                             ) ||
-        //                         (item.sub_location_name && item.sub_location_name
-        //                             .toLowerCase().includes(keyword)) ||
-        //                         (item.status && item.status.toLowerCase().includes(
-        //                             keyword)) ||
-        //                         (item.form_number && item.form_number.toLowerCase()
-        //                             .includes(keyword)) ||
-        //                         (item.date && item.date.toLowerCase().includes(
-        //                         keyword)) ||
-        //                         (item.users && item.users.name && item.users.name
-        //                             .toLowerCase().includes(keyword))
-        //                     );
-        //                 });
-        //                 renderBoxes(filtered);
-        //             }
-        //         }, 300);
-        //     });
-
-        //     function fetchPosopnames() {
-        //         fetch("{{ route('posopnamesublocationpenginput.posopnamesublocationpenginput') }}")
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 allData = data.data || [];
-        //                 if (allData.length === 0) {
-        //                     container.innerHTML = '<p>Tidak ada data.</p>';
-        //                     return;
-        //                 }
-        //                 renderBoxes(allData);
-        //             })
-        //             .catch(err => {
-        //                 console.error('Fetch error:', err);
-        //                 container.innerHTML = '<p>Gagal memuat data.</p>';
-        //             });
-        //     }
-
-        //     function renderBoxes(data) {
-        //         container.innerHTML = '';
-
-        //         if (data.length === 0) {
-        //             container.innerHTML = '<p>Tidak ada data ditemukan.</p>';
-        //             return;
-        //         }
-
-        //         data.forEach(item => {
-        //             const box = document.createElement('div');
-        //             box.classList.add('box');
-
-        //             box.innerHTML =
-
-        //                 `<div class="box-header">Opname: ${item.opname.location && item.opname.location.name ? item.opname.location.name : '-'}</div>
-    //             <div class="box-content">
-    //                 <p><strong>Opname Sub Location:</strong> ${item.sublocation.name ?? '-'}</p>
-    //                 <p><strong>Opname ID:</strong> ${item.opname_id ?? '-'}</p>
-    //                 <p><strong>Status:</strong> ${item.status ?? '-'}</p>
-    //                 <p><strong>Form Number:</strong> ${item.form_number ?? '-'}</p>
-    //                 <p><strong>Name:</strong> ${item.users && item.users.name ? item.users.name : '-'}</p>
-    //                 <p><strong>Date:</strong> ${item.date ?? '-'}</p>
-
-    //             </div>
-    //         `;
-
-        //             container.appendChild(box);
-        //         });
-        //     }
-        // });
     </script>
 @endpush
 

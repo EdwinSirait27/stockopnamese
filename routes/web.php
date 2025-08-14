@@ -110,8 +110,8 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/posopnameadmin/posopnameadmin', [dashboardAdminController::class, 'getPosopnamesadmin'])->name('posopnameadmin.posopnameadmin');
     // Route::get('/admin/show/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
 
-    Route::get('/importsoadmin/use/{opname_id}', [dashboardAdminController::class, 'indexsoadmin'])->name('importsoadmin.use');
-    Route::post('/importsoadmin/{opname_id}', [dashboardAdminController::class, 'importsoadmin'])->name('importsoadminimport.use');
+    Route::get('/importsoadmin/use/{opname_id}', [dashboardAdminController::class, 'indexsoadmin'])->name('importsoadmin');
+    Route::post('/importsoadmin/{opname_id}', [dashboardAdminController::class, 'importsoadmin'])->name('importsoadmin.use');
     Route::get('/importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('importsoadmin.downloadsoadmin');
     Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
     Route::get('/posopnamesublocationsadmin/posopnamesublocationsadmin', [dashboardAdminController::class, 'getPosopnamesublocationsadmin'])->name('posopnamesublocationsadmin.posopnamesublocationsadmin');

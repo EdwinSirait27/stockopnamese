@@ -78,7 +78,13 @@
                 <td><strong>Lokasi</strong></td>
                 <td>{{ $posopname->location->name ?? '-' }}</td>
                 <td><strong>User</strong></td>
-                <td>{{ $posopnamesublocation->first()->users->name ?? '-' }}</td>
+                {{-- <td>{{ $posopnamesublocation->first()->users->name ?? '-' }}</td> --}}
+                <td>
+    {{ optional($posopnamesublocation->first()->oxy)->full_name 
+        ?? optional($posopnamesublocation->first()->users)->name 
+        ?? '-' }}
+</td>
+
             </tr>
             <tr class="header-row">
                 <td><strong>Note</strong></td>
@@ -87,7 +93,7 @@
             <br>
             <tr>
                 <th>No</th>
-                <th>item master id</th>
+                {{-- <th>item master id</th> --}}
                 <th>Kode Item</th>
                 <th>Barcode</th>
                 <th>Uom</th>
@@ -101,7 +107,7 @@
             @foreach ($posopnameitems as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->item_master_id ?? '-' }}</td>
+                    {{-- <td>{{ $item->item_master_id ?? '-' }}</td> --}}
                     <td>{{ $item->item->code ?? '-' }}</td>
                     {{-- <td>{{ $item->item->barcode ?? '-' }}</td> --}}
                     <td>

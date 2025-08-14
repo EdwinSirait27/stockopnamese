@@ -106,7 +106,14 @@
                         </thead>
                     </table>
                 </div>
-                
+                 <form action="{{ route('posopnamesublocation.reqPrint', $posopnamesublocation->opname_sub_location_id) }}"
+      method="POST"
+      onsubmit="return confirm('Ubah status menjadi REQ PRINT?')">
+    @csrf
+    <button type="submit" class="btn btn-warning">
+        Request Print
+    </button>
+</form>
             </div>
         </section>
     </div>
@@ -224,8 +231,8 @@
 
 
                 let qty = parseFloat($('#preview-qty').val()); // bisa decimal
-                if (isNaN(qty) || qty < 0.001) {
-                    alert('Qty harus minimal 0.001');
+                if (isNaN(qty) || qty < 0.000) {
+                    alert('Qty harus minimal 0.000');
                     return;
                 }
 

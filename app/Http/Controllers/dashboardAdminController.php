@@ -123,7 +123,7 @@ class dashboardAdminController extends Controller
             'form_number',
             'date'
         ])
-        ->with('sublocation', 'opname.location', 'users', 'opname')
+        ->with('sublocation', 'opname.location', 'users', 'opname','oxy')
         
         // ✅ Filter berdasarkan location_id milik user
         ->whereHas('opname.location', function ($q) use ($userLocationId) {
@@ -536,7 +536,7 @@ public function printitemadmin(Request $request, $form_number)
         $mtokosoglo->update($validated);
         return redirect()->route('dashboardadmin')->with('success', 'Data berhasil diperbarui.');
     }
-    public function downloadso($filename)
+    public function downloadsoadmin($filename)
     {
         $path = 'templateso/' . $filename;
 
