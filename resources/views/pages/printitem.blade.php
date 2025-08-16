@@ -120,6 +120,7 @@
 </body>
 
 </html> --}}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -152,17 +153,7 @@
             padding: 2px 4px;
             background: #fff;
         }
-        /* @media print {
-            .no-print {
-                display: none;
-            }
-            thead {
-                display: table-header-group;
-            }
-            tfoot {
-                display: table-footer-group;
-            }
-        } */
+     
            @media print {
             .no-print {
                 display: none;
@@ -187,12 +178,7 @@
                 font-size: 12px;
             }
 
-            /* Nomor halaman */
-            /* tfoot td::after {
-                content: " | Halaman " counter(page) " dari " counter(pages);
-            } */
              tfoot td::after {
-    /* content: " | Halaman " counter(page); */
 }
     
         }

@@ -100,7 +100,6 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::get('/opname/getshowitem', [dashboardController::class, 'getshowitem'])
         ->name('opname.getshowitem');
     // routes/web.php
-// Route::get('/printitem/{form_number}', [dashboardController::class, 'printitem'])->name('printitem.print');
     Route::get('/opname/printitem/{opname_sub_location_id}', [dashboardController::class, 'printitem'])
         ->name('opname.printitem');
 });
@@ -115,14 +114,13 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('importsoadmin.downloadsoadmin');
     Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
     Route::get('/posopnamesublocationsadmin/posopnamesublocationsadmin', [dashboardAdminController::class, 'getPosopnamesublocationsadmin'])->name('posopnamesublocationsadmin.posopnamesublocationsadmin');
-    Route::get('/opname/showitemadmin/{form_number}', [dashboardAdminController::class, 'showitemadmin'])
+      Route::get('/opname/showitemadmin/{opname_sub_location_id}', [dashboardAdminController::class, 'showitemadmin'])
         ->name('opname.showitemadmin');
-    // Endpoint DataTables untuk item berdasarkan form_number
     Route::get('/opname/getshowitemadmin', [dashboardAdminController::class, 'getshowitemadmin'])
         ->name('opname.getshowitemadmin');
-    // routes/web.php
-// Route::get('/printitem/{form_number}', [dashboardController::class, 'printitem'])->name('printitem.print');
-    Route::get('/opname/printitemadmin/{form_number}', [dashboardAdminController::class, 'printitemadmin'])
+    // Route::get('/opname/printitemadmin/{form_number}', [dashboardAdminController::class, 'printitemadmin'])
+    //     ->name('opname.printitemadmin');
+      Route::get('/opname/printitemadmin/{opname_sub_location_id}', [dashboardAdminController::class, 'printitemadmin'])
         ->name('opname.printitemadmin');
 });
 Route::middleware(['auth', 'role:Admin|Bos|Penginput'])->group(function () {
