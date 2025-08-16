@@ -89,6 +89,21 @@ class dashboardController extends Controller
        
         return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id', 'posopname'));
     }
+public function approveAll($opname_id)
+{
+    // Update semua sublocation yang statusnya PRINTED menjadi APPROVED
+    $updated = Posopnamesublocation::where('opname_id', $opname_id)
+        ->where('status', 'PRINTED')
+        ->update(['status' => 'APPROVED']);
+
+    if ($updated > 0) {
+        return redirect()->back()->with('success', "$updated data berhasil di-approve.");
+    }
+
+    return redirect()->back()->with('error', 'Tidak ada data dengan status PRINTED yang bisa di-approve.');
+}
+
+
     public function getPosopnamesublocations(Request $request)
     {
         $query = Posopnamesublocation::select('pos_opname_sub_location.*')
@@ -112,22 +127,7 @@ class dashboardController extends Controller
             });
         }
         return DataTables::of($query)
-    //         ->addColumn('action', function ($row) {
-    //             return '
-    //         <a href="' . route('opname.showitem', $row->opname_sub_location_id) . '"
-    //            class="btn btn-sm btn-primary">
-    //             <i class="fas fa-eye"></i> Show
-    //         </a>
-    //         <a href="' . route('opname.printitem', $row->opname_sub_location_id) . '"
-    //            class="btn btn-sm btn-success" target="_blank">
-    //             <i class="fas fa-print"></i> Print
-    //         </a>
-    //     ';
-    //         })
-    //         ->rawColumns(['action'])
-    //         ->make(true);
-
-    // }
+ 
     ->addColumn('action', function ($row) {
     $showBtn = '
         <a href="' . route('opname.showitem', $row->opname_sub_location_id) . '"

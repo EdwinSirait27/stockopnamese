@@ -70,6 +70,14 @@
                                     <a href="{{ route('importso.use', $opname_id) }}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-file-import"></i> Import Stock Opname
                                     </a>
+                                     <form action="{{ route('opname.approveAll', $opname_id) }}" 
+          method="POST" 
+          onsubmit="return confirm('Yakin ingin approve semua data dengan status PRINTED?')">
+        @csrf
+        <button type="submit" class="btn btn-warning">
+            <i class="fas fa-check"></i> Approve Semua PRINTED
+        </button>
+    </form>
                                 </div>
 
                                 {{-- <div class="d-flex flex-wrap gap-2 align-items-stretch"> --}}

@@ -40,6 +40,9 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
     Route::get('/posopname/posopname', [dashboardController::class, 'getPosopnames'])->name('posopname.posopname');
     Route::get('/showdashboard/{opname_id}', [dashboardController::class, 'show'])->name('pages.showdashboard');
+  Route::post('/opname/{opname_id}/approve-all', [dashboardController::class, 'approveAll'])
+    ->name('opname.approveAll');
+
     Route::get('/posopnamesublocations/posopnamesublocations', [dashboardController::class, 'getPosopnamesublocations'])->name('posopnamesublocations.posopnamesublocations');
 
 
