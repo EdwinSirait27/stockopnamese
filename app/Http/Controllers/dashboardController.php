@@ -330,6 +330,8 @@ class dashboardController extends Controller
     }
     public function Importso(Request $request, $opname_id)
     {
+        ini_set('max_execution_time', 180);
+
         $request->validate([
             'file' => 'required|mimes:xlsx,csv,xls'
         ]);
