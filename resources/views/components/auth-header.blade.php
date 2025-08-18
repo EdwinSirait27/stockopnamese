@@ -1,4 +1,4 @@
-{{-- <div class="login-brand">
+<div class="login-brand">
     <img src="{{ asset('img/abc.png') }}"
         alt="logo"
         width="100"
@@ -6,4 +6,4 @@
     <div class="mt-2 text-center font-weight-bold text-dark">
         Stock Opname
     </div>
-</div> --}}
+</div>

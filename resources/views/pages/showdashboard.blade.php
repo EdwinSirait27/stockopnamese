@@ -61,7 +61,7 @@
                                         <tbody>
                                     </table>
                                 </div>
-                                <div class="action-buttons d-flex align-items-center gap-2">
+                                {{-- <div class="action-buttons d-flex align-items-center gap-2">
                                     <button type="button" onclick="window.location='{{ route('dashboard') }}'"
                                         class="btn btn-danger btn-sm">
                                         <i class="fas fa-users"></i> Back
@@ -70,21 +70,40 @@
                                     <a href="{{ route('importso.use', $opname_id) }}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-file-import"></i> Import Stock Opname
                                     </a>
-                                     <form action="{{ route('opname.approveAll', $opname_id) }}" 
-          method="POST" 
-          onsubmit="return confirm('Yakin ingin approve semua data dengan status PRINTED?')">
+                                    <form action="{{ route('opname.approveAll', $opname_id) }}" method="POST"
+                                        onsubmit="return confirm('Yakin ingin approve semua data dengan status PRINTED?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="fas fa-check"></i> Approve Semua PRINTED
+                                        </button>
+                                    </form>
+                                </div> --}}
+                                <div class="action-buttons d-flex align-items-center gap-2">
+    <button 
+        type="button" 
+        onclick="window.location='{{ route('dashboard') }}'" 
+        class="btn btn-danger btn-sm"
+    >
+        <i class="fas fa-users"></i> Back
+    </button>
+
+    <a 
+        href="{{ route('importso.use', $opname_id) }}" 
+        class="btn btn-primary btn-sm"
+    >
+        <i class="fas fa-file-import"></i> Import Stock Opname
+    </a>
+
+    <form id="approved"
+        action="{{ route('opname.approveAll', $opname_id) }}" 
+        method="POST">
         @csrf
-        <button type="submit" class="btn btn-warning">
+        <button type="submit" id="approved-button" class="btn btn-warning btn-sm">
             <i class="fas fa-check"></i> Approve Semua PRINTED
         </button>
     </form>
-                                </div>
+</div>
 
-                                {{-- <div class="d-flex flex-wrap gap-2 align-items-stretch"> --}}
-
-
-
-                                {{-- </div> --}}
                             </div>
                         </div>
                     </div>
@@ -96,6 +115,7 @@
 @push('scripts')
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         jQuery(document).ready(function($) {
@@ -158,21 +178,21 @@
                     //     className: 'text-center'
                     // },
                     {
-    data: null, // ambil semua supaya bisa cek relasi
-    name: 'oxy.full_name', // tetap set name untuk sorting/search server-side
-    orderable: false,
-    searchable: false,
-    className: 'text-center',
-    render: function (data, type, row) {
-        if (row.oxy && row.oxy.full_name) {
-            return row.oxy.full_name;
-        } else if (row.users && row.users.name) {
-            return row.users.name;
-        } else {
-            return '-';
-        }
-    }
-},
+                        data: null, // ambil semua supaya bisa cek relasi
+                        name: 'oxy.full_name', // tetap set name untuk sorting/search server-side
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center',
+                        render: function(data, type, row) {
+                            if (row.oxy && row.oxy.full_name) {
+                                return row.oxy.full_name;
+                            } else if (row.users && row.users.name) {
+                                return row.users.name;
+                            } else {
+                                return '-';
+                            }
+                        }
+                    },
                     {
                         data: 'date',
                         name: 'date',
@@ -187,9 +207,36 @@
                     }
                 ],
             });
-             setInterval(function() {
+            setInterval(function() {
                 table.ajax.reload(null, false); // false = biar tetap di halaman yang sama
             }, 5000);
         });
+    </script>
+    <script>
+         document.getElementById('approved-button').addEventListener('click', function(e) {
+            e.preventDefault(); // Mencegah pengiriman form langsung
+            Swal.fire({
+                title: 'Are You Sure?',
+                text: "Make sure the data you entered is correct!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Assign!',
+                cancelButtonText: 'Abort'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika pengguna mengkonfirmasi, submit form
+                    document.getElementById('approved').submit();
+                }
+            });
+        });
+          @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '{{ session('success') }}',
+            });
+        @endif
     </script>
 @endpush

@@ -108,7 +108,7 @@ class LoginController extends Controller
 public function login(Request $request)
 {
     $request->validate([
-        'username' => 'required|regex:/^[0-9]+$/|exists:users,username',
+        'username' => 'required|exists:users,username',
         'password' => ['required', 'regex:/^\S+$/', 'max:255'],
     ]);
 
