@@ -259,6 +259,7 @@
     </table>
 
 </body>
+
 </html>
 
   {{-- @foreach ($posopnameitems as $index => $item)

@@ -157,7 +157,8 @@
                                             <label for="location_id">Location</label>
                                             <label for="location_id" class="form-label">Location</label>
                                             <select name="location_id"
-                                                class="form-select select2 @error('location_id') is-invalid @enderror" required>
+                                                class="form-select select2 @error('location_id') is-invalid @enderror"
+                                                required>
                                                 <option value="">Pilih Lokasi</option>
                                                 @foreach ($locations as $id => $name)
                                                     <option value="{{ $id }}"
@@ -174,7 +175,7 @@
 
 
 
-                                          <div class="form-group col-md-6 col-12">
+                                        <div class="form-group col-md-6 col-12">
                                             <label for="username">Username</label>
                                             <input type="text" class="form-control" id="username" name="username"
                                                 value="{{ old('username', $user->username) }}">
@@ -217,7 +218,6 @@
 @endsection
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <!-- JS Libraies -->
     <script src="{{ asset('library/summernote/dist/summernote-bs4.js') }}"></script>
     <script src="{{ asset('library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
     <script src="{{ asset('js/page/features-profile.js') }}"></script>
@@ -229,6 +229,4 @@
             });
         });
     </script>
-
-    <!-- Page Specific JS File -->
 @endpush

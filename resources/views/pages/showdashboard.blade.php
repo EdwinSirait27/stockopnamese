@@ -61,23 +61,6 @@
                                         <tbody>
                                     </table>
                                 </div>
-                                {{-- <div class="action-buttons d-flex align-items-center gap-2">
-                                    <button type="button" onclick="window.location='{{ route('dashboard') }}'"
-                                        class="btn btn-danger btn-sm">
-                                        <i class="fas fa-users"></i> Back
-                                    </button>
-
-                                    <a href="{{ route('importso.use', $opname_id) }}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-file-import"></i> Import Stock Opname
-                                    </a>
-                                    <form action="{{ route('opname.approveAll', $opname_id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin approve semua data dengan status PRINTED?')">
-                                        @csrf
-                                        <button type="submit" class="btn btn-warning">
-                                            <i class="fas fa-check"></i> Approve Semua PRINTED
-                                        </button>
-                                    </form>
-                                </div> --}}
                                 <div class="action-buttons d-flex align-items-center gap-2">
     <button 
         type="button" 
@@ -93,7 +76,6 @@
     >
         <i class="fas fa-file-import"></i> Import Stock Opname
     </a>
-
     <form id="approved"
         action="{{ route('opname.approveAll', $opname_id) }}" 
         method="POST">
@@ -122,12 +104,11 @@
             var table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
-                // scrollX: true,
                 ajax: {
                     url: '{{ route('posopnamesublocations.posopnamesublocations') }}',
                     type: 'GET',
                     data: function(d) {
-                        d.opname_id = '{{ $opname_id }}'; // ini akan dikirim ke controller
+                        d.opname_id = '{{ $opname_id }}';
                     }
                 },
                 responsive: true,
@@ -217,7 +198,7 @@
             e.preventDefault(); // Mencegah pengiriman form langsung
             Swal.fire({
                 title: 'Are You Sure?',
-                text: "Make sure the data you entered is correct!",
+                text: "Change status from Printed to Approved!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
