@@ -286,14 +286,10 @@ public function checkPrint()
     )
         ->where('status', 'REQ PRINT')
         ->first();
-
     if ($job) {
-        // ambil opname
         $posopname = Posopname::with('ambildarisublocation', 'location')
             ->where('opname_id', $job->opname_id)
             ->first();
-
-        // ambil items
         $posopnameitems = Posopnameitem::select([
             'opname_item_id',
             'opname_id',
@@ -316,13 +312,9 @@ public function checkPrint()
             )
             ->where('opname_sub_location_id', $job->opname_sub_location_id)
             ->get();
-
-        // total qty
         $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
             return bcadd($carry, $item->qty_real, 3);
         }, '0');
-
-        // hitung duplikat
         $codeCounts = $posopnameitems
             ->groupBy(function ($item) {
                 return $item->item->code ?? '-';
@@ -330,8 +322,6 @@ public function checkPrint()
             ->map(function ($group) {
                 return $group->count();
             });
-
-        // render HTML untuk dikirim ke Python
         $html = view('pages.printitem', [
             'posopnamesublocation' => collect([$job]),
             'form_number' => $job->form_number,
@@ -340,17 +330,13 @@ public function checkPrint()
             'totalQtyReal' => $totalQtyReal,
             'codeCounts' => $codeCounts
         ])->render();
-
-        // update status biar ga dobel print
-        $job->update(['status' => 'PRINTED']);
-
+$job->update(['status' => 'PRINTED']);
         return response()->json([
             'status' => 'OK',
             'form_number' => $job->form_number,
             'html' => $html
         ]);
     }
-
     return response()->json(['status' => 'NO JOB']);
 }
     public function indexso($opname_id)
@@ -365,7 +351,6 @@ public function checkPrint()
     public function Importso(Request $request, $opname_id)
     {
         ini_set('max_execution_time', 180);
-
         $request->validate([
             'file' => 'required|mimes:xlsx,csv,xls'
         ]);
@@ -397,7 +382,6 @@ public function checkPrint()
         $posopnamesublocation = Posopnamesublocation::with('opname')
             ->where('opname_id', $opname_id)
             ->get();
-
         if (!$posopnamesublocation) {
             Log::warning('Data tidak ditemukan di method edit', ['opname_id' => $opname_id]);
             abort(404, 'Data not found.');

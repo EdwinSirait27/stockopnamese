@@ -89,7 +89,8 @@ public function login(Request $request)
 
         $user = Auth::user();
         // Cek role hanya Bos atau Admin yang boleh login
-        if (! $user->hasRole('Bos')) {
+        // if (! $user->hasRole('Bos')) {
+        if (! $user->hasAnyRole(['Bos', 'Admin'])) {
             // Logout paksa, invalidate token
             JWTAuth::invalidate($token);
 

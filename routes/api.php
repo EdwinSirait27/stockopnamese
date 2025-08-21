@@ -24,7 +24,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('jwt.auth')->group(function () {
-    Route::middleware(['role:Bos'])->group(function () {
+    Route::middleware(['role:Bos|Admin'])->group(function () {
         Route::get('profile', [AuthController::class, 'profile']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::apiResource('index', PosopnameController::class);
