@@ -13,7 +13,7 @@ use App\Models\Mtokosoglo;
 use App\Models\Posopnamesublocation;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+ use Illuminate\Support\Facades\Http;
 class dashboardController extends Controller
 {
     public function index()
@@ -77,17 +77,7 @@ class dashboardController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
-    public function show($opname_id)
-    {
-        Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
-        $posopnamesublocation = Posopnamesublocation::with('opname', 'sublocation.location', 'users', 'sublocation', 'opname.ambildarisublocation')
-            ->where('opname_id', $opname_id)
-            ->get();
-        $posopname = Posopname::with('ambildarisublocation', 'location')
-            ->where('opname_id', $opname_id)
-            ->get();
-        return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id', 'posopname'));
-    }
+   
     public function approveAll($opname_id)
     {
         $updated = Posopnamesublocation::where('opname_id', $opname_id)
@@ -98,59 +88,7 @@ class dashboardController extends Controller
         }
         return redirect()->back()->with('error', 'Tidak ada data dengan status PRINTED yang bisa di-approve.');
     }
-    public function getPosopnamesublocations(Request $request)
-    {
-        $query = Posopnamesublocation::select('pos_opname_sub_location.*')
-            ->with('sublocation', 'opname.location', 'users', 'oxy');
-        if ($request->has('opname_id')) {
-            $query->where('opname_id', $request->opname_id);
-        }
-        if ($search = $request->input('search.value')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('opname_sub_location_id', 'like', "%{$search}%")
-                    ->orWhere('opname_id', 'like', "%{$search}%")
-                    ->orWhere('sub_location_id', 'like', "%{$search}%")
-                    ->orWhere('sub_location_name', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%")
-                    ->orWhere('form_number', 'like', "%{$search}%")
-                    ->orWhere('date', 'like', "%{$search}%")
-                    ->orWhere('user_id', 'like', "%{$search}%");
-            });
-        }
-        return DataTables::of($query)
-            ->addColumn('action', function ($row) {
-                $showBtn = '
-        <a href="' . route('opname.showitem', $row->opname_sub_location_id) . '"
-           class="btn btn-sm btn-primary">
-            <i class="fas fa-eye"></i> Show
-        </a>
-    ';
-                if ($row->status === 'DRAFT') {
-                    $printBtn = '
-            <button class="btn btn-sm btn-secondary" disabled>
-                <i class="fas fa-print"></i> Print
-            </button>
-        ';
-                } elseif (in_array($row->status, ['REQ PRINT', 'PRINTED'])) {
-                    $printBtn = '
-            <a href="' . route('opname.printitem', $row->opname_sub_location_id) . '"
-               class="btn btn-sm btn-success" target="_blank">
-                <i class="fas fa-print"></i> Print
-            </a>
-        ';
-                } else {
-                    $printBtn = '
-            <button class="btn btn-sm btn-secondary" disabled>
-                <i class="fas fa-print"></i> Print
-            </button>
-        ';
-                }
-                return $showBtn . ' ' . $printBtn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
-
-    }
+   
     public function showitem($opname_sub_location_id)
     {
         Log::info('Masuk ke method showitem', ['opname_sub_location_id' => $opname_sub_location_id]);
@@ -207,7 +145,71 @@ class dashboardController extends Controller
         }
         return DataTables::of($query)->make(true);
     }
+     public function show($opname_id)
+    {
+        Log::info('Masuk ke method show', ['opname_id' => $opname_id]);
+        $posopnamesublocation = Posopnamesublocation::with('opname', 'sublocation.location', 'users', 'sublocation', 'opname.ambildarisublocation')
+            ->where('opname_id', $opname_id)
+            ->get();
+        $posopname = Posopname::with('ambildarisublocation', 'location')
+            ->where('opname_id', $opname_id)
+            ->get();
+        return view('pages.showdashboard', compact('posopnamesublocation', 'opname_id', 'posopname'));
+    }
+ public function getPosopnamesublocations(Request $request)
+    {
+        $query = Posopnamesublocation::select('pos_opname_sub_location.*')
+            ->with('sublocation', 'opname.location', 'users', 'oxy');
+        if ($request->has('opname_id')) {
+            $query->where('opname_id', $request->opname_id);
+        }
+        if ($search = $request->input('search.value')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('opname_sub_location_id', 'like', "%{$search}%")
+                    ->orWhere('opname_id', 'like', "%{$search}%")
+                    ->orWhere('sub_location_id', 'like', "%{$search}%")
+                    ->orWhere('sub_location_name', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhere('form_number', 'like', "%{$search}%")
+                    ->orWhere('date', 'like', "%{$search}%")
+                    ->orWhere('user_id', 'like', "%{$search}%");
+            });
+        }
+        return DataTables::of($query)
+            ->addColumn('action', function ($row) {
+                $showBtn = '
+        <a href="' . route('opname.showitem', $row->opname_sub_location_id) . '"
+           class="btn btn-sm btn-primary">
+            <i class="fas fa-eye"></i> Show
+        </a>
+    ';
+                if ($row->status === 'DRAFT') {
+                    $printBtn = '
+            <button class="btn btn-sm btn-secondary" disabled>
+                <i class="fas fa-print"></i> Print
+            </button>
+        ';
+                } elseif (in_array($row->status, ['REQ PRINT', 'PRINTED'])) {
+                    $printBtn = '
+            <a href="' . route('opname.printitem', $row->opname_sub_location_id) . '"
+               class="btn btn-sm btn-success" target="_blank">
+                <i class="fas fa-print"></i> Print
+            </a>
+        ';
+                } else {
+                    $printBtn = '
+            <button class="btn btn-sm btn-secondary" disabled>
+                <i class="fas fa-print"></i> Print
+            </button>
+        ';
+                }
+                return $showBtn . ' ' . $printBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
 
+    }
+    
     public function printitem(Request $request, $opname_sub_location_id)
     {
         Log::info('Masuk ke method printitem', ['opname_sub_location_id' => $opname_sub_location_id]);
@@ -273,52 +275,84 @@ class dashboardController extends Controller
         ]);
     }
 
-// public function printitem(Request $request, $opname_sub_location_id)
-// {
-//     $posopnamesublocation = Posopnamesublocation::with(
-//         'opname',
-//         'sublocation.location',
-//         'users',
-//         'sublocation',
-//         'opname.ambildarisublocation'
-//     )->where('opname_sub_location_id', $opname_sub_location_id)->firstOrFail();
+public function checkPrint()
+{
+    $job = Posopnamesublocation::with(
+        'opname',
+        'sublocation.location',
+        'users',
+        'sublocation',
+        'opname.ambildarisublocation'
+    )
+        ->where('status', 'REQ PRINT')
+        ->first();
 
-//     if ($posopnamesublocation->status === 'REQ PRINT') {
-//         $posopnamesublocation->update(['status' => 'PRINTED']);
-//     }
+    if ($job) {
+        // ambil opname
+        $posopname = Posopname::with('ambildarisublocation', 'location')
+            ->where('opname_id', $job->opname_id)
+            ->first();
 
-//     $posopname = Posopname::with('ambildarisublocation', 'location')
-//         ->where('opname_id', $posopnamesublocation->opname_id)
-//         ->first();
+        // ambil items
+        $posopnameitems = Posopnameitem::select([
+            'opname_item_id',
+            'opname_id',
+            'item_master_id',
+            'qty_system',
+            'qty_real',
+            'note',
+            'type',
+            'company_id',
+            'sub_location_id',
+            'opname_sub_location_id'
+        ])
+            ->with(
+                'sublocation',
+                'opname',
+                'posopnamesublocation',
+                'opname.location',
+                'item',
+                'item.posunit'
+            )
+            ->where('opname_sub_location_id', $job->opname_sub_location_id)
+            ->get();
 
-//     $posopnameitems = Posopnameitem::with(
-//         'sublocation',
-//         'opname',
-//         'posopnamesublocation',
-//         'opname.location',
-//         'item',
-//         'item.posunit'
-//     )
-//         ->where('opname_sub_location_id', $opname_sub_location_id)
-//         ->get();
+        // total qty
+        $totalQtyReal = $posopnameitems->reduce(function ($carry, $item) {
+            return bcadd($carry, $item->qty_real, 3);
+        }, '0');
 
-//     $pdf = Pdf::loadView('pages.printitem_pdf', [
-//         'posopnamesublocation' => $posopnamesublocation,
-//         'posopname' => $posopname,
-//         'posopnameitems' => $posopnameitems,
-//     ]);
+        // hitung duplikat
+        $codeCounts = $posopnameitems
+            ->groupBy(function ($item) {
+                return $item->item->code ?? '-';
+            })
+            ->map(function ($group) {
+                return $group->count();
+            });
 
-//     // Simpan PDF sementara
-//     $filePath = storage_path('app/public/print_'.$opname_sub_location_id.'.pdf');
-//     $pdf->save($filePath);
+        // render HTML untuk dikirim ke Python
+        $html = view('pages.printitem', [
+            'posopnamesublocation' => collect([$job]),
+            'form_number' => $job->form_number,
+            'posopname' => $posopname,
+            'posopnameitems' => $posopnameitems,
+            'totalQtyReal' => $totalQtyReal,
+            'codeCounts' => $codeCounts
+        ])->render();
 
-//     // Kirim ke printer server (pakai shell_exec lp/lpr di Linux)
-//     shell_exec("lp -d PRINTER_NAME " . escapeshellarg($filePath));
+        // update status biar ga dobel print
+        $job->update(['status' => 'PRINTED']);
 
-//     return response()->json(['success' => true, 'message' => 'Dokumen sudah dikirim ke printer']);
-// }
+        return response()->json([
+            'status' => 'OK',
+            'form_number' => $job->form_number,
+            'html' => $html
+        ]);
+    }
 
-
+    return response()->json(['status' => 'NO JOB']);
+}
     public function indexso($opname_id)
     {
         $files = Storage::disk('public')->files('templateso');

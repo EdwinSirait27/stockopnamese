@@ -1,8 +1,11 @@
 <?php
+use App\Http\Controllers\dashboardController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\PosopnameController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Posopnamesublocation;
+use Illuminate\Support\Facades\Response;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,9 +24,29 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('jwt.auth')->group(function () {
-    Route::middleware(['role:Penginput'])->group(function () {
+    Route::middleware(['role:Bos'])->group(function () {
         Route::get('profile', [AuthController::class, 'profile']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::apiResource('index', PosopnameController::class);
+        Route::get('/check-print', [dashboardController::class, 'checkPrint']);
     });
 });
+
+// Route::get('/check-print', function () {
+//     $printJob = Posopnamesublocation::where('status', 'REQ PRINT')->first();
+
+//     if ($printJob) {
+//         // update status jadi "PRINTING" biar ga dobel
+//         $printJob->update(['status' => 'PRINTED']);
+
+//         return Response::json([
+//             'id' => $printJob->id,
+//             'form_number' => $printJob->form_number,
+//             'html' => view('printitem', compact('printJob'))->render()
+//         ]);
+//     }
+
+//     return Response::json(['status' => 'NO JOB']);
+// });
+
+

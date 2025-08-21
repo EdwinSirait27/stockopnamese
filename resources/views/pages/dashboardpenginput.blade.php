@@ -54,10 +54,26 @@
     <div class="main-content">
         <section class="section">
             <div class="section-body">
-
                 <div style="position: sticky; top: 0; background: white; z-index: 100; padding-top: 10px;">
-                    <input type="text" id="search-input" placeholder="Scan QRCode" class="form-control mb-3"
-                        autocomplete="off" />
+                    {{-- <input type="text" id="search-input" placeholder="Scan QRCode" class="form-control mb-3"
+                        autocomplete="off" /> --}}
+                        <input type="text" id="search-input" 
+       placeholder="Scan QRCode" 
+       class="form-control mb-3"
+       autocomplete="off" />
+
+<script>
+  const input = document.getElementById("search-input");
+
+  // Fokus pertama kali
+  input.focus();
+
+  // Kalau kehilangan fokus, otomatis balik lagi
+  input.addEventListener("blur", () => {
+    setTimeout(() => input.focus(), 100);
+  });
+</script>
+
                 </div>
 
                 <div id="posopname-container" class="box-container">

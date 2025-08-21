@@ -9,8 +9,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Log;
-
-
 class AuthController extends Controller
 {
      public function username()
@@ -90,9 +88,8 @@ public function login(Request $request)
         }
 
         $user = Auth::user();
-
         // Cek role hanya Bos atau Admin yang boleh login
-        if (! $user->hasRole('Penginput')) {
+        if (! $user->hasRole('Bos')) {
             // Logout paksa, invalidate token
             JWTAuth::invalidate($token);
 
@@ -101,7 +98,6 @@ public function login(Request $request)
                 'message' => 'Anda tidak memiliki akses untuk login.'
             ], 403);
         }
-
         // Ambil role & permission kalau perlu
         $roles = $user->getRoleNames();
         $permissions = $user->getAllPermissions()->pluck('name');
