@@ -13,12 +13,15 @@
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                     <ul class="dropdown-menu">
-                        <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ url('features-profile') }}">Profile</a>
-                        </li>
+                        </li> --}}
 
                         <li class='{{ Request::is('dashboard') ? 'active' : '' }}'>
                             <a class="nav-link" href="{{ url('dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class='{{ Request::is('Stockopname') ? 'active' : '' }}'>
+                            <a class="nav-link" href="{{ url('Stockopname') }}">Stock Opname</a>
                         </li>
               
                         {{-- <li class='{{ Request::is('scanbarcode') ? 'active' : '' }}'>
@@ -75,9 +78,9 @@
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                     <ul class="dropdown-menu">
-                        <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ url('features-profile') }}">Profile</a>
-                        </li>
+                        </li> --}}
 
                         <li class='{{ Request::is('dashboardadmin') ? 'active' : '' }}'>
                             <a class="nav-link" href="{{ url('dashboardadmin') }}">Dashboard</a>
@@ -89,9 +92,9 @@
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                     <ul class="dropdown-menu">
-                        <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::is('features-profile') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ url('features-profile') }}">Profile</a>
-                        </li>
+                        </li> --}}
 
                         {{-- <li class='{{ Request::is('dashboardadmin') ? 'active' : '' }}'>
                             <a class="nav-link" href="{{ url('dashboardadmin') }}">Dashboard</a>

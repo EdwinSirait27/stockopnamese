@@ -8,7 +8,9 @@
 @endpush
 
 @section('main')
-    <div class="card card-primary">
+    {{-- <div class="card card-primary"> --}}
+        
+<div class="card" style="color:#9efe01;">
         <div class="card-header">
             <h4>Login</h4>
         </div>
@@ -38,8 +40,8 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input id="username" type="text" class="form-control" name="username" placeholder="insert your username"
+                    <label for="login_id">Username</label>
+                    <input id="login_id" type="text" class="form-control" name="login_id" placeholder="insert your username"
                         tabindex="1" required autofocus>
                     <div class="invalid-feedback">
                         Please fill in your username

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 @section('title', 'MJM')
 @push('style')
     <style>
@@ -59,7 +59,6 @@
                                             <thead>
                                                 <tr>
                                                     <th scope="col">No</th>
-                                                    {{-- <th scope="col" class="text-center">Opname ID</th> --}}
                                                     <th scope="col" class="text-center">Number</th>
                                                     <th scope="col" class="text-center">Location</th>
                                                     <th scope="col" class="text-center">Sub Location</th>
@@ -228,22 +227,6 @@
                                                     <th scope="col" class="text-center">Sub Location</th>
                                                     <th scope="col" class="text-center">Opname Type</th>
                                                     <th scope="col" class="text-center">Note</th>
-                                                    {{-- <th scope="col" class="text-center">Note</th>
-                                                <th scope="col" class="text-center">Counter</th>
-                                                <th scope="col" class="text-center">Number</th>
-                                                <th scope="col" class="text-center">Approval 1</th>
-                                                <th scope="col" class="text-center">Approval 2</th>
-                                                <th scope="col" class="text-center">Approval 3</th>
-                                                <th scope="col" class="text-center">Prefix Number</th>
-                                                <th scope="col" class="text-center">Approval 1 Date</th>
-                                                <th scope="col" class="text-center">Approval 2 Date</th>
-                                                <th scope="col" class="text-center">Approval 3 Date</th>
-                                                <th scope="col" class="text-center">Type</th>
-                                                <th scope="col" class="text-center">Company ID</th>
-                                                <th scope="col" class="text-center">Opane</th>
-                                                <th scope="col" class="text-center">User ID</th>
-                                                <th scope="col" class="text-center">Name</th>
-                                                <th scope="col" class="text-center">Type Opname</th> --}}
                                                     <th scope="col" class="text-center">Action</th>
 
                                                 </tr>
@@ -269,12 +252,11 @@
                 var table = $('#users-table').DataTable({
                     processing: true,
                     serverSide: true,
-                    // scrollX: true,
                     ajax: {
                         url: '{{ route('posopnameadmin.posopnameadmin') }}',
                         type: 'GET',
                         data: function(d) {
-                            d.location_name = $('#location_name').val(); // ambil value dari select
+                            d.location_name = $('#location_name').val();
                         }
 
                     },
@@ -348,4 +330,36 @@
             });
         </script>
     @endpush
-@endrole
+@endrole --}}
+@extends('layouts.app')
+
+@section('title', 'Dashboard')
+
+@section('main')
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Choose Databases & Location</h1>
+        </div>
+
+        <div class="section-body">
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            <form action="{{ route('dashboard') }}" method="GET">
+    <div class="form-group">
+        <label for="db">Choose Databases</label>
+        <select name="db" id="db" class="form-control" onchange="this.form.submit()">
+            <option value="mysql_third" {{ $db=='mysql_third' ? 'selected' : '' }}>SE 001</option>
+            <option value="mysql_fourth" {{ $db=='mysql_fourth' ? 'selected' : '' }}>SE 005</option>
+            <option value="mysql_fifth" {{ $db=='mysql_fifth' ? 'selected' : '' }}>SE 008</option>
+        </select>
+    </div>
+</form>
+
+            {{-- <button type="submit" class="btn btn-primary mt-3">Simpan</button> --}}
+        </div>
+    </section>
+</div>
+@endsection

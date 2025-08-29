@@ -95,9 +95,11 @@
 @section('main')<div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Import File SO : {{ $posopname->location->name }}</h1>
+                {{-- <h1>Import File SO : {{ $posopname->location->name }}</h1> --}}
+                <h1>Import File SO : {{ $dbLabel }}</h1>
+
             </div>
-            <h4>Sub Location : {{ $posopname->ambildarisublocation->name }}</h4>
+            {{-- <h4>Sub Location : {{ $posopname->ambildarisublocation->name }}</h4> --}}
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <strong>Import Gagal (Validasi Excel):</strong>
@@ -111,7 +113,7 @@
             <div class="section-body">
                 <div class="form-container">
                     {{-- <form id="import-create" action="{{ route('Importso.Importso') }}" method="POST" --}}
-                    <form id="import-create" action="{{ route('Importso.use', $posopname->opname_id) }}" method="POST"
+                    <form id="import-create" action="{{ route('Importso.use') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
@@ -124,7 +126,7 @@
                             {{-- <a href="javascript:history.back()" class="btn btn-secondary">
     <i class="fas fa-arrow-left"></i> Back
 </a> --}}
-                            <a href="{{ route('pages.showdashboard', ['opname_id' => $posopname->opname_id]) }}"
+                            <a href="{{ route('Stockopname.index') }}"
                                 class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back
                             </a>

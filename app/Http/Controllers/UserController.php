@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Location;
+use App\Models\Locationse001;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\DataTables;
@@ -18,14 +19,12 @@ class UserController extends Controller
 {
     public function index()
     {
-
         return view('users.index');
-
     }
     public function getUsers()
     {
-        $users = User::with('roles','location')
-            ->select(['id', 'username','location_id', 'name', 'created_at'])
+        $users = User::with('roles','location','locationse')
+            ->select(['id', 'username','BO', 'name', 'created_at'])
             // ->select(['id', 'username','location_id', 'name', 'created_at'])->byLocation()
             ->get()
             ->map(function ($user) {
@@ -49,17 +48,17 @@ class UserController extends Controller
                     return 'Empty';
                 }
             })
-                    ->addColumn('location_name', function ($user) {
-                return !empty($user->Location) && !empty($user->Location->name)
-                    ? $user->Location->name
+                    ->addColumn('BO', function ($user) {
+                return !empty($user) && !empty($user->BO)
+                    ? $user->BO
                     : 'Empty';
             })
-            ->rawColumns(['roles','location_name', 'action'])
+            ->rawColumns(['roles','BO', 'action'])
             ->make(true);
     }
     public function edit($hashedId)
     {
-        $user = User::with('roles.permissions','location')->get()->first(function ($u) use ($hashedId) {
+        $user = User::with('roles.permissions','location','locationse')->get()->first(function ($u) use ($hashedId) {
             $expectedHash = substr(hash('sha256', $u->id . env('APP_KEY')), 0, 8);
             return $expectedHash === $hashedId;
         });
@@ -68,6 +67,7 @@ class UserController extends Controller
         }
         $roles = Role::pluck('name', 'name')->all();
         $locations = Location::pluck('name', 'location_id');
+        $locationse = Locationse001::pluck('BO', 'BO');
 
         // Change selectedRole to use name instead of id
         $selectedRole = old('role', optional($user->roles->first())->name ?? '');
@@ -76,6 +76,7 @@ class UserController extends Controller
             'hashedId' => $hashedId,
             'roles' => $roles,
             'locations' => $locations,
+            'locationse' => $locationse,
             'selectedRole' => $selectedRole
         ]);
     }
@@ -128,7 +129,7 @@ class UserController extends Controller
     public function update(Request $request, $hashedId)
 {
     // Cari user berdasarkan hashed ID
-    $user = User::with('roles.permissions','location')->get()->first(function ($u) use ($hashedId) {
+    $user = User::with('roles.permissions','location','locationse')->get()->first(function ($u) use ($hashedId) {
         $expectedHash = substr(hash('sha256', $u->id . env('APP_KEY')), 0, 8);
         return $expectedHash === $hashedId;
     });
@@ -142,17 +143,17 @@ class UserController extends Controller
 
     // Validasi input
     $validatedData = $request->validate([
-        'username' => ['required','min:3', 'max:255',Rule::unique('users')->ignore($user->id), // ignore id user yang sedang diupdate
-    ],
-        'password' => ['nullable', 'regex:/^\S+$/', 'min:3', 'max:255'],
-        'name' => ['required', 'min:3', 'max:255'],
+    //     'username' => ['required','min:3', 'max:255',Rule::unique('users')->ignore($user->id), // ignore id user yang sedang diupdate
+    // ],
+    //     'password' => ['nullable', 'regex:/^\S+$/', 'min:3', 'max:255'],
+    //     'name' => ['required', 'min:3', 'max:255'],
         'role' => ['required', 'string', 'exists:roles,name'],
-       'location_id' => [
+       'BO' => [
         'required',
         function ($attribute, $value, $fail) {
-            $exists = DB::connection('mysql_second') // ganti dengan nama koneksi kedua kamu
-                ->table('pos_location')
-                ->where('location_id', $value)
+            $exists = DB::connection('mysql_third') // ganti dengan nama koneksi kedua kamu
+                ->table('bo')
+                ->where('BO', $value)
                 ->exists();
 
             if (! $exists) {
@@ -167,12 +168,12 @@ class UserController extends Controller
 
     try {
         // Update password jika diisi
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-         $user->username = $validatedData['username'];
-         $user->location_id = $validatedData['location_id'];
-         $user->name = $validatedData['name'];
+        // if ($request->filled('password')) {
+        //     $user->password = Hash::make($request->password);
+        // }
+        //  $user->username = $validatedData['username'];
+         $user->BO = $validatedData['BO'];
+        //  $user->name = $validatedData['name'];
 
         // Update role
         $role = Role::findByName($validatedData['role']);

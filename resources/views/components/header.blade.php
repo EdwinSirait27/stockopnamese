@@ -23,9 +23,9 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-title">Hai, {{ Auth::user()->name }}</div>
-            <a href="{{ route('features-profile') }}" class="dropdown-item has-icon">
+            {{-- <a href="{{ route('features-profile') }}" class="dropdown-item has-icon">
     <i class="far fa-user"></i> Profile
-</a>
+</a> --}}
 
                 <div class="dropdown-divider"></div>
                 {{-- <form method="POST" action="{{ route('logout') }}">

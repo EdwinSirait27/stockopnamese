@@ -14,6 +14,7 @@ use App\Http\Controllers\dasboardPenginputController;
 use App\Http\Controllers\CurrentdbController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\DbController;
+use App\Http\Controllers\SOController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,24 +39,27 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::post('/auth-register', [RegisterController::class, 'register'])->name('auth-register.register');
     Route::get('/auth-register', [RegisterController::class, 'index'])->name('auth-register.auth-register');
     Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
-    Route::get('/posopname/posopname', [dashboardController::class, 'getPosopnames'])->name('posopname.posopname');
-    Route::get('/showdashboard/{opname_id}', [dashboardController::class, 'show'])->name('pages.showdashboard');
-  Route::post('/opname/{opname_id}/approve-all', [dashboardController::class, 'approveAll'])
-    ->name('opname.approveAll');
+    Route::get('/Stockopname', [SOController::class, 'index'])->name('Stockopname.index');
+    Route::get('/stockopname/stockopname', [SOController::class, 'getDatatables'])->name('stockopname.stockopname');
 
-    Route::get('/posopnamesublocations/posopnamesublocations', [dashboardController::class, 'getPosopnamesublocations'])->name('posopnamesublocations.posopnamesublocations');
+    Route::get('/Stockopname/{db}/{kdtoko}/details', [SOController::class, 'showDetails'])
+        ->name('Stockopname.details');
+
+    Route::get('/stockopname/{db}/{kdtoko}/details/data', [SOController::class, 'getDetailDatatables'])
+        ->name('stockopname.details.datatables');
+
+    Route::get('/importso', [SOController::class, 'indexso'])->name('importso.use');
+    Route::post('/Importso', [SOController::class, 'Importso'])->name('Importso.use');
+    Route::get('/Importso/downloadso/{filename}', [SOController::class, 'downloadso'])->name('Importso.downloadso');
+    Route::get('/Stockopname/{db}/{kdtoko}/print', [SOController::class, 'showprint'])
+    ->name('Stockopname.print');
 
 
-    Route::post('/scan-barcode', [ScanbarcodeController::class, 'scanBarcode'])->name('scan.barcode');
-    Route::get('/scanbarcode', function () {
-        return view('pages.scanbarcode');
-    })->name('scan.page');
-    Route::get('/blank-page', function () {
-        return view('pages.blank-page', ['type_menu' => '']);
-    });
-    Route::get('/importso/use/{opname_id}', [dashboardController::class, 'indexso'])->name('importso.use');
-    Route::post('/Importso/{opname_id}', [dashboardController::class, 'Importso'])->name('Importso.use');
-    Route::get('/Importso/downloadso/{filename}', [dashboardController::class, 'downloadso'])->name('Importso.downloadso');
+
+
+
+
+
     Route::get('/roles', [RoleController::class, 'index'])
         ->name('roles.index');
     Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
@@ -71,11 +75,6 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::put('/permissions/{id}', [PermissionController::class, 'update'])->name('permissions.update');
     Route::get('/permissions/permissions', [PermissionController::class, 'getPermissions'])->name('permissions.permissions');
 
-    Route::match(['get', 'post'], '/DB', [DbController::class, 'index'])->name('DB.index');
-    Route::get('/mstock/mstock', [DbController::class, 'getMstock'])->name('mstock.mstock');
-    Route::post('/import-stock', [DbController::class, 'import'])->name('stock.import');
-    //   Route::get('/import-stock', [DbController::class, 'import'])->name('stock.import');
-
     Route::get('/buttons', [ButtonsController::class, 'index'])->name('buttons.index');
     Route::get('/buttons/buttons', [ButtonsController::class, 'getButtons'])->name('buttons.buttons');
     Route::get('/buttons/edit/{id}', [ButtonsController::class, 'edit'])->name('buttons.edit');
@@ -86,23 +85,6 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::get('/users/edit/{hashedId}', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{hashedId}', [userController::class, 'update'])->name('users.update');
 
-    Route::get('/Currentdb', [CurrentdbController::class, 'index'])->name('Currentdb.index');
-    Route::get('/currentdb/currentdb', [CurrentdbController::class, 'getCurrentdb'])->name('currentdb.currentdb');
-    Route::get('/import-progress', function () {
-        return response()->json([
-            'progress' => Cache::get('import_progress', 0),
-            'done' => Cache::get('import_progress_done', false),
-        ]);
-    })->name('import.progress');
-
-    // Halaman Show Item berdasarkan form_number
-    Route::get('/opname/showitem/{opname_sub_location_id}', [dashboardController::class, 'showitem'])
-        ->name('opname.showitem');
-
-    // Endpoint DataTables untuk item berdasarkan form_number
-    Route::get('/opname/getshowitem', [dashboardController::class, 'getshowitem'])
-        ->name('opname.getshowitem');
-    // routes/web.php
     Route::get('/opname/printitem/{opname_sub_location_id}', [dashboardController::class, 'printitem'])
         ->name('opname.printitem');
 });
@@ -117,13 +99,13 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/importsoadmin/downloadsoadmin/{filename}', [dashboardAdminController::class, 'downloadsoadmin'])->name('importsoadmin.downloadsoadmin');
     Route::get('/showdashboardadmin/{opname_id}', [dashboardAdminController::class, 'showadmin'])->name('pages.showdashboardadmin');
     Route::get('/posopnamesublocationsadmin/posopnamesublocationsadmin', [dashboardAdminController::class, 'getPosopnamesublocationsadmin'])->name('posopnamesublocationsadmin.posopnamesublocationsadmin');
-      Route::get('/opname/showitemadmin/{opname_sub_location_id}', [dashboardAdminController::class, 'showitemadmin'])
+    Route::get('/opname/showitemadmin/{opname_sub_location_id}', [dashboardAdminController::class, 'showitemadmin'])
         ->name('opname.showitemadmin');
     Route::get('/opname/getshowitemadmin', [dashboardAdminController::class, 'getshowitemadmin'])
         ->name('opname.getshowitemadmin');
     // Route::get('/opname/printitemadmin/{form_number}', [dashboardAdminController::class, 'printitemadmin'])
     //     ->name('opname.printitemadmin');
-      Route::get('/opname/printitemadmin/{opname_sub_location_id}', [dashboardAdminController::class, 'printitemadmin'])
+    Route::get('/opname/printitemadmin/{opname_sub_location_id}', [dashboardAdminController::class, 'printitemadmin'])
         ->name('opname.printitemadmin');
 });
 Route::middleware(['auth', 'role:Admin|Bos|Penginput'])->group(function () {
@@ -139,15 +121,15 @@ Route::middleware(['auth', 'role:Penginput'])->group(function () {
     Route::get('/posopnamesublocationpenginput/posopnamesublocationpenginput', [dasboardPenginputController::class, 'getPosopnamesublocationspenginput'])->name('posopnamesublocationpenginput.posopnamesublocationpenginput');
     Route::get('/scan/{opname_sub_location_id}', [dasboardPenginputController::class, 'scan'])->name('scan');
     Route::post('/scan/{opname_sub_location_id}', [dasboardPenginputController::class, 'scanPost'])->name('scan.post');
-  Route::get('/posopname/items/{id}', [dasboardPenginputController::class, 'getPosopnameItems'])
-    ->name('posopname.items');
-Route::post('/posopname/{opname_sub_location_id}/scan-preview', [dasboardPenginputController::class, 'scanBarcodePreview'])
-    ->name('posopname.scanBarcodePreview');
-Route::post('/save-scanned-item/{opname_sub_location_id}', [dasboardPenginputController::class, 'saveScannedItem']);
-Route::get('/posopname-item/{id}', [dasboardPenginputController::class, 'showposopnameitem']);
-Route::put('/posopname-item/{id}', [dasboardPenginputController::class, 'update']);
-Route::post('/posopnamesublocation/{id}/req-print', [dasboardPenginputController::class, 'reqPrint'])
-    ->name('posopnamesublocation.reqPrint');
+    Route::get('/posopname/items/{id}', [dasboardPenginputController::class, 'getPosopnameItems'])
+        ->name('posopname.items');
+    Route::post('/posopname/{opname_sub_location_id}/scan-preview', [dasboardPenginputController::class, 'scanBarcodePreview'])
+        ->name('posopname.scanBarcodePreview');
+    Route::post('/save-scanned-item/{opname_sub_location_id}', [dasboardPenginputController::class, 'saveScannedItem']);
+    Route::get('/posopname-item/{id}', [dasboardPenginputController::class, 'showposopnameitem']);
+    Route::put('/posopname-item/{id}', [dasboardPenginputController::class, 'update']);
+    Route::post('/posopnamesublocation/{id}/req-print', [dasboardPenginputController::class, 'reqPrint'])
+        ->name('posopnamesublocation.reqPrint');
 
 });
 Route::get('/redirect-by-role', function () {
@@ -172,13 +154,13 @@ Route::get('/redirect-by-role', function () {
 })->middleware('auth');
 
 
-        //   @foreach($posopnameitems_by_location as $item)
-        //             <tr>
-        //                 <td>{{ $item->opname_item_id }}</td>
-        //                 <td>{{ $item->item->name ?? 'N/A' }}</td>
-        //                 <td>{{ $item->item->barcode ?? 'N/A' }}</td>
-        //                 <td>{{ $item->qty_system }}</td>
-        //                 <td>{{ $item->qty_real }}</td>
-        //                 <td>{{ $item->note ?? '-' }}</td>
-        //             </tr>
-        //         @endforeach
+//   @foreach($posopnameitems_by_location as $item)
+//             <tr>
+//                 <td>{{ $item->opname_item_id }}</td>
+//                 <td>{{ $item->item->name ?? 'N/A' }}</td>
+//                 <td>{{ $item->item->barcode ?? 'N/A' }}</td>
+//                 <td>{{ $item->qty_system }}</td>
+//                 <td>{{ $item->qty_real }}</td>
+//                 <td>{{ $item->note ?? '-' }}</td>
+//             </tr>
+//         @endforeach

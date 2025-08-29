@@ -17,23 +17,18 @@ class ScanbarcodeController extends Controller
         \Log::info('Input barcode: ' . $request->BARA2);
         $request->validate(['BARA2' => 'required|string']);
         $barcode = $request->BARA2;
-
-        // 1. Cari di Mstocksoglo.BARA2
         \Log::info('[STEP 1] Mencari di Mstocksoglo.BARA2...');
         $product = Mstocksoglo::where('BARA2', $barcode)->first();
         if ($product) {
             \Log::info('✅ Ditemukan di Mstocksoglo.BARA2: ' . $barcode);
             return response()->json($product);
         }
-
-        // 2. Cari di Mstocksoglo.BARA
         \Log::info('[STEP 2] Mencari di Mstocksoglo.BARA...');
         $product = Mstocksoglo::where('BARA', $barcode)->first();
         if ($product) {
             \Log::info('✅ Ditemukan di Mstocksoglo.BARA: ' . $barcode);
             return response()->json($product);
         }
-        // 3. Cari di Mstockitem.BARA1
         \Log::info('[STEP 3] Mencari di Mstockitem.BARA1...');
         $productItem = Mstockitem::where('BARA1', $barcode)->first();
         if ($productItem) {
@@ -55,7 +50,6 @@ class ScanbarcodeController extends Controller
             }
         }
 
-        // 4. Cari di Mstockitem.BARA
         \Log::info('[STEP 4] Mencari di Mstockitem.BARA...');
         $productItem = Mstockitem::where('BARA', $barcode)->first();
         if ($productItem) {

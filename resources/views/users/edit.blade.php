@@ -81,7 +81,7 @@
                                         <div class="form-group col-md-6 col-12">
                                             <label for="name">Name</label>
                                             <input type="text" class="form-control" id="name" name="name"
-                                                value="{{ old('name', $user->name) }}">
+                                                value="{{ old('name', $user->name) }}" disabled>
                                             <div class="invalid-feedback">
                                                 Please fill in the Name
                                             </div>
@@ -138,7 +138,7 @@
                                             <label for="password">New Password</label>
                                             <div class="password-wrapper position-relative">
                                                 <input type="password" class="form-control pwstrength" id="password"
-                                                    data-indicator="pwindicator" name="password">
+                                                    data-indicator="pwindicator" name="password" disabled>
                                                 <span
                                                     class="toggle-password position-absolute top-50 end-0 translate-middle-y pe-3"
                                                     onclick="togglePassword()">
@@ -154,20 +154,20 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-md-6 col-12">
-                                            <label for="location_id">Location</label>
-                                            <label for="location_id" class="form-label">Location</label>
-                                            <select name="location_id"
-                                                class="form-select select2 @error('location_id') is-invalid @enderror"
+                                            <label for="BO"></label>
+                                            <label for="BO" class="form-label">Location</label>
+                                            <select name="BO"
+                                                class="form-select select2 @error('BO') is-invalid @enderror"
                                                 required>
-                                                <option value="">Pilih Lokasi</option>
-                                                @foreach ($locations as $id => $name)
+                                                <option value="">Choose Location</option>
+                                                @foreach ($locationse as $id => $BO)
                                                     <option value="{{ $id }}"
-                                                        {{ old('location_id', $user->location_id) == $id ? 'selected' : '' }}>
-                                                        {{ $name }}
+                                                        {{ old('BO', $user->BO) == $id ? 'selected' : '' }}>
+                                                        {{ $BO }}
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            @error('location_id')
+                                            @error('BO')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -178,7 +178,7 @@
                                         <div class="form-group col-md-6 col-12">
                                             <label for="username">Username</label>
                                             <input type="text" class="form-control" id="username" name="username"
-                                                value="{{ old('username', $user->username) }}">
+                                                value="{{ old('username', $user->username) }}" disabled>
                                             <div class="invalid-feedback">
                                                 Please fill in the Username
                                             </div>

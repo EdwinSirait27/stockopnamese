@@ -121,8 +121,8 @@
                         className: 'text-center'
                     },
                     {
-                        data: 'location_name',
-                        name: 'location_name',
+                        data: 'BO',
+                        name: 'BO',
                         className: 'text-center'
                     },
 

@@ -2,6 +2,7 @@
 use App\Http\Controllers\dashboardController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SOController;
 use App\Http\Controllers\Api\PosopnameController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Posopnamesublocation;
@@ -19,7 +20,6 @@ use Illuminate\Support\Facades\Response;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
@@ -28,7 +28,8 @@ Route::middleware('jwt.auth')->group(function () {
         Route::get('profile', [AuthController::class, 'profile']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::apiResource('index', PosopnameController::class);
-        Route::get('/check-print', [dashboardController::class, 'checkPrint']);
+        Route::get('/check-print', [SOController::class, 'checkPrint']);
+        Route::post('/select-db', [AuthController::class, 'selectDb']);
     });
 });
 
