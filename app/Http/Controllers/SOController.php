@@ -188,25 +188,104 @@ public function showprint($db, $kdtoko)
 
     return view('pages.Stockopname.print', compact('db','totalFisik','dbLabel', 'kdtoko', 'store', 'details','nameCounts'));
 }
+// public function checkPrint()
+// {
+//     $dbNames = [
+//         'mysql_third' => 'SE 001',
+//         'mysql_fourth' => 'SE 005',
+//         'mysql_fifth' => 'SE 008',
+//     ];
+//      $db = session('selected_db',$dbNames);
+
+//     sleep(8);
+
+//     $job = DB::connection($db)
+//         ->table('mtoko_soglo')
+//         ->where('masuk', 3) // Req Print
+//         ->first();
+
+//     if ($job) {
+//         $store = DB::connection($db)
+//             ->table('mtoko_soglo')
+//             ->where('kdtoko', $job->kdtoko)
+//             ->select('kdtoko', 'kettoko', 'personil', 'masuk', 'inpmasuk', 'balik')
+//             ->first();
+
+//         $details = DB::connection($db)
+//             ->table('mtoko_det_soglo as d')
+//             ->leftJoin('mstock as s', 'd.BARA', '=', 's.BARA')
+//             ->where('d.KDTOKO', $job->kdtoko)
+//             ->select(
+//                 'd.KDTOKO',
+//                 'd.BARA',
+//                 'd.NOURUT',
+//                 'd.FISIK',
+//                 'd.BARCODE',
+//                 'd.ID',
+//                 's.NAMA as nama_barang'
+//             )
+//             ->orderBy('d.NOURUT')
+//             ->get();
+
+//         $totalFisik = DB::connection($db)
+//             ->table('mtoko_det_soglo')
+//             ->where('KDTOKO', $job->kdtoko)
+//             ->sum('FISIK');
+
+//         $nameCounts = $details->groupBy('nama_barang')->map->count();
+
+//         $html = view('pages.Stockopname.print', [
+//             'db' => $db,
+//             'dbLabel' => $db,
+//             'kdtoko' => $job->kdtoko,
+//             'store' => $store,
+//             'details' => $details,
+//             'totalFisik' => $totalFisik,
+//             'nameCounts' => $nameCounts,
+//         ])->render();
+
+//         DB::connection($db)
+//             ->table('mtoko_soglo')
+//             ->where('kdtoko', $job->kdtoko)
+//             ->update(['masuk' => 1]); // Printed
+
+//         return response()->json([
+//             'status' => 'OK',
+//             'kdtoko' => $job->kdtoko,
+//             'html' => $html
+//         ]);
+//     }
+//     return response()->json(['status' => 'NO JOB']);
+// }
 public function checkPrint()
 {
-     $db = session('selected_db', 'mysql_third');
-    // delay 5 detik sebelum ambil job
-    sleep(5);
+    $dbNames = [
+        'mysql_third'  => 'SE 001',
+        'mysql_fourth' => 'SE 005',
+        'mysql_fifth'  => 'SE 008',
+    ];
 
-    $job = DB::connection($db)
+    // Ambil key dari session, default mysql_third
+    $dbKey = session('selected_db', 'mysql_third');
+
+    // Ambil label untuk ditampilkan
+    $dbLabel = $dbNames[$dbKey] ?? $dbKey;
+
+    sleep(8);
+
+    $job = DB::connection($dbKey)
         ->table('mtoko_soglo')
         ->where('masuk', 3) // Req Print
         ->first();
 
     if ($job) {
-        $store = DB::connection($db)
+        $store = DB::connection($dbKey)
             ->table('mtoko_soglo')
             ->where('kdtoko', $job->kdtoko)
             ->select('kdtoko', 'kettoko', 'personil', 'masuk', 'inpmasuk', 'balik')
             ->first();
 
-        $details = DB::connection($db)
+        $details = DB::connection($dbKey)
             ->table('mtoko_det_soglo as d')
             ->leftJoin('mstock as s', 'd.BARA', '=', 's.BARA')
             ->where('d.KDTOKO', $job->kdtoko)
@@ -222,7 +301,7 @@ public function checkPrint()
             ->orderBy('d.NOURUT')
             ->get();
 
-        $totalFisik = DB::connection($db)
+        $totalFisik = DB::connection($dbKey)
             ->table('mtoko_det_soglo')
             ->where('KDTOKO', $job->kdtoko)
             ->sum('FISIK');
@@ -230,16 +309,16 @@ public function checkPrint()
         $nameCounts = $details->groupBy('nama_barang')->map->count();
 
         $html = view('pages.Stockopname.print', [
-            'db' => $db,
-            'dbLabel' => $db,
-            'kdtoko' => $job->kdtoko,
-            'store' => $store,
-            'details' => $details,
+            'db'         => $dbKey,    // koneksi
+            'dbLabel'    => $dbLabel,  // label SE 001 / SE 005 / SE 008
+            'kdtoko'     => $job->kdtoko,
+            'store'      => $store,
+            'details'    => $details,
             'totalFisik' => $totalFisik,
             'nameCounts' => $nameCounts,
         ])->render();
 
-        DB::connection($db)
+        DB::connection($dbKey)
             ->table('mtoko_soglo')
             ->where('kdtoko', $job->kdtoko)
             ->update(['masuk' => 1]); // Printed
@@ -247,11 +326,13 @@ public function checkPrint()
         return response()->json([
             'status' => 'OK',
             'kdtoko' => $job->kdtoko,
-            'html' => $html
+            'html'   => $html
         ]);
     }
+
     return response()->json(['status' => 'NO JOB']);
 }
+
 
 
 
