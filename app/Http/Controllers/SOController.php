@@ -144,14 +144,31 @@ public function getDatatables(Request $request)
                 default: return $row->masuk; // fallback kalau ada nilai ga jelas wkwkwk
             }
         })
-        ->addColumn('action', function($row) use ($db) {
+//         ->addColumn('action', function($row) use ($db) {
+//     $urlDetail = route('Stockopname.details', ['db' => $db, 'kdtoko' => $row->kdtoko]);
+//     $urlPrint  = route('Stockopname.print',   ['db' => $db, 'kdtoko' => $row->kdtoko]);
+//     return '
+//         <a href="'.$urlDetail.'" class="btn btn-sm btn-primary">Detail</a>
+//         <a href="'.$urlPrint.'" target="_blank" class="btn btn-sm btn-success">Print</a>
+//     ';
+// })
+->addColumn('action', function($row) use ($db) {
     $urlDetail = route('Stockopname.details', ['db' => $db, 'kdtoko' => $row->kdtoko]);
     $urlPrint  = route('Stockopname.print',   ['db' => $db, 'kdtoko' => $row->kdtoko]);
-    return '
-        <a href="'.$urlDetail.'" class="btn btn-sm btn-primary">Detail</a>
-        <a href="'.$urlPrint.'" target="_blank" class="btn btn-sm btn-success">Print</a>
-    ';
+
+    // Tombol Detail selalu aktif
+    $btnDetail = '<a href="'.$urlDetail.'" class="btn btn-sm btn-primary">Detail</a>';
+
+    // Tombol Print hanya aktif kalau masuk == 1 (Printed)
+    if (in_array($row->masuk, [0, 2, 3])) {
+        $btnPrint = '<button class="btn btn-sm btn-secondary" disabled>Print</button>';
+    } else {
+        $btnPrint = '<a href="'.$urlPrint.'" target="_blank" class="btn btn-sm btn-success">Print</a>';
+    }
+
+    return $btnDetail.' '.$btnPrint;
 })
+
 
         ->rawColumns(['action'])
         ->make(true);
