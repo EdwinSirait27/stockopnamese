@@ -7,6 +7,28 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    public function render($request, Throwable $exception)
+{
+    if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+        return response()->json(['success' => false, 'message' => 'Token tidak valid'], 401);
+    }
+
+    if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+        return response()->json(['success' => false, 'message' => 'Token kadaluarsa'], 401);
+    }
+
+    if ($exception instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
+        return response()->json(['success' => false, 'message' => 'Token tidak ada'], 401);
+    }
+
+    return parent::render($request, $exception);
+}
+protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
+{
+    return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+}
+
+
     /**
      * A list of exception types with their corresponding custom log levels.
      *
