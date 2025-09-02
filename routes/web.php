@@ -41,6 +41,7 @@ Route::middleware(['auth', 'role:Bos'])->group(function () {
     Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
     Route::get('/Stockopname', [SOController::class, 'index'])->name('Stockopname.index');
     Route::get('/stockopname/stockopname', [SOController::class, 'getDatatables'])->name('stockopname.stockopname');
+Route::post('/stockopname/refresh', [SOController::class, 'refreshStockSoglo'])->name('stockopname.refresh');
 
     Route::get('/Stockopname/{db}/{kdtoko}/details', [SOController::class, 'showDetails'])
         ->name('Stockopname.details');

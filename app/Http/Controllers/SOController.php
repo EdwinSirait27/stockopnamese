@@ -7,6 +7,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 class SOController extends Controller
 {
@@ -22,6 +23,86 @@ public function index(Request $request)
     $dbLabel = $dbNames[$db] ?? $db; 
     return view('pages.Stockopname.Stockopname', compact('db', 'dbLabel'));
 }
+
+// public function refreshStockSoglo(Request $request)
+// {
+//     $db = session('selected_db', 'mysql_third'); // pakai koneksi yg sudah dipilih
+
+//     try {
+//         Log::info("Refresh mstock_soglo dimulai.", ['db' => $db]);
+
+//         // Step 1: Hapus semua data
+//         DB::connection($db)->table('mstock_soglo')->truncate();
+//         Log::info("Tabel mstock_soglo berhasil dikosongkan.", ['db' => $db]);
+
+//         // Step 2: Insert ulang data
+//         $sql = "
+//             INSERT INTO mstock_soglo (
+//                 BARA, BARA2, NAMA, AWAL, MASUK, KELUAR, SALDO, AVER, HBELI, HJUAL, STATUS, KDGOL, KDTOKO, HPP, SATUAN
+//             )
+//             SELECT 
+//                 BARA, BARA2, NAMA, AWAL, MASUK, KELUAR,
+//                 (AWAL + MASUK - KELUAR) AS SALDO,
+//                 AVER, HBELI, HJUAL, STATUS, KDGOL, KDTOKO, HPP, SATUAN
+//             FROM mstock
+//             WHERE INV = '1' AND KONSI = '0' AND KDGOL <> 'X0000000'
+//         ";
+
+//         DB::connection($db)->statement($sql);
+//         Log::info("Insert data baru ke mstock_soglo berhasil.", ['db' => $db]);
+
+//         return redirect()->back()->with('success', 'Data mstock_soglo has been refreshed!');
+//     } catch (\Exception $e) {
+//         Log::error("Gagal refresh mstock_soglo.", [
+//             'db' => $db,
+//             'error' => $e->getMessage()
+//         ]);
+//         return redirect()->back()->with('error', 'Gagal refresh mstock_soglo: ' . $e->getMessage());
+//     }
+// }
+public function refreshStockSoglo(Request $request) 
+{
+    $db = session('selected_db', 'mysql_third'); // pakai koneksi yg sudah dipilih
+
+    try {
+        Log::info("Refresh mstock_soglo dimulai.", ['db' => $db]);
+
+        // Step 1: Hapus semua data dari tabel terkait
+        DB::connection($db)->table('mstock_soglo')->truncate();
+        Log::info("Tabel mstock_soglo berhasil dikosongkan.", ['db' => $db]);
+
+        DB::connection($db)->table('mtoko_soglo')->truncate();
+        Log::info("Tabel mtoko_soglo berhasil dikosongkan.", ['db' => $db]);
+
+        DB::connection($db)->table('mtoko_det_soglo')->truncate();
+        Log::info("Tabel mtoko_det_soglo berhasil dikosongkan.", ['db' => $db]);
+
+        // Step 2: Insert ulang data ke mstock_soglo
+        $sql = "
+            INSERT INTO mstock_soglo (
+                BARA, BARA2, NAMA, AWAL, MASUK, KELUAR, SALDO, AVER, HBELI, HJUAL, STATUS, KDGOL, KDTOKO, HPP, SATUAN
+            )
+            SELECT 
+                BARA, BARA2, NAMA, AWAL, MASUK, KELUAR,
+                (AWAL + MASUK - KELUAR) AS SALDO,
+                AVER, HBELI, HJUAL, STATUS, KDGOL, KDTOKO, HPP, SATUAN
+            FROM mstock
+            WHERE INV = '1' AND KONSI = '0' AND KDGOL <> 'X0000000'
+        ";
+        DB::connection($db)->statement($sql);
+        Log::info("Insert data baru ke mstock_soglo berhasil.", ['db' => $db]);
+
+        return redirect()->back()->with('success', 'Data mstock_soglo, mtoko_soglo, dan mtoko_det_soglo berhasil di-refresh!');
+    } catch (\Exception $e) {
+        Log::error("Gagal refresh data.", [
+            'db' => $db,
+            'error' => $e->getMessage()
+        ]);
+        return redirect()->back()->with('error', 'Gagal refresh data: ' . $e->getMessage());
+    }
+}
+
+
   public function indexso(Request $request)
 {
     $db = $request->get('db', session('selected_db', 'mysql_third'));
