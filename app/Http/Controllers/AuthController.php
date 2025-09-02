@@ -110,16 +110,24 @@ public function login(Request $request)
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
+                // Log kegagalan otentikasi
+                Log::warning('Login failed: Invalid credentials for user ' . $request->input($this->username()));
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid credentials'
                 ], 401);
             }
+            
+            // Log keberhasilan otentikasi
+            Log::info('Login successful for user ' . $request->input($this->username()));
 
             // PERBAIKAN: Dapatkan objek user langsung dari token
             $user = JWTAuth::user();
 
             if (! $user->hasAnyRole(['Bos', 'Admin'])) {
+                // Log akses ditolak
+                Log::warning('Login denied: User ' . $user->username . ' does not have required roles.');
+                
                 // Logout paksa, invalidate token
                 JWTAuth::invalidate($token);
 
@@ -128,6 +136,9 @@ public function login(Request $request)
                     'message' => 'Anda tidak memiliki akses untuk login.'
                 ], 403);
             }
+            // Log otorisasi berhasil
+            Log::info('Login authorized for user ' . $user->username);
+            
             // Ambil role & permission kalau perlu
             $roles = $user->getRoleNames();
             $permissions = $user->getAllPermissions()->pluck('name');
@@ -157,16 +168,24 @@ public function login(Request $request)
         }
     }
     
-    public function logout(Request $request)
+  public function logout(Request $request)
     {
         try {
+            // Log permintaan logout
+            Log::info('Logout attempt for token: ' . JWTAuth::getToken());
+            
             JWTAuth::invalidate(JWTAuth::getToken());
+            
+            // Log keberhasilan logout
+            Log::info('Logout successful.');
 
             return response()->json([
                 'success' => true,
                 'message' => 'Logout berhasil'
             ]);
         } catch (JWTException $e) {
+            // Log kegagalan logout
+            Log::error('Logout failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal logout, token tidak valid atau sudah kadaluarsa'
