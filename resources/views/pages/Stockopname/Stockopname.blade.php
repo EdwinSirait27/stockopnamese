@@ -1,16 +1,12 @@
 @extends('layouts.app')
-
 @section('title', 'Stock Opname')
-
 @push('style')
-    <!-- CSS Libraries -->
     <style>
         .text-center {
             text-align: center;
         }
     </style>
 @endpush
-
 @section('main')
     <div class="main-content">
         <section class="section">
@@ -29,14 +25,12 @@
 
                 <div class="card">
                     <div class="card-body">
-                        {{-- Table --}}
                         <table id="datatable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th class="text-center">Kdtoko</th>
                                     <th class="text-center">Kettoko</th>
                                     <th class="text-center">Masuk</th>
-                                    <th class="text-center">Personil</th>
                                     <th class="text-center">Inp Masuk</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -110,12 +104,12 @@
                         className: 'text-center',
                         defaultContent: 'empty'
                     },
-                    {
-                        data: 'personil',
-                        name: 'personil',
-                        className: 'text-center',
-                        defaultContent: 'empty'
-                    },
+                    // {
+                    //     data: 'personil',
+                    //     name: 'personil',
+                    //     className: 'text-center',
+                    //     defaultContent: 'empty'
+                    // },
                     {
                         data: 'inpmasuk',
                         name: 'inpmasuk',

@@ -78,8 +78,8 @@
             <tr class="header-row">
                 <td><strong>Lokasi</strong></td>
                 <td>{{ $dbLabel ?? '-' }}</td>
-                <td><strong>Penghitung</strong></td>
-                <td colspan="2">{{ $store->personil ?? '-' }}</td>
+                {{-- <td><strong>Penghitung</strong></td> --}}
+                {{-- <td colspan="2">{{ $store->personil ?? '-' }}</td> --}}
                 <td><strong>Penginput</strong></td>
                   <td colspan="2">
                     {{ $store->inpmasuk ?? 'empty'}}
@@ -87,9 +87,9 @@
             </tr>
             <tr>
                 <th>No</th>
-                <th>Fixture</th>
+                {{-- <th>Fixture</th> --}}
                 <th>Nama</th>
-                <th>Bara</th>
+                {{-- <th>Bara</th> --}}
                 <th>Barcode</th>
                 <th>Qty Real</th>
                 <th>Catatan</th>
@@ -103,11 +103,11 @@
             @endphp
         <tr>
             <td>{{ $i+1 }}</td>
-            <td>{{ $d->KDTOKO }}</td>
+            {{-- <td>{{ $d->KDTOKO }}</td> --}}
             <td class="{{ $isDuplicate ? 'highlight-duplicate' : '' }}">
                     {{ $d->nama_barang }}
                 </td>
-            <td>{{ $d->BARA }}</td>
+            {{-- <td>{{ $d->BARA }}</td> --}}
             <td>{{ $d->BARCODE }}</td>
             <td>{{ $d->FISIK }}</td>
             <td></td>
