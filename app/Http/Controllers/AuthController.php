@@ -167,6 +167,60 @@ public function login(Request $request)
             ], 500);
         }
     }
+//     public function selectDb(Request $request)
+// {
+//     $database = $request->input('database');
+
+//     $dbNames = [
+//         'mysql_third' => 'SE 001',
+//         'mysql_fourth' => 'SE 005',
+//         'mysql_fifth' => 'SE 008',
+//     ];
+
+//     if (!array_key_exists($database, $dbNames)) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Database tidak valid'
+//         ], 400);
+//     }
+
+//     // Simpan pilihan DB ke session atau cache (optional)
+//     session(['selected_database' => $database]);
+
+//     return response()->json([
+//         'success' => true,
+//         'message' => "Database berhasil dipilih: " . $dbNames[$database],
+//         'selected' => $database
+//     ]);
+// }
+public function selectDb(Request $request)
+{
+    $database = $request->input('database');
+
+    $dbNames = [
+        'mysql_third'  => 'SE 001',
+        'mysql_fourth' => 'SE 005',
+        'mysql_fifth'  => 'SE 008',
+    ];
+
+    if (!array_key_exists($database, $dbNames)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Database tidak valid'
+        ], 400);
+    }
+
+    $user = auth()->user();
+    $user->selected_db = $database;
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => "Database berhasil dipilih: " . $dbNames[$database],
+        'selected' => $database
+    ]);
+}
+
     
   public function logout(Request $request)
     {
@@ -192,32 +246,7 @@ public function login(Request $request)
             ], 500);
         }
     }
-public function selectDb(Request $request)
-{
-    $database = $request->input('database');
 
-    $dbNames = [
-        'mysql_third' => 'SE 001',
-        'mysql_fourth' => 'SE 005',
-        'mysql_fifth' => 'SE 008',
-    ];
-
-    if (!array_key_exists($database, $dbNames)) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Database tidak valid'
-        ], 400);
-    }
-
-    // Simpan pilihan DB ke session atau cache (optional)
-    session(['selected_database' => $database]);
-
-    return response()->json([
-        'success' => true,
-        'message' => "Database berhasil dipilih: " . $dbNames[$database],
-        'selected' => $database
-    ]);
-}
 
 
   public function profile()
